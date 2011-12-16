@@ -1,0 +1,551 @@
+\documentclass[article,nojss]{jss}
+\DeclareGraphicsExtensions{.pdf,.eps}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Add-on packages and fonts
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{verbatim}
+
+\newcommand{\noun}[1]{\textsc{#1}}
+%% Bold symbol macro for standard LaTeX users
+\providecommand{\boldsymbol}[1]{\mbox{\boldmath $#1$}}
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+\usepackage{array} % table commands
+\setlength{\extrarowheight}{0.1cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\newcommand{\R}{\proglang{R }}
+\newcommand{\dae}{\textbf{\textsf{deTestSet }}}
+\newcommand{\ds}{\textbf{\textsf{deSolve }}}
+\newcommand{\ts}{\textbf{\textsf{deTestSet }}}
+\newcommand{\rs}{\textbf{\textsf{rootSolve }}}
+
+\newcommand{\rb}[1]{\raisebox{1.5ex}{#1}}
+
+\title{Package \pkg{deTestSet}: testset for initial value problems of 
+  differential equations in \proglang{R}}
+
+\Plaintitle{testset for initial value problems of differential equations in R}
+
+\Keywords{ordinary differential equations, differential algebraic equations,
+initial value problems, testset, \proglang{R}}
+
+\Plainkeywords{differential algebraic equations,
+initial value problems, R}
+
+
+\author{Karline Soetaert\\
+  Netherlands Institute of Sea Research (NIOZ)\\
+  Yerseke, The Netherlands
+  \And
+  Jeff Cash\\
+  Department of mathematics\\
+  Imperial College London\\
+  U.K.
+  \And
+  Francesca Mazzia\\
+  Dipartimento di Matematica \\
+  Universita' di Bari \\
+  Italy   
+}
+
+\Plainauthor{Karline Soetaert, Jeff Cash and Francesca Mazzia}
+
+\Abstract{
+  \R package \ts contains the R-version of the ODE and DAE initial value 
+  problems test set from \url{http://www.dm.uniba.it/\~testset}\cite{testset}.  
+
+  If the model problem is small enough, then it is implemented in
+  pure \R. For larger models, the
+  problem specified in \proglang{FORTRAN} code at the website of Jeff Cash
+  \url{http://www.ma.ic.ac.uk/~jcash/IVP_software} were used.
+
+  These implementations were compiled as DLLs, and included in the package.
+  The code of these models can be found in the packages
+  \url{inst/examples/dynload} subdirectory.
+  
+  For a number of small models, we show how to implement them in \R.
+  }
+%% The address of (at least) one author should be given
+%% in the following format:
+%% The address of (at least) one author should be given
+%% in the following format:
+\Address{
+  Karline Soetaert\\
+  Netherlands Institute of Sea Research (NIOZ)\\
+  4401 NT Yerseke, Netherlands \\
+  E-mail: \email{k.soetaert@nioo.knaw.nl}\\
+  URL: \url{http://www.nioo.knaw.nl/users/ksoetaert}\\
+   \\
+  Jeff Cash\\
+  Imperial College London\\
+  South Kensington Campus\\
+  London SW7 2AZ, U.K.\\
+  E-mail: \email{j.cash@imperial.ac.uk}\\
+  URL: \url{http://www.ma.ic.ac.uk/\~jcash}\\
+  \\
+  Francesca Mazzia           \\
+  Dipartimento di Matematica \\
+  Universita' di Bari        \\
+  Via Orabona 4,             \\
+  70125 BARI                 \\
+  Italy 
+  E-mail: \email{mazzia@dm.uniba.it}\\
+  URL: \url{http://pitagora.dm.uniba.it/\~mazzia}\\
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% R/Sweave specific LaTeX commands.
+%% need no \usepackage{Sweave}
+%\VignetteIndexEntry{Solving Differential Algebraic Equations in R}
+%\VignetteKeywords{differential algebraic equations, initial value problems, R}
+%\VignettePackage{deTestSet}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin of the document
+\begin{document}
+\SweaveOpts{engine=R,eps=FALSE}
+\SweaveOpts{keep.source=TRUE}
+
+<<preliminaries,echo=FALSE,results=hide>>=
+library("deTestSet")
+options(prompt = "> ")
+options(width=70)
+@
+
+\maketitle
+
+<<>>=
+out <- andrews()
+@
+<<label=andrews,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "andrews", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figandrews,fig=TRUE,echo=FALSE>>=
+<<andrews>>
+@
+\end{center}
+\caption{the andrews problem-  see text for R-code}
+\label{fig:andrews}
+\end{figure}
+\clearpage
+
+
+
+
+
+<<>>=
+out <- beam()
+@
+<<label=beam,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "beam", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figbeam,fig=TRUE,echo=FALSE>>=
+<<beam>>
+@
+\end{center}
+\caption{Solution of beam   -  see text for R-code}
+\label{fig:beam}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- caraxis()
+@
+<<label=caraxis,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "caraxis", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figcaraxis,fig=TRUE,echo=FALSE>>=
+<<caraxis>>
+@
+\end{center}
+\caption{Solution of caraxis   -  see text for R-code}
+\label{fig:caraxis}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- crank()
+@
+<<label=crank,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "crank", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figcrank,fig=TRUE,echo=FALSE>>=
+<<crank>>
+@
+\end{center}
+\caption{Solution of crank   -  see text for R-code}
+\label{fig:crank}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- E5()
+@
+<<label=E5,include=FALSE>>=
+plot(out, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "E5", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figE5,fig=TRUE,echo=FALSE>>=
+<<E5>>
+@
+\end{center}
+\caption{Solution of E5 -  see text for R-code}
+\label{fig:E5}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- emep()
+@
+<<label=emep,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "emep", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figemep,fig=TRUE,echo=FALSE>>=
+<<emep>>
+@
+\end{center}
+\caption{Solution of emep -  see text for R-code}
+\label{fig:emep}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- fekete()
+@
+<<label=fekete,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "fekete", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figfekete,fig=TRUE,echo=FALSE>>=
+<<fekete>>
+@
+\end{center}
+\caption{Solution of fekete -  see text for R-code}
+\label{fig:fekete}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- hires()
+@
+<<label=hires,include=FALSE>>=
+plot(out, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "hires", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=fighires,fig=TRUE,echo=FALSE>>=
+<<hires>>
+@
+\end{center}
+\caption{Solution of hires -  see text for R-code}
+\label{fig:hires}
+\end{figure}
+\clearpage
+
+
+
+
+
+The nand problem is most efficiently solved with \code{daspk}
+<<>>=
+out <- nand(method = daspk)
+@
+<<label=nand,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "nand", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=fignand,fig=TRUE,echo=FALSE>>=
+<<nand>>
+@
+\end{center}
+\caption{Solution of nand -  see text for R-code}
+\label{fig:nand}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- orego()
+@
+<<label=orego,include=FALSE>>=
+plot(out, lwd = 2, ask = FALSE, log = "y")
+mtext(outer = TRUE, side = 3, line = -1.5, "orego", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figorego,fig=TRUE,echo=FALSE>>=
+<<orego>>
+@
+\end{center}
+\caption{Solution of orego -  see text for R-code}
+\label{fig:orego}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- pollution()
+@
+<<label=pollution,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "pollution", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figpollution,fig=TRUE,echo=FALSE>>=
+<<pollution>>
+@
+\end{center}
+\caption{Solution of pollution -  see text for R-code}
+\label{fig:pollution}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- ring()
+@
+<<label=ring,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "ring", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figring,fig=TRUE,echo=FALSE>>=
+<<ring>>
+@
+\end{center}
+\caption{Solution of ring -  see text for R-code}
+\label{fig:ring}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- rober()
+@
+<<label=rober,include=FALSE>>=
+plot(out, lwd = 2, ask = FALSE, log = "x", xlim = c(1e-5,1e11))
+mtext(outer = TRUE, side = 3, line = -1.5, "rober", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figrober,fig=TRUE,echo=FALSE>>=
+<<rober>>
+@
+\end{center}
+\caption{Solution of rober -  see text for R-code}
+\label{fig:rober}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- transistor()
+@
+<<label=transistor,include=FALSE>>=
+plot(out, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "transistor", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figtransistor,fig=TRUE,echo=FALSE>>=
+<<transistor>>
+@
+\end{center}
+\caption{Solution of transistor -  see text for R-code}
+\label{fig:transistor}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- tube()
+@
+<<label=tube,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "tube", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figtube,fig=TRUE,echo=FALSE>>=
+<<tube>>
+@
+\end{center}
+\caption{Solution of tube -  see text for R-code}
+\label{fig:tube}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- twobit()
+@
+<<label=twobit,include=FALSE>>=
+plot(out, which = 1:9, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "twobit", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figtwobit,fig=TRUE,echo=FALSE>>=
+<<twobit>>
+@
+\end{center}
+\caption{Solution of twobit -  see text for R-code}
+\label{fig:twobit}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+<<>>=
+out <- vdpol()
+@
+<<label=vdpol,include=FALSE>>=
+plot(out, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "vdpol", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figvdpol,fig=TRUE,echo=FALSE>>=
+<<vdpol>>
+@
+\end{center}
+\caption{Solution of vdpol -  see text for R-code}
+\label{fig:vdpol}
+\end{figure}
+\clearpage
+
+
+
+
+
+
+
+<<>>=
+out <- wheelset()
+@
+<<label=wheelset,include=FALSE>>=
+plot(out, which = 1:6, lwd = 2, ask = FALSE)
+mtext(outer = TRUE, side = 3, line = -1.5, "wheelset", cex = 1.5)
+@
+\setkeys{Gin}{width=0.8\textwidth}
+\begin{figure}
+\begin{center}
+<<label=figwheel,fig=TRUE,echo=FALSE>>=
+<<wheelset>>
+@
+\end{center}
+\caption{Solution of wheelset an implicit differential equation model - index 2,
+dimension 17 -  see text for R-code}
+\label{fig:wheel}
+\end{figure}
+\clearpage
+\bibliography{docs}
+
+
+
+
+\end{document}
