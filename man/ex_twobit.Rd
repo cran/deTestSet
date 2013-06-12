@@ -10,8 +10,8 @@ Index 1 DAE of dimension 350
 }
 \usage{
 twobit (times = seq(0, 320, by = 0.5), yini = NULL, dyini = NULL, 
-  method = "radau",  atol = 1e-4, rtol = 1e-4, 
-  maxsteps = 1e5, hmax = 0.1, ...) 
+        printmescd = TRUE, method = radau,  
+        atol = 1e-4, rtol = 1e-4, maxsteps = 1e5, hmax = 0.1, ...) 
 }
 
 \arguments{
@@ -38,6 +38,9 @@ twobit (times = seq(0, 320, by = 0.5), yini = NULL, dyini = NULL,
   }
   \item{hmax }{maximal size of step; if too large: will fail.
   }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 1e13  are printed
+    } 
   \item{... }{additional arguments passed to the solver .
   }
 }
@@ -53,7 +56,7 @@ twobit (times = seq(0, 320, by = 0.5), yini = NULL, dyini = NULL,
   of the output value.
       
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia
 }

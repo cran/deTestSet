@@ -195,7 +195,6 @@ C
      *           E,GG,SIGMA,GM,C11,C22,C23,
      *           DELTA0,AR,RS,EPS,B1,B2
       PARAMETER( TOL   = 0.00000001d0)
-      CHARACTER (LEN = 80) MSG
 C
 C =====================================================================
 C
@@ -411,8 +410,6 @@ C     ERROR HANDLING
 C
  999  IF (IERR .LT. 0) THEN
          IRES = -1
-c         WRITE(MSG, *)"AN ERROR OCCURRED in WHEELSET, at time", T
-c         call rexit(MSG)
       ELSE
          IRES = 0
       END IF
@@ -755,7 +752,7 @@ C
       IF ( ( (AR + SIR + RS - EPS) .LE. XABS) .OR.
      *     ( (AR + SIR - RS + EPS) .GE. XABS )    )  THEN
            IERR = -2
-           WRITE(*,*) 'OUT OF RAIL PROFILE (DERAILMENT)'
+           CALL Rprint( 'Out of rail profile (DERAILMENT)')
       ELSE
            T    = SQRT ( RS*RS - (XABS-AR-SIR)**2 )
            SX   = T - RN0 - COS(DELTA0)*RS
@@ -831,7 +828,7 @@ C
       XABS = ABS(X)
       IF ( (B1 .GE. XABS) .OR. (XABS .GE. B2) ) THEN
           IERR = -1
-          WRITE(*,*) 'OUT OF WHEEL PROFILE (DERAILMENT)'
+          CALL Rprint( 'Out of wheel profile (DERAILMENT)' )
       ELSE
           RX   = RN0 + TA*(AR-XABS)
           DRX  = SIGN(1.D0,X)*(-TA)

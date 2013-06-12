@@ -11,7 +11,7 @@ gamd <- function(y, times, func, parms, nind = c(length(y),0,0),
   verbose = FALSE, hmax = NULL, hini = 0,
   ynames = TRUE, minord = NULL, maxord = NULL,
   bandup = NULL, banddown = NULL,
-  maxsteps = 1e4, maxnewtit = c(10, 18, 26, 36),
+  maxsteps = 1e4, maxnewtit = c(12, 18, 26, 36),
   dllname = NULL, initfunc = dllname, initpar = parms,
   rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, forcings = NULL,
   initforc = NULL, fcontrol = NULL, ...)
@@ -191,13 +191,13 @@ gamd <- function(y, times, func, parms, nind = c(length(y),0,0),
   iwork[4] <- maxord
 
   if (is.null (maxnewtit)) 
-    maxnewtit <- c(10, 18, 26, 36)
+    maxnewtit <- c(12, 18, 26, 36)
   else {
     if (length(maxnewtit) != 4)
       stop("'maxit' should be an integer vector of length 4")
     ii <- which (is.na(maxnewtit))
       if (length(ii) > 0)
-        maxnewtit[ii] <- c(10,18,26,36)[ii]
+        maxnewtit[ii] <- c(12,18,26,36)[ii]
   }
      
   iwork[5:8] <- maxnewtit
@@ -242,7 +242,7 @@ gamd <- function(y, times, func, parms, nind = c(length(y),0,0),
   out <- saveOut(out, y, n, Nglobal, Nmtot, func, Func2,
                  iin= 1:6, iout=c(1:4,10,12))
 
-  attr(out, "type") <- "gam"
+  attr(out, "type") <- "gamd"
   if (verbose) diagnostics(out)
   return(out)
 }

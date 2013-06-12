@@ -139,7 +139,6 @@ C ---------------------------------------------------------------------
 
       COMMON /nandcom/ RGS, RGD, RBS, RBD, CGS, CGD, CBD, CBS, C9,
      *               DELTA, CURIS, VTH, VDD, VBB
-      CHARACTER(LEN=80) MSG
 
       CALL nandPULSE(T,V1,V1D,0.D0,5.D0,5.D0,5.D0,5.D0,5.D0,20.D0)
       CALL nandPULSE(T,V2,V2D,0.D0,5.D0,15.D0,5.D0,15.D0,5.D0,40.D0)

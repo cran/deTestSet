@@ -8,7 +8,8 @@
 ##
 ## =============================================================================
 
-vdpol <- function(times = 0:2000, yini = NULL, parms = list(), ...) {
+vdpol <- function(times = 0:2000, yini = NULL, parms = list(), 
+		              printmescd = TRUE, atol = 1e-6, rtol = 1e-6, ...) {
 
 ### derivative function
   Vdpol <- function(t,y,mu) {
@@ -25,11 +26,30 @@ vdpol <- function(times = 0:2000, yini = NULL, parms = list(), ...) {
 
     if (is.null(yini))  yini <- c(y1 = 2, y2 = 0) 
     checkini(2, yini)
-
+	prob <- vdpolprob()
 
 ### solve
     out <- ode(func = Vdpol, parms = parameter, y = yini, times = times,
-       ...)
+			atol=atol,rtol=rtol, ...)
+   if(printmescd) 
+     out <- printpr (out, prob, "vdpol", rtol, atol)	
+   return(out)
+}
 
-    return(out)
+
+
+
+vdpolprob <- function(){ 
+	fullnm <- 'Problem VANDERPOL'
+	problm <- 'vdpolm'
+	type   <- 'ODE'
+	neqn   <- 2
+	t <- matrix(1,2)
+	t[1]   <- 0
+	t[2]   <- 2000
+	numjac <- TRUE
+	mljac  <- neqn
+	mujac  <- neqn	
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
 }

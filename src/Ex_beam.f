@@ -27,7 +27,7 @@ c----------------------------------------------------------------------
       IMPLICIT REAL*8 (A-H,O-Z)
       integer ierr,ipar(*)
       double precision rpar(*)
-        DIMENSION DF(NN),TH(150),U(150),V(150),W(150)
+        DIMENSION DF(80),TH(150),U(150),V(150),W(150)
         DIMENSION ALPHA(150),BETA(150),STH(150),CTH(150)
       integer start 
       data start/0 /
@@ -123,7 +123,7 @@ c----------------------------------------------------------------------
 
       subroutine beamsoln(neqn, y)
       integer neqn
-      double precision  y(neqn)
+      double precision  y(80)
 c
 c
 c computed using double precision RADAU on an

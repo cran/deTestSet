@@ -10,8 +10,8 @@ It is a non-stiff second order differential algebraic equation of index
 
 }
 \usage{
-andrews (times = seq(0, 0.03, by = 0.001), yini = NULL, 
-         dyini = NULL, parms = list(), method = "mebdfi", 
+andrews (times = seq(0, 0.03, by = 0.03/100), yini = NULL, dyini = NULL, 
+         parms = list(), printmescd = TRUE, method = mebdfi, 
          atol = 1e-7, rtol = 1e-7, maxsteps = 1e+05, ...) 
 }
 
@@ -34,6 +34,9 @@ andrews (times = seq(0, 0.03, by = 0.001), yini = NULL,
   }
   \item{parms }{list of parameters that overrule the default parameter values
   }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 0.03 are printed
+    }
   \item{method }{the solver to use
   }
   \item{maxsteps }{maximal number of steps per output interval taken by 
@@ -54,7 +57,7 @@ andrews (times = seq(0, 0.03, by = 0.001), yini = NULL,
   of the output value.
       
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia  <mazzia@dm.uniba.it>
 }

@@ -10,7 +10,8 @@ It is an index 2 system of 49 non-linear Differential-Algebraic Equations.
 }
 \usage{
 tube (times = seq(0, 17.0*3600, by = 100), yini = NULL, dyini = NULL, 
-  parms = list(), method = "radau",  maxsteps = 1e+05, ...) 
+      parms = list(), printmescd = TRUE, method = radau,   
+      atol = 1e-6, rtol = 1e-6, maxsteps = 1e+05, ...) 
 }
 
 \arguments{
@@ -31,6 +32,15 @@ tube (times = seq(0, 17.0*3600, by = 100), yini = NULL, dyini = NULL,
   \item{maxsteps }{maximal number of steps per output interval taken by 
     the solver
   }
+ \item{atol }{absolute error tolerance, either a scalar or a vector,
+    one value for each y.
+  }
+  \item{rtol }{relative error tolerance, either a scalar or a vector,
+    one value for each y,
+  }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 1e13  are printed
+    } 
   \item{... }{additional arguments passed to the solver .
   }
 }
@@ -46,7 +56,7 @@ tube (times = seq(0, 17.0*3600, by = 100), yini = NULL, dyini = NULL,
   of the output value.
       
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia
 }

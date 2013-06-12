@@ -29,7 +29,7 @@ gamd(y, times, func, parms, nind = c(length(y), 0, 0),
   mass = NULL, massup = NULL, massdown = NULL, verbose = FALSE,
   hmax = NULL, hini = 0, ynames = TRUE, minord = NULL, 
   maxord = NULL, bandup = NULL, banddown = NULL, 
-  maxsteps = 1e4, maxnewtit = c(10, 18, 26, 36), 
+  maxsteps = 1e4, maxnewtit = c(12, 18, 26, 36), 
   dllname = NULL, initfunc = dllname, initpar = parms, 
   rpar = NULL, ipar = NULL, nout=0, outnames = NULL, forcings = NULL,
   initforc = NULL, fcontrol = NULL, ...)
@@ -230,7 +230,7 @@ gamd(y, times, func, parms, nind = c(length(y), 0, 0),
   attribute, it will be used to label the columns of the output value.
 
 }
-\author{Karline Soetaert 
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia
 }

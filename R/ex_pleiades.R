@@ -9,7 +9,8 @@
 ## =============================================================================
 
 pleiades  <- function (times = seq(0, 3.0, by = 0.01), yini = NULL, 
-                        method = lsoda, ...) {
+                       printmescd = TRUE, method = lsoda, 
+                       atol = 1e-6, rtol = 1e-6, ...) {
 
 ### check input 
    pleiade <- function (t, Y, pars) {
@@ -32,7 +33,9 @@ pleiades  <- function (times = seq(0, 3.0, by = 0.01), yini = NULL,
                 v1 = 0, v2 = 0, v3 = 0, v4 =-1.25, v5 = 1, v6 = 0,   v7 = 0)
 
    checkini(28, yini)
-
+   
+   prob <- pleiprob()
+   
    useres <- FALSE
    if (is.character(method)) {
     if (method %in% c("mebdfi", "daspk"))
@@ -41,11 +44,35 @@ pleiades  <- function (times = seq(0, 3.0, by = 0.01), yini = NULL,
       useres <- TRUE
     if (useres)
    out <- ode(func = "pleiafunc", parms = NULL, dllname = "deTestSet", y = yini,
-                times = times,  initfunc = NULL,  method=method, ...)
+                times = times,  initfunc = NULL,  method=method, atol=atol, rtol=rtol,...)
 
     else 
    out <- ode(func = "pleiafunc", parms = NULL, dllname = "deTestSet", y = yini,
-              jacfunc = "pleiajac", times = times, initfunc = NULL,  method=method, ...)
+              jacfunc = "pleiajac", times = times, initfunc = NULL,  method=method, 
+			  atol=atol, rtol=rtol, ...)
+  
+   if(printmescd) 
+     out <- printpr (out, prob, "pleiades", rtol, atol)	
    return(out)
 }
+
+
+
+
+pleiprob <- function(){ 
+	fullnm <- 'Pleiades problem'
+	problm <- 'plei'
+	type   <- 'ODE'
+	neqn   <- 28
+	t <- matrix(1,2)
+	t[1]   <- 0
+	t[2]   <- 3.0e0
+	numjac <- FALSE
+	mljac  <- neqn
+	mujac  <- neqn	
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
+}
+
+
 

@@ -4,8 +4,9 @@
 ###      index 2 DAE of dimension 160
 ### ============================================================================
 
-fekete <- function(times = seq(0, 20, by = 0.1), yini = NULL, dyini = NULL,
-                   parms = list(), method = "mebdfi", maxsteps = 1e5, ...) {
+fekete <- function(times = seq(0, 1e3, by = 10), yini = NULL, dyini = NULL,
+                   parms = list(), printmescd = TRUE, method = mebdfi, 
+                   atol=1e-6, rtol=1e-6, maxsteps = 1e5, ...) {
 
 # No parameters 
 
@@ -28,7 +29,9 @@ fekete <- function(times = seq(0, 20, by = 0.1), yini = NULL, dyini = NULL,
 
 ### solve
    ind  <- c(6*20,2*20,0)    #  index of the system
-
+   
+   prob <- feketeprob()
+   
    useres <- FALSE
    if (is.character(method)) {
     if (method %in% c("mebdfi", "daspk"))
@@ -36,18 +39,36 @@ fekete <- function(times = seq(0, 20, by = 0.1), yini = NULL, dyini = NULL,
    } else  if("res" %in% names(formals(method)))
       useres <- TRUE
 
-    if (useres)
-       return( dae(y = yini, dy = dyini, times = times, res = "fekres",
+   if (useres){ 
+      fekete <- dae(y = yini, dy = dyini, times = times, res = "fekres",
                    nind = ind, method = method,
                    dllname = "deTestSet", initfunc = NULL,
-                   parms = NULL, maxsteps = maxsteps))
-
+                   parms = NULL, atol=atol, rtol=rtol, maxsteps = maxsteps, ...)
+   } else { 
    fekete <- dae(y = yini, times = times, nind = ind,
           func = "fekfunc", mass = c(rep(1, 120), rep(0, 40)),
           massup = 0, massdown = 0,
           dllname = "deTestSet", initfunc = NULL,
-          parms = NULL, method = method,
+          parms = NULL, method = method, atol=atol,rtol=rtol,
           maxsteps = maxsteps, ...)
-
+    }
+   if(printmescd) 
+     fekete <- printpr (fekete, prob, "fekete", rtol, atol)	
    return(fekete)
 }
+
+feketeprob <- function(){ 
+	fullnm <- 'Fekete problem'
+	problm <- 'fekete'
+	type   <- 'DAE'
+	neqn   <- 160
+	t <- matrix(1,2)
+	t[1]   <- 0
+	t[2]   <- 1.0e3
+	numjac <- FALSE
+	mljac  <- neqn
+	mujac  <- neqn
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
+}
+

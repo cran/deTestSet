@@ -36,7 +36,7 @@ cashkarp (y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   verbose = FALSE, hmax = NULL, hini = hmax, ynames = TRUE, 
   maxsteps = 10000, dllname = NULL, initfunc = dllname, initpar = parms, 
   rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, forcings = NULL,
-  initforc = NULL, fcontrol = NULL, stiffness = 0, ...)
+  initforc = NULL, fcontrol = NULL, stiffness = 2, ...)
 
 }
 
@@ -156,8 +156,9 @@ cashkarp (y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     See \link[deSolve]{forcings} or vignette \code{compiledCode}.
   }
   \item{stiffness }{How the stiffness of the solution should be estimated.
-   Default = No stiffness estimate; when = \code{stiffness = 1} or \code{-1}: all stiffness estimates
-   calculated ; when = \code{stiffness = 2} or \code{-2}: stiffness based on
+   Default = stiffness based on eigenvalue approximation; 
+   when = \code{stiffness = 0}: no stiffness estimate; when = \code{stiffness = 1} 
+   or \code{-1}: all stiffness estimates calculated ; when = \code{stiffness = 2} or \code{-2}: stiffness based on
    eigenvalue approximation;  when = \code{stiffness = 3} or \code{-3}: stiffness
    based on error estimate; when = \code{stiffness = 4} or \code{-4}: stiffness
    based on conditioning. Positive values of \code{stiffness} will cause the
@@ -177,7 +178,7 @@ cashkarp (y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   attribute, it will be used to label the columns of the output value.
 
 }
-\author{Karline Soetaert 
+\author{Karline Soetaert <karline.soetaert@nioz.nl> 
 }
 \examples{
 

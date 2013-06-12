@@ -9,7 +9,8 @@ It is a differential algebraic equation of index 2, 17 equations.
 }
 \usage{
 wheelset (times = seq(0, 10, by = 0.01), yini = NULL, dyini = NULL, 
-  parms = list(), method = "mebdfi", maxsteps = 1e5, ...) 
+          parms = list(), printmescd = TRUE, method = mebdfi, 
+          atol = 1e-6, rtol = 1e-6, maxsteps = 1e5, ...) 
 }
 
 \arguments{
@@ -30,6 +31,15 @@ wheelset (times = seq(0, 10, by = 0.01), yini = NULL, dyini = NULL,
   \item{maxsteps }{maximal number of steps per output interval taken by 
     the solver
   }
+  \item{atol }{absolute error tolerance, either a scalar or a vector,
+    one value for each y.
+  }
+  \item{rtol }{relative error tolerance, either a scalar or a vector,
+    one value for each y,
+  }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 0.1  are printed
+    }
   \item{... }{additional arguments passed to the solver .
   }
 }
@@ -45,7 +55,7 @@ wheelset (times = seq(0, 10, by = 0.01), yini = NULL, dyini = NULL,
   of the output value.
       
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia
 }

@@ -20,7 +20,7 @@ reference (name = c("andrews", "beam", "caraxis", "crank", "E5",
   A vector with the reference solution
       
 }
-\author{Karline Soetaert 
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia
 }

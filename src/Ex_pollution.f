@@ -32,7 +32,26 @@ c----------------------------------------------------------------------
       call deparms(25, parms)
       return
       end
+c----------------------------------------------------------------------
+c     residual function
+c----------------------------------------------------------------------
+      SUBROUTINE polres(T,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
 
+      implicit none
+      DOUBLE PRECISION T, Y(20), DELTA(20), YPRIME(20),RPAR(*), CJ
+      INTEGER I, J, IERR, N, IPAR(*)
+C
+      IERR = 0
+      N = 20
+      CALL  polfunc(N, T, Y, DELTA, rpar, ipar)
+C
+      DO J = 1,N
+         DELTA(J) = YPRIME(J)-DELTA(J)
+      ENDDO
+
+C
+      RETURN
+      END
 
 c----------------------------------------------------------------------
 c     derivative function
@@ -99,12 +118,43 @@ c----------------------------------------------------------------------
       return
       end
 
+
+c----------------------------------------------------------------------
+c     jacobian function for residual function
+c----------------------------------------------------------------------
+
+
+      SUBROUTINE poljacres(T,Y,YPRIME,DFDY,CON,RPAR,IPAR)
+      INTEGER NEQN,MN, ml, mu,  IPAR(*)
+      PARAMETER (NEQN=20, MN = 20)
+      DOUBLE PRECISION T,Y(NEQN),YPRIME(NEQN),DFDY(MN,NEQN),CON,RPAR(*)
+      ml = 0
+      mu = 0
+
+
+      call poljac(neqn,t,y,ml,mu,dfdy,mn,rpar,ipar)
+
+       do i=1,neqn
+         do  j=1,neqn
+            dfdy(i,j) = -dfdy(i,j)
+         enddo
+      enddo
+c compute pd = -df/dy + con*M
+      do j=1,neqn
+         dfdy(j,j) = 1.0d0/con+ dfdy(j,j)
+      enddo
+c
+
+      return
+      end
+
+
 c----------------------------------------------------------------------
 c     jacobian function
 c----------------------------------------------------------------------
 
       subroutine poljac(neqn,t,y,ml,mu,dfdy,ldim,rpar,ipar)
-      integer ldim,neqn,ierr,ipar(*)
+      integer ldim,neqn,ierr,ipar(*),ml,mu
       double precision t,y(neqn),dfdy(ldim,neqn),rpar(*)
 
       integer i,j

@@ -8,8 +8,9 @@
 ##
 ## =============================================================================
 
-pollution <- function(times = seq(0, 10, 0.1), yini = NULL, 
-  parms = list(), method = mebdfi, ...) {
+pollution <- function(times = seq(0, 60, 1), yini = NULL, 
+                      parms = list(), printmescd = TRUE, 
+                      method = mebdfi, atol = 1e-6, rtol = 1e-6,  ...) {
 
 ### check input 
     parameter <- c(
@@ -38,6 +39,8 @@ pollution <- function(times = seq(0, 10, 0.1), yini = NULL,
           "CO", "ALD", "MEO2", "C2O3", "CO2", "PAN", "CH3O", 
           "HNO3", "O1D", "SO2", "SO4", "NO3", "N2O5")
 
+
+     prob <- polluprob()
 ### solve
     useres <- FALSE
     if (is.character(method)) {
@@ -45,15 +48,42 @@ pollution <- function(times = seq(0, 10, 0.1), yini = NULL,
 	    	useres <- TRUE
     } else  if("res" %in% names(formals(method)))
 	       useres <- TRUE
-    if (useres)
-    out <- ode(y = yini, times = times, func = "polfunc",
-		dllname = "deTestSet", initfunc = "polpar", method=method,
-		parms = parameter, ...)
+    if (useres){
+    
+    #  out <- ode(y = yini, times = times, func = "polfunc",
+	  # 	dllname = "deTestSet", initfunc = "polpar", method=method,
+	 # 	parms = parameter, ...)
+	    dyini <- rep(0,20)
+
+      checkini(20, yini, dyini)
+	  	out <-dae(y = yini, dy = dyini, times = times, res = "polres",
+          dllname = "deTestSet", jacres = "poljacres",initfunc = "polpar", 
+          parms = parameter, method=method,atol=atol, rtol=rtol,  ...)
+                 }
     else 
     out <- ode(y = yini, times = times, func = "polfunc", jacfunc = "poljac",
               dllname = "deTestSet", initfunc = "polpar", method=method,
-              parms = parameter, ...)
-
-  return(out)
+              parms = parameter,atol=atol, rtol=rtol, ...)
+    if(printmescd) 
+      out <- printpr (out, prob, "pollution", rtol, atol)	
+    return(out)
 }
+
+
+
+polluprob <- function(){ 
+	fullnm <- 'Pollution problem'
+	problm <- 'pollu'
+	type   <- 'ODE'
+	neqn   <- 20
+	t <- matrix(1,2)
+	t[1]   <- 0
+	t[2]   <- 60
+	numjac <- FALSE
+	mljac  <- neqn
+	mujac  <- neqn	
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
+}
+
 

@@ -37,7 +37,7 @@ initial value problems, R}
 
 
 \author{Karline Soetaert\\
-  Netherlands Institute of Sea Research (NIOZ)\\
+  Royal Netherlands Institute of Sea Research (NIOZ)\\
   Yerseke, The Netherlands
   \And
   Jeff Cash\\
@@ -74,10 +74,10 @@ initial value problems, R}
 %% in the following format:
 \Address{
   Karline Soetaert\\
-  Netherlands Institute of Sea Research (NIOZ)\\
+  Royal Netherlands Institute of Sea Research (NIOZ)\\
   4401 NT Yerseke, Netherlands \\
-  E-mail: \email{k.soetaert@nioo.knaw.nl}\\
-  URL: \url{http://www.nioo.knaw.nl/users/ksoetaert}\\
+  E-mail: \email{karline.soetaert@nioz.nl}\\
+  URL: \url{http://www.nioz.nl}\\
    \\
   Jeff Cash\\
   Imperial College London\\
@@ -99,8 +99,8 @@ initial value problems, R}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% R/Sweave specific LaTeX commands.
 %% need no \usepackage{Sweave}
-%\VignetteIndexEntry{Solving Differential Algebraic Equations in R}
-%\VignetteKeywords{differential algebraic equations, initial value problems, R}
+%\VignetteIndexEntry{Test Set Problems in R}
+%\VignetteKeywords{differential algebraic equations, initial value problems, testset, R}
 %\VignettePackage{deTestSet}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin of the document

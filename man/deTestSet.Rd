@@ -29,7 +29,7 @@
   \tabular{ll}{
     Package: \tab deTestSet\cr
     Type:    \tab Package\cr
-    Version: \tab 1.0\cr
+    Version: \tab 1.1\cr
     License: \tab GNU Public License 2 or above\cr
   }
 

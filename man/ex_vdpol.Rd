@@ -9,7 +9,9 @@ nonlinear vacuum tube circuots.
 It is an ODE, 2 equations. 
 }
 \usage{
-vdpol  (times = 0:2000, yini = NULL,  parms = list(), ...)
+vdpol  (times = 0:2000, yini = NULL,  
+        parms = list(), printmescd = TRUE,
+        atol = 1e-6, rtol = 1e-6, ...)
 }
 
 \arguments{
@@ -22,6 +24,15 @@ vdpol  (times = 0:2000, yini = NULL,  parms = list(), ...)
   }
   \item{parms }{list of parameters that overrule the default parameter values
   }
+  \item{atol }{absolute error tolerance, either a scalar or a vector,
+    one value for each y.
+  }
+  \item{rtol }{relative error tolerance, either a scalar or a vector,
+    one value for each y,
+  }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 5 are printed
+    }
   \item{... }{additional arguments passed to the solver .
   }
 }
@@ -37,9 +48,9 @@ vdpol  (times = 0:2000, yini = NULL,  parms = list(), ...)
   of the output value.
       
 }
-\author{Karline Soetaert  
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
-Francesca Mazzia
+Francesca Mazzia <mazzia@dm.uniba.it>
 }
 \examples{
 out <- vdpol()

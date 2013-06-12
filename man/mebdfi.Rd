@@ -272,7 +272,7 @@ mebdfi(y, times, func = NULL, parms, dy = NULL, res = NULL,
   of the output value.
       
 }
-\author{Karline Soetaert 
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Jeff Cash
 }

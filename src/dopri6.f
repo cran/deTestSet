@@ -195,7 +195,6 @@ C *** *** *** *** *** *** *** *** *** *** *** *** ***
       DIMENSION Y(N),ATOL(*),RTOL(*),WORK(LWORK),IWORK(LIWORK)
       DIMENSION RPAR(*),IPAR(*),VSTI(N)
       LOGICAL ARRET
-      CHARACTER (LEN=150) MSG
       EXTERNAL FCN,SOLOUT
 C *** *** *** *** *** *** ***
 C        SETTING THE PARAMETERS 
@@ -214,9 +213,7 @@ C -------- NMAX , THE MAXIMAL NUMBER OF STEPS -----
          NMAX=IWORK(1)
          IF(NMAX.LE.0)THEN
             IF (IPRINT.GT.0) THEN
-               WRITE(MSG,*)
-     &          ' WRONG INPUT IWORK(1)=',IWORK(1)
-               CALL RPRINT(MSG) 
+         CALL Rprinti1( 'Wrong input iwork(1) = ',IWORK(1))
             ENDIF
             ARRET=.TRUE.
          END IF
@@ -228,15 +225,13 @@ C -------- METH   COEFFICIENTS OF THE METHOD
          METH=IWORK(2)
          IF(METH.LE.0.OR.METH.GE.4)THEN
             IF (IPRINT.GT.0) THEN
-               WRITE(MSG,*)
-     &          ' CURIOUS INPUT IWORK(2)=',IWORK(2)
-               CALL RPRINT(MSG) 
+         CALL Rprinti1('Curious input iwork(2) = ',IWORK(2))
             ENDIF
             ARRET=.TRUE.
          END IF
       END IF  
 C -------- NSTIFF   PARAMETER FOR STIFFNESS DETECTION  
-      IWORK(4)=1
+C      IWORK(4)=1
       NSTIFF=IWORK(4) 
       IF (NSTIFF.EQ.0) NSTIFF=1000
       IF (NSTIFF.LT.0) NSTIFF=NMAX+10
@@ -244,18 +239,14 @@ C -------- NRDENS   NUMBER OF DENSE OUTPUT COMPONENTS
       NRDENS=IWORK(5)
       IF(NRDENS.LT.0.OR.NRDENS.GT.N)THEN
          IF (IPRINT.GT.0) THEN 
-            WRITE(MSG,*)
-     &           ' CURIOUS INPUT IWORK(5)=',IWORK(5)
-            CALL RPRINT(MSG) 
+         CALL Rprinti1('Curious input iwork(5) = ',IWORK(5))
           ENDIF
 
          ARRET=.TRUE.
       ELSE
             IF(NRDENS.GT.0.AND.IOUT.LT.2)THEN
                IF (IPRINT.GT.0) THEN
-                 WRITE(MSG,*)
-     &      ' WARNING: PUT IOUT=2 FOR DENSE OUTPUT '
-                 CALL RPRINT(MSG) 
+         CALL Rprint(' Warning: put IOUT=2 for dense output ')
                ENDIF
 
             END IF 
@@ -271,9 +262,8 @@ C -------- UROUND   SMALLEST NUMBER SATISFYING 1.D0+UROUND>1.D0
          UROUND=WORK(1)
          IF(UROUND.LE.1.D-35.OR.UROUND.GE.1.D0)THEN
             IF (IPRINT.GT.0) THEN
-               WRITE(MSG,*)
-     &        ' WHICH MACHINE DO YOU HAVE? YOUR UROUND WAS:',WORK(1)
-              CALL RPRINT(MSG) 
+         CALL Rprintd1(
+     &        ' Which machine do you have? your uround was : ',WORK(1))
             ENDIF
 
             ARRET=.TRUE.
@@ -286,9 +276,8 @@ C -------  SAFETY FACTOR -------------
          SAFE=WORK(2)
          IF(SAFE.GE.1.D0.OR.SAFE.LE.1.D-4)THEN
             IF (IPRINT.GT.0) THEN
-              WRITE(MSG,*)
-     &          ' CURIOUS INPUT FOR SAFETY FACTOR WORK(2)=',WORK(2)
-              CALL RPRINT(MSG) 
+         CALL Rprintd1(
+     &          'Curious input for safety factor work(2) = ',WORK(2))
             ENDIF
             ARRET=.TRUE.
          END IF
@@ -314,9 +303,7 @@ C --------- BETA FOR STEP CONTROL STABILIZATION -----------
             BETA=WORK(5)
             IF(BETA.GT.0.2D0)THEN
                IF (IPRINT.GT.0) THEN
-                 WRITE(MSG,*)
-     &          ' CURIOUS INPUT FOR BETA: WORK(5)=',WORK(5)
-                 CALL RPRINT(MSG) 
+         CALL Rprintd1('Curious input for beta: work(5) = ',WORK(5))
             ENDIF
             ARRET=.TRUE.
          END IF
@@ -344,9 +331,7 @@ C ------ TOTAL STORAGE REQUIREMENT -----------
       ISTORE=IEYS+5*NRDENS-1
       IF(ISTORE.GT.LWORK)THEN
         IF (IPRINT.GT.0) THEN
-          WRITE(MSG,*)
-     &   ' INSUFFICIENT STORAGE FOR WORK, MIN. LWORK=',ISTORE
-          CALL RPRINT(MSG) 
+         CALL Rprinti1('Insufficient storage for work, min. = ',ISTORE)
          ENDIF
 
         ARRET=.TRUE.
@@ -355,9 +340,7 @@ C ------ TOTAL STORAGE REQUIREMENT -----------
       ISTORE=ICOMP+NRDENS-1
       IF(ISTORE.GT.LIWORK)THEN
         IF (IPRINT.GT.0) THEN
-           WRITE(MSG,*)
-     &   ' INSUFFICIENT STORAGE FOR IWORK, MIN. LIWORK=',ISTORE
-           CALL RPRINT(MSG) 
+         CALL Rprinti1('Insufficient storage for iwork, min. = ',ISTORE)
          ENDIF
 
         ARRET=.TRUE.
@@ -401,7 +384,6 @@ C ----------------------------------------------------------
       DIMENSION Y(N),Y1(N),YSTI(N),ATOL(*),RTOL(*),RPAR(*),IPAR(*)
       DIMENSION CONT(5*NRD),ICOMP(NRD),VSTI(N)
       LOGICAL REJECT,LAST 
-      CHARACTER(LEN=150) MSG
       EXTERNAL FCN
       COMMON /CONDO5/XOLD,HOUT
 C *** *** *** *** *** *** ***
@@ -493,19 +475,13 @@ C ------- STIFFNESS DETECTION
                STDEN=STDEN+(Y1(I)-YSTI(I))**2
  64         CONTINUE  
             IF (STDEN.GT.0.D0) HLAMB=SQRT(STNUM/STDEN) 
-c            IF (IPRINT .GT. 0) THEN
-c             write(MSG,188) hlamb,stden
-c188          format(1x,'the first stiffness estimate',2g22.10)
-c             CALL RPRINT(MSG) 
-c            ENDIF
-            IF (HLAMB.GT.3.25D0) THEN
+
+            IF (HLAMB.GT.3.25D0 .OR. .NOT.(HLAMB .GT. 0.0d0) ) THEN
                NONSTI=0
                IASTI=IASTI+1  
                IF (IASTI.EQ.15) THEN
                   IF (IPRINT.GT.0) THEN
-                               WRITE (MSG,*) 
-     &               ' THE PROBLEM SEEMS TO BECOME STIFF AT X = ',X   
-                      CALL RPRINT(MSG) 
+         CALL Rprintd1('The problem seems to become stiff at x = ',X )
                   ENDIF
                   IF (IPRINT.LE.0) GOTO 76
                END IF
@@ -604,30 +580,23 @@ C --- FAIL EXIT
       RETURN
   77  CONTINUE
       IF (IPRINT.GT.0) THEN
-        WRITE(MSG,979)X   
-         CALL RPRINT(MSG) 
-    
-        WRITE(MSG,*)' STEP SIZE T0O SMALL, H=',H
-         CALL RPRINT(MSG) 
+       CALL Rprintd1('Exit of DOPRI5 at x = ', X) 
+       CALL Rprintd1('Step size too small, h = ',H)
       ENDIF
       IDID=-3
       RETURN
   78  CONTINUE
       IF (IPRINT.GT.0) THEN
-        WRITE(MSG,979)X   
-         CALL RPRINT(MSG) 
-        WRITE(MSG,*)
-     &     ' MORE THAN NMAX =',NMAX,'STEPS ARE NEEDED' 
-         CALL RPRINT(MSG) 
+      CALL Rprintd1('Exit of DOPRI5 at x = ', X) 
+      CALL Rprinti1(
+     &     'More than nmax steps are needed ' ,NMAX)
       ENDIF
       IDID=-2
       RETURN
   79  CONTINUE
       IF (IPRINT.GT.0) THEN
-        WRITE(MSG,979)X
-         CALL RPRINT(MSG) 
+      CALL Rprintd1('Exit of DOPRI5 at x = ', X) 
       ENDIF
- 979  FORMAT(' EXIT OF DOPRI5 AT X=',E18.4) 
       IDID=2
       RETURN
       END

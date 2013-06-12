@@ -234,7 +234,7 @@ bimd(y, times, func, parms, nind = c(length(y), 0, 0),
   attribute, it will be used to label the columns of the output value.
 
 }
-\author{Karline Soetaert 
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia
 }

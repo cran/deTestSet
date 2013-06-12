@@ -185,3 +185,50 @@ void initOutC(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
    }
 }
+
+
+/*==================================================
+ Slightly different printing, based on R-core dblep0 and intp0
+===================================================*/
+
+
+void F77_NAME(dblep0k) (const char *label, int *nchar, double *data, int *ndata)
+{
+    int k, nc = *nchar;
+
+    if(nc < 0) nc = strlen(label);
+    if(nc > 255) {
+	warning("invalid character length in dblepr");
+	nc = 0;
+    } else if(nc > 0) {
+	for (k = 0; k < nc; k++)
+	    Rprintf("%c", label[k]);
+    }
+/*    if(*ndata > 0) printRealVector(data, *ndata, 1); */
+    if(*ndata > 0) 
+      for (k = 0; k < *ndata; k++)  
+        Rprintf("%g",data[k]);
+
+	Rprintf("\n");/* put that at end, so that vector is on same line as string*/
+/*    return(0);  and removed this one */
+}
+
+void F77_NAME(intp0k) (const char *label, int *nchar, int *data, int *ndata)
+{
+    int k, nc = *nchar;
+
+    if(nc < 0) nc = strlen(label);
+    if(nc > 255) {
+	warning("invalid character length in intpr");
+	nc = 0;
+    } else if(nc > 0) {
+	for (k = 0; k < nc; k++)
+	    Rprintf("%c", label[k]);
+    }
+/*    if(*ndata > 0) printIntegerVector(data, *ndata, 1); */
+      for (k = 0; k < *ndata; k++)  
+        Rprintf("%i",data[k]);
+
+	Rprintf("\n");
+/*    return(0);  and removed this one */
+}

@@ -25,7 +25,7 @@ checkInput <- function(y, times, func, rtol, atol,
   if (!is.numeric(hmin))   stop("`hmin' must be numeric")
   if (hmin < 0)            stop("`hmin' must be a non-negative value")
   if (is.null(hmax))
-    hmax <- if (is.null(times)) 0 else max(abs(diff(times)))
+    hmax <- if (is.null(times)) 0 else max(abs(times[length(times)]-times[1]))
   if (!is.numeric(hmax))   stop("`hmax' must be numeric")
   if (hmax < 0)            stop("`hmax' must be a non-negative value")
   if (hmax == Inf)  hmax <- 0
@@ -258,3 +258,27 @@ saveOutrk <- function(out, y, n, Nglobal, Nmtot, iin, iout)  {
   return(out)
 }
 
+
+## =============================================================================
+## Print mescd output
+## =============================================================================
+
+printpr <- function (out, prob, name, rtol, atol) {
+   mescd <- NULL 
+   if (nrow(out) > 0) 
+    if ( abs(out[nrow(out),1]-prob$t[2]) < 1e-10 ) { 
+ 	   ref = reference(name)
+	   mescd = min(-log10(abs(out[nrow(out),-1] - ref)/(atol/rtol+abs(ref))))
+	   printM(prob$fullnm)
+	   cat('Solved with ')
+	   printM(attributes(out)$type)
+	   cat('Using rtol = ')
+	   cat(rtol)
+	   cat(', atol=')
+	   printM(atol)
+	   printM("Mixed error significant digits:")
+	   printM(mescd)
+    }
+  attr(out, "mescd") <- mescd
+  return(out)  
+}

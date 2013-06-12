@@ -265,7 +265,7 @@ bimd <- function(y, times, func, parms, nind = c(length(y),0,0),
   out <- saveOut(out, y, n, Nglobal, Nmtot, func, Func2,
                  iin= 1:6, iout=c(1:4,10,12))
 
-  attr(out, "type") <- "bim"
+  attr(out, "type") <- "bimd"
   if (verbose) diagnostics(out)
   return(out)
 }

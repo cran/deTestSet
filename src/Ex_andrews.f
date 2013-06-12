@@ -24,12 +24,12 @@ c----------------------------------------------------------------------
 
       SUBROUTINE andpar(daeparms)
       EXTERNAL daeparms
-      
+
       double precision parms(42)
       common / andcom/ parms
 
         CALL daeparms(42,parms)
-        
+
       END SUBROUTINE andpar
 
 c-----------------------------------------------------------------------
@@ -37,7 +37,7 @@ c     residual function
 c-----------------------------------------------------------------------
 
       SUBROUTINE andres(T,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
-      
+
       implicit none
       DOUBLE PRECISION T, Y(27), DELTA(27), YPRIME(27),RPAR(*), CJ
       INTEGER I, J, IERR, N, IPAR(*)
@@ -203,10 +203,34 @@ c----------------------------------------------------------------------
 c     jacobian function
 c----------------------------------------------------------------------
 
-      SUBROUTINE andjac(T,Y,YPRIME,DFDY,CON,RPAR,IPAR)
-      INTEGER NEQN,MN
+      subroutine andjacres(t,y,yprime,dfdy,con,rpar,ipar)
+      INTEGER NEQN,MN, ipar(*),ml,mu
       PARAMETER (NEQN=27, MN = 27)
-      DOUBLE PRECISION T, Y(NEQN), DFDY(MN,NEQN),CON
+      DOUBLE PRECISION T, Y(NEQN), CON,DFDY(MN,NEQN), rpar(*)
+      ml = 0
+      mu = 0
+
+      call andjac(neqn,t,y,ml,mu,dfdy,MN,rpar,ipar)
+
+       do i=1,neqn
+         do  j=1,neqn
+            dfdy(i,j) = -dfdy(i,j)
+         enddo
+      enddo
+c compute pd = -df/dy + con*M
+      do j=1,14
+         dfdy(j,j) = 1.0d0/con+dfdy(j,j)
+      enddo
+c
+
+      return
+      end
+
+
+      subroutine andjac(neqn,t,y,ml,mu,dfdy,ldim,rpar,ipar)
+      INTEGER NEQN,MN, ipar(*),ml,mu, ldim
+c      PARAMETER (NEQN=27, MN = 27)
+      DOUBLE PRECISION T, Y(27), DFDY(27,27), rpar(*)
 
 
 c-----------------------------------------------------------------------
@@ -325,23 +349,14 @@ c
  140     continue
  150  continue
 C
-      do i=1,neqn
-         do  j=1,neqn
-            dfdy(i,j) = -dfdy(i,j)
-         enddo
-      enddo
-c compute pd = -df/dy + con*M
-      do j=1,14
-         dfdy(j,j) = 1.0d0/con+dfdy(j,j)
-      enddo
-c
+
       return
       end
 c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine andsoln(neqn,y)
       integer neqn
-      double precision y(neqn)
+      double precision y(27)
 c
 c computed at Cray C90, using Cray double precision:
 c Solving Andrews` squeezing mechanism using PSIDE

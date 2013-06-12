@@ -9,7 +9,9 @@ It is an ordinary differential equation of dimension 80.
 
 }
 \usage{
-beam (times=seq(0, 5, by = 0.01), yini = NULL, method = gamd, ...) 
+beam (times=seq(0, 5, by = 0.05), yini = NULL, 
+      printmescd = TRUE, method = gamd, 
+      atol = 1e-6, rtol = 1e-6, ...) 
 }
 
 \arguments{
@@ -21,6 +23,15 @@ beam (times=seq(0, 5, by = 0.01), yini = NULL, method = gamd, ...)
     value of \code{times} must be the initial time.
   }
   \item{method }{the solver to use
+  }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 5 are printed
+    }
+  \item{atol }{absolute error tolerance, either a scalar or a vector,
+    one value for each y.
+  }
+  \item{rtol }{relative error tolerance, either a scalar or a vector,
+    one value for each y,
   }
   \item{... }{additional arguments passed to the solver .
   }
@@ -37,7 +48,7 @@ beam (times=seq(0, 5, by = 0.01), yini = NULL, method = gamd, ...)
   of the output value.
       
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia <mazzia@dm.uniba.it>
 }

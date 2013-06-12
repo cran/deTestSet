@@ -12,7 +12,7 @@ dopri5 <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   verbose, hmax, hini, ynames, maxsteps, 
   dllname, initfunc, initpar, 
   rpar, ipar, nout, outnames, forcings,
-  initforc, fcontrol, type=2, stiffness = 0, ...)
+  initforc, fcontrol, type=2,  ...)
 
 }
 
@@ -20,7 +20,7 @@ cashkarp <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   verbose = FALSE, hmax = NULL, hini = hmax, ynames = TRUE, maxsteps = 10000,
   dllname = NULL, initfunc = dllname, initpar = parms,
   rpar=NULL, ipar = NULL, nout = 0, outnames = NULL, forcings = NULL,
-  initforc = NULL, fcontrol = NULL, stiffness = 0, ...) {
+  initforc = NULL, fcontrol = NULL, stiffness = 2, ...) {
 
    rk5 (y, times, func, parms, rtol, atol,
   verbose, hmax, hini, ynames, maxsteps, 
@@ -135,12 +135,12 @@ rk5 <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   iwork[5] <- n
   if (type == 3) {
 ## stiffness
-    iwork[4] <- iwork[6] <- iwork[7] <- -1   # No detection, the default
+    iwork[4] <- iwork[6] <- iwork[7] <- -1   # No detection
           if (stiffness == 1)  {  # All stiffness estimates used and stop
      iwork[4] <- iwork[6] <- iwork[7] <- 2
    } else if (stiffness == -1) {  # All stiffness estimates used and continue
      iwork[4] <- iwork[6] <- iwork[7] <- 1
-   } else if (stiffness == 2)     # based on eigenvalue approximation and stop
+   } else if (stiffness == 2)     # the default, based on eigenvalue approximation and stop
      iwork[4] <- 2
      else if (stiffness == -2)    # based on eigenvalue approximation and continue
      iwork[4] <- 1

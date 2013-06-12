@@ -6,8 +6,9 @@
 
 crank <- function(times = seq(0, 0.1, by = 0.001),
                   yini = NULL, dyini = NULL,
-                  parms=list(), method = "mebdfi",
-                  maxsteps = 1e6, options = list(),  ...) {
+                  parms=list(), printmescd = TRUE, method = mebdfi,  
+                  atol = 1e-6, rtol = 1e-6, maxsteps = 1e6,  
+                  options = list(),  ...) {
 
 ### check input 
     parameter <- c(M1 = 0.36, M2 = 0.151104, M3 = 0.075552, 
@@ -51,25 +52,61 @@ crank <- function(times = seq(0, 0.1, by = 0.001),
       stop("illegal value in options")
     
     nind   <- c(14,10,0)    # index of system
-   useres <- FALSE
+	
+	prob <- crankprob()
+	
+    useres <- FALSE
    if (is.character(method)) {
     if (method %in% c("mebdfi", "daspk"))
       useres <- TRUE
    } else  if("res" %in% names(formals(method)))
       useres <- TRUE
 
-    if (useres)
-     return( dae(y = yini, dy = dyini, times = times,
+    if (useres){ 
+      crank<- dae(y = yini, dy = dyini, times = times,
           res = "crankres", nind = nind, method = method,
           dllname = "deTestSet", initfunc = "crankpar", parms = parameter,
-          ipar = ipar, maxsteps = maxsteps, ...))
-
+          ipar = ipar, maxsteps = maxsteps, ...)
+    } else{   
    crank <- dae(y = yini, times = times, nind = nind,
           func = "crankfunc", mass =  as.double(c(rep(1, 14), rep(0, 10))),
           massup = 0, massdown = 0,
           dllname = "deTestSet", initfunc = "crankpar",
           parms = parameter, method = method,
           ipar = ipar, maxsteps = maxsteps, ...)
+     }
+	 
+ if (nrow(crank) > 0) 
+  if (printmescd & ( crank[nrow(crank),1] == prob$t[2] )) { 
+	  ref = reference("crank")
+	  mescd = min(-log10(abs(crank[nrow(crank),2:8] - ref[1:7])/(atol/rtol+abs(ref[1:7]))))
+	  printM(prob$fullnm)
+	  cat('Solved with ')
+	  printM(attributes(crank)$type)
+	  cat('Using rtol = ')
+	  cat(rtol)
+	  cat(', atol=')
+	  printM(atol)
+	  printM("Mixed error significant digits (first seven components):")
+	  printM(mescd)}
+   else mescd <- NULL
+   attr(crank, "mescd") <- mescd
+   return(crank)
+}
 
-    return(crank)
+
+
+crankprob <- function(){ 
+	fullnm <- 'Slider Crank'
+	problm <- 'crank'
+	type   <- 'DAE'
+	neqn   <- 24
+	t <- matrix(1,2)
+	t[1]   <- 0
+	t[2]   <- 0.1
+	numjac <- TRUE
+	mljac  <- neqn
+	mujac  <- neqn
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
 }

@@ -11,7 +11,7 @@
 
 ring <- function(times = seq(0, 1e-3, by = 5e-6),
                  yini = NULL, dyini = NULL,
-                 parms = list(), method = "mebdfi", 
+                 parms = list(), printmescd = TRUE, method = mebdfi, 
                  atol = 1e-8, rtol = 1e-8, maxsteps = 1e6, ...) {
 
 # initial conditions of state variables
@@ -31,7 +31,8 @@ ring <- function(times = seq(0, 1e-3, by = 5e-6),
       dyini <- rep(0,15)
 
     checkini(15, yini, dyini)
-    
+	
+	prob <- ringprob()
 ### solve
    useres <- FALSE
    if (is.character(method)) {
@@ -41,16 +42,35 @@ ring <- function(times = seq(0, 1e-3, by = 5e-6),
       useres <- TRUE
 
     if (useres)
-     return( dae(y = yini, dy = dyini, times = times, res = "ringres",
+     out<- dae(y = yini, dy = dyini, times = times, res = "ringres",
           dllname = "deTestSet", initfunc = "ringpar", atol=atol, rtol=rtol,
-          parms = parameter, method=method, maxsteps = maxsteps, ...))
-
-   out <- dae(y = yini, times = times,
+          parms = parameter, method=method, maxsteps = maxsteps, ...)
+     else 
+     out <- dae(y = yini, times = times,
           func = "ringfunc", 
           dllname = "deTestSet", initfunc = "ringpar", atol=atol, rtol=rtol,
           parms = parameter,method = method,  maxsteps = maxsteps, ...)
-
-  return(out)
+   if(printmescd) 
+     out <- printpr (out, prob, "ring", rtol, atol)	
+   return(out)
 }
 
 # -------------------------------------------------------
+
+
+ringprob <- function(){ 
+	fullnm <- 'Ring Modulator'
+	problm <- 'ringmod'
+	type   <- 'ODE'
+	neqn   <- 15
+	t <- matrix(1,2)
+	t[1]   <- 0
+	t[2]   <- 1e-3
+	numjac <- FALSE
+	mljac  <- neqn
+	mujac  <- neqn	
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
+}
+
+

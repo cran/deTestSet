@@ -30,7 +30,7 @@ c----------------------------------------------------------------------
       DOUBLE PRECISION T,CJ,Y(N), YPRIME(N), DF(N),RPAR(*)
       INTEGER ierr, IPAR(*)
 
-      CALL twobfunc(N,T,Y,DF,RPAR,IPAR)
+      CALL twobfuncres(N,T,Y,DF,IERR,RPAR,IPAR)
 C
       DO I=1, 175
          DF(I) =  YPRIME(I) - DF(I)
@@ -42,21 +42,41 @@ C
       RETURN
       END
 c-----------------------------------------------------------------------
+      SUBROUTINE twobFuncres(NEQN,T,Y,DY,IERR,RPAR,IPAR)
+      IMPLICIT NONE
+      INTEGER NEQN, I,IPAR(*), IERR
+      double precision t,y(NEQN),dy(NEQN),rpar(*)
+      double precision x(175),res(175)
+      external FCN,GCN
+
+      do 10 i=1,175
+ 10      x(i)=y(i+175)
+      CALL FCN(175,t,x,res, ierr)
+
+      do 20 i=1,175
+ 20      dy(i)=res(i)
+      call GCN(175,x,res)
+      do 30 i=1,175
+ 30      dy(i+175)=y(i)-res(i)
+
+      RETURN
+      END
+
+c ----- twobitFunc
+c-----------------------------------------------------------------------
       SUBROUTINE twobFunc(NEQN,T,Y,DY,RPAR,IPAR)
       IMPLICIT NONE
       INTEGER NEQN, I,IPAR(*), IERR
-      double precision t,y(*),dy(*),rpar(*)
+      double precision t,y(NEQN),dy(NEQN),rpar(*)
       double precision x(175),res(175)
       external FCN,GCN
-      CHARACTER(LEN=80) MSG
 
       do 10 i=1,175
  10      x(i)=y(i+175)
       CALL FCN(175,t,x,res, ierr)
 
       IF ( IERR .EQ. -1 ) THEN
-         WRITE(MSG, *)"AN ERROR OCCURRED in TWOBIT, at time", T
-         call rexit(MSG)
+        CALL Rprintd1('An error occurred in TWOBIT, at time ', T)
         RETURN
       ENDIF
       do 20 i=1,175
@@ -763,50 +783,54 @@ C --- NOR-gate 2: nodes 32 -- 44
 C
 
       CALL NOR(N,32,Y(18),CIN,0.d0,CIND,Y,F,ierr)
+      if(ierr.eq.-1)return
 
 C
 C --- ANDOI-gate 2: nodes 45-- 62
 C
 
       CALL ANDOI(N,45,Y(36),CIN,Y(18),0.d0,CIND,0.d0,Y,F,ierr)
+      if(ierr.eq.-1)return
 
 C
 C --- ANDOI-gate 3: nodes 63-- 80
 C
 
       CALL ANDOI(N,63,Y(5),CIN,Y(18),0.d0,CIND,0.d0,Y,F,ierr)
+      if(ierr.eq.-1)return
 
 C
 C --- NOR-gate 3: nodes 81 -- 93
 C
 
       CALL NOR(N,81,V3,V4,V3D,V4D,Y,F,ierr)
+      if(ierr.eq.-1)return
 
 C
 C --- ANDOI-gate 4: nodes 94 -- 111
 C
 
       CALL ANDOI(N,94,Y(85),V4,V3,0.d0,V4D,V3D,Y,F,ierr)
-
+      if(ierr.eq.-1)return
 C
 C --- NAND-gate: nodes 112 -- 125
 C
 
       CALL NAND(N,112,Y(67),Y(98),0.d0,0.d0,Y,F,ierr)
-
+      if(ierr.eq.-1)return
 C
 C --- ORANI-gate 1: nodes 126 -- 143
 C
 
       CALL ORANI(N,126,Y(116),Y(67),Y(98),0.d0,0.d0,0.d0,Y,F,ierr)
-
+      if(ierr.eq.-1)return
 C
 C --- ANDOI-gate 5 (ANDOI-gate with capacitive coupling
 C ---               of result node): nodes 144 -- 161
 C
 
       CALL ANDOIP(N,144,Y(85),Y(5),Y(98),0.d0,0.d0,0.d0,Y,F,ierr)
-
+      if(ierr.eq.-1)return
 C
 C --- Three additional enhancement transistors in series
 C --- First transistor:  Internal nodes 162 -- 165
@@ -1794,7 +1818,7 @@ C ---------------------------------------------------------------------------
       IMPLICIT NONE ! double precision (A-H,O-Z)
       DOUBLE PRECISION VDS, VGS, VBS, BETA, CGAMMA,PHI,VT0,VTE
       integer NED,ierr
-      CHARACTER(LEN=80) MSG
+
         DOUBLE PRECISION RGS, RGD, RBS, RBD, CGS, CGD, CBD, CBS,
      *               DELTA, CTIME, STIFF,
      *               CURIS, VTH, VDD, VBB, CLOAD, COUT
@@ -1832,9 +1856,8 @@ C --- Three enhancement-type transistors in series
 
       if(phi-vbs.lt.0d0.or.phi.lt.0d0)then
          ierr=-1
-         WRITE(MSG, *)"Error in  TWOBIT due to Phi, vbs", phi, vbs
-c         call rwarn(MSG)
-          call rexit("Run aborted")
+        CALL Rprintd2('Error in  TWOBIT due to Phi, vbs ', phi, vbs)
+          call rexit('Run aborted')
          return
       end if
 
@@ -1856,7 +1879,6 @@ c         call rwarn(MSG)
       IMPLICIT NONE ! double precision (A-H,O-Z)
       DOUBLE PRECISION VDS,VGD,VBD,BETA,CGAMMA,PHI,VT0,VTE
       integer NED,ierr
-      CHARACTER(LEN=80) MSG
 
         DOUBLE PRECISION RGS, RGD, RBS, RBD, CGS, CGD, CBD, CBS,
      *               DELTA, CTIME, STIFF,
@@ -1893,9 +1915,8 @@ C --- Three enhancement-type transistors in series
 
       if(phi-vbd.lt.0d0.or.phi.lt.0d0)then
          ierr=-1
-         WRITE(MSG, *)"Error in TWOBIT due to Phi, vbd", phi, vbd
-C         call rwarn(MSG)
-         call rexit("Run aborted")
+         CALL Rprintd2('Error in TWOBIT due to Phi, vbd ', phi, vbd)
+         call rexit('Run aborted')
          return
       end if
 

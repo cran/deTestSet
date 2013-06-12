@@ -40,7 +40,7 @@ c----------------------------------------------------------------------
       subroutine ringres(t,y,yprime,cj,f,ires,rpar,ipar)
       integer neqn,ires,ipar(*)
       parameter  (neqn=15)
-      double precision t,y(neqn),yprime(neqn),f(neqn),rpar(*)
+      double precision t,y(neqn),yprime(neqn),f(neqn),rpar(*),cj
 
       call ringfuncierr(neqn,t,y,f,ires, rpar,ipar)
       do i = 1,15
@@ -62,7 +62,6 @@ c----------------------------------------------------------------------
       common /ringcom/c, cs, cp, r, rp, lh, ls1, ls2, ls3,
      +     rg1, rg2, rg3, ri, rc, gamma, delta
       parameter (pi=3.141592653589793238462643383d0)
-      CHARACTER (LEN=80) MSG
 
       uin1   = 0.5d0*sin(2d3*pi*t)
       uin2   = 2d0*sin(2d4*pi*t)
@@ -121,7 +120,6 @@ c      endif
       common /ringcom/c, cs, cp, r, rp, lh, ls1, ls2, ls3,
      +     rg1, rg2, rg3, ri, rc, gamma, delta
       parameter (pi=3.141592653589793238462643383d0)
-      CHARACTER (LEN=80) MSG
 
       uin1   = 0.5d0*sin(2d3*pi*t)
       uin2   = 2d0*sin(2d4*pi*t)

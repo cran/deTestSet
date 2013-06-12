@@ -57,7 +57,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
 c     jacobian function
 c-----------------------------------------------------------------------
-      subroutine hiresjac(neqn,t,y,dfdy,ml,mu,ldim,rpar,ipar)
+      subroutine hiresjac(neqn,t,y,ml,mu,dfdy,ldim,rpar,ipar)
       integer ldim,neqn,ierr,ipar(*),mu,ml
       double precision t,y(neqn),yprime(neqn),dfdy(ldim,neqn),rpar(*)
       double precision k1, k2, k3, k4, k5, k6, k7, k8, k9, oks 

@@ -309,11 +309,13 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   }
 /*                     ####   main time loop   ####                           */
 
+
   for (i = 0; i < nt-1; i++)
   {
-      tin = REAL(times)[i];
+//
+	  tin = REAL(times)[i];
       tout = REAL(times)[i+1];
-
+//      Rprintf("idid %i tin %g tout %g xdytmp %g \n", idid, tin, tout, xdytmp[0]);
       F77_CALL(mebdfi)(&n_eq, &tin, &hini, xytmp, xdytmp, &tout, &tcrit,
         &mf, &idid, &lrw, rwork, &liw, iwork, mbnd, &maxord,
 	      &Itol, Rtol, Atol, out, ipar,  jac_func, res_func, &ierr);
@@ -325,6 +327,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
          &mf, &idid, &lrw, rwork, &liw, iwork, mbnd, &maxord,
 	       &Itol, Rtol, Atol, out, ipar,  jac_func, res_func, &ierr);
       }
+//     Rprintf("idid %i tin %g tout %g tin-tout %g \n", idid, tin, tout, tin-tout);
 
 	    if (idid == -1)   {
 	      warning("the integration failed to pass the error test, even after reducing h by factor 1e10");

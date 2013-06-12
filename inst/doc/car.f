@@ -26,7 +26,7 @@ c----------------------------------------------------------------------
       double precision k, cj, lam1, lam2
       double precision yl, yr, yb, xl, xr, xb, Lr, Ll
 C
-      if (ipar(1) < 10) call rexit("nout should be at least 10")
+      if (ipar(1) < 10) call rexit('nout should be at least 10')
       k = m*eps*eps/2d0
 
       yb  = r*sin(w*t)

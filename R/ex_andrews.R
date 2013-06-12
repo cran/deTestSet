@@ -6,9 +6,9 @@
 ###          by joints without friction
 ### ============================================================================
 
-andrews <- function(times = seq(0, 0.03, by = 0.001),
-                    yini = NULL, dyini = NULL, 
-                    parms = list(), method = "mebdfi", 
+andrews <- function(times = seq(0,0.03, by=0.03/100) ,
+                    yini = NULL, dyini = NULL, parms = list(),  
+                    printmescd = TRUE, method = mebdfi, 
                     atol = 1e-7, rtol = 1e-7, maxsteps = 1e5, ...) {
 
 ### check input 
@@ -26,6 +26,8 @@ andrews <- function(times = seq(0, 0.03, by = 0.001),
 
     parameter <- overrulepar(parameter, parms, 42)
 
+    prob <- andrewsprob()
+    
     if (is.null(yini)) 
       yini <- c(-0.0617138900142764496358948458001, 0,
            0.455279819163070380255912382449, 0.222668390165885884674473185609,
@@ -45,8 +47,10 @@ andrews <- function(times = seq(0, 0.03, by = 0.001),
       names(yini) <- c(paste("q",1:7,sep=""),paste("dq",1:7,sep=""),
         paste("dq2",1:7,sep=""),paste("lambda",1:6,sep=""))
 
+     if (is.null(times)) times <- prob$times
+   
 ### solve
-
+   
    ind <- c(7,7,13)  # index of the system
 
    useres <- FALSE
@@ -56,18 +60,71 @@ andrews <- function(times = seq(0, 0.03, by = 0.001),
    } else  if("res" %in% names(formals(method)))
       useres <- TRUE
 
-    if (useres)
-     return( dae(y = yini, dy = dyini, times = times,
+    if (useres) { 
+       AndOut <- dae(y = yini, dy = dyini, times = times,
                  res = "andres", nind = ind,
-                 dllname = "deTestSet", jacres = "andjac", initfunc = "andpar",
+                 dllname = "deTestSet", jacres = "andjacres", initfunc = "andpar",
                  parms = parameter, jactype = "fullusr", method = method,
-                 maxsteps = maxsteps, atol=atol, rtol=rtol,...))
-
-   AndOut <- dae(y = yini, times = times, nind = ind,
-          func = "andfunc", mass =  as.double(c(rep(1, 14), rep(0, 13))),
+                 maxsteps = maxsteps, atol=atol, rtol=rtol,...)
+     }
+     else
+     {
+     if (prob$numjac)
+      AndOut <- dae(y = yini, times = times, nind = ind,
+          func = "andfunc", mass =  prob$mass,
           massup = 0, massdown = 0, 
           dllname = "deTestSet", initfunc = "andpar", parms = parameter,
           method = method, maxsteps = maxsteps, atol=atol, rtol=rtol, ...)
+     else{
+       fulljac = (prob$mujac == prob$neqn & prob$mljac == prob$neqn)
+       if (fulljac)
+		     jactype <- "fullusr"
+       else
+		     jactype <- "bandusr"
+       AndOut <- dae(y = yini, times = times, nind = ind,
+          func = "andfunc", mass =  prob$mass,
+          massup = 0, massdown = 0, 
+          dllname = "deTestSet", initfunc = "andpar", parms = parameter,
+          method = method, maxsteps = maxsteps, atol=atol, rtol=rtol,
+          jacfunc ="andjac", jactype = jactype, ...)
+      }
+   }   
+   if (printmescd) AndOut <- printpr (AndOut, prob, "andrews", rtol, atol)	
+   return(AndOut)
+}
 
-  return(AndOut)
+
+andrewsprob <- function(){
+   fullnm <- "Andrews' squeezing mechanism"
+   problm <- 'andrews'
+   type <- 'DAE'
+   neqn <- 27
+   ndisc <- 500
+   t <- matrix(1,2)
+   t[1] <- 0
+   t[2] <- 3e-2
+   numjac <- FALSE
+   mljac <- neqn
+   mujac <- neqn
+   mlmas <- 0
+   mumas <- 0
+   ind <- c(7,7,13)
+   mass =  as.double(c(rep(1, 14), rep(0, 13)))
+   return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,ndisc=ndisc,
+                   t=t,numjac=numjac,mljac=mljac,mujac=mujac,
+                    mlmas=mlmas,mumas=mumas,nind=ind, mass=mass))
+}
+
+
+andrewsinit <- function( ){
+   yini <- c(-0.0617138900142764496358948458001, 0,
+           0.455279819163070380255912382449, 0.222668390165885884674473185609,
+           0.487364979543842550225598953530,-0.222668390165885884674473185609,
+           1.23054744454982119249735015568 ,0,     0,0,     0,0,          0,0,
+           14222.4439199541138705911625887,-10666.8329399655854029433719415,
+           0,0,   0,0,  0,98.5668703962410896057654982170,
+           -6.12268834425566265503114393122,0,         0,0,   0)
+      dyini <- rep(0,27)
+      dyini[1:14] <- yini[8:21]
+   return(list(yini,dyini))
 }

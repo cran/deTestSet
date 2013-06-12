@@ -2,14 +2,14 @@ C karline: all write statements -> rprint and removed / from formats
 C karline: removed argument ierr from call to func, jac and mas
 
 C -----------------------------------------------------------------------------------
-C     THE CODE BIMD NUMERICALLY SOLVES (STIFF) DIFFERENTIAL ODE 
-C     PROBLEMS OR LINEARLY IMPLICIT DAE PROBLEMS OF INDEX UP TO 3 
+C     THE CODE BIMD NUMERICALLY SOLVES (STIFF) DIFFERENTIAL ODE
+C     PROBLEMS OR LINEARLY IMPLICIT DAE PROBLEMS OF INDEX UP TO 3
 C     WITH CONSTANT MASS MATRIX
 C
-C     Copyright (C)2005-2007   
+C     Copyright (C)2005-2007
 C
 C     Authors: CECILIA MAGHERINI (cecilia.magherini@ing.unipi.it)
-C              LUIGI   BRUGNANO  (brugnano@math.unifi.it) 
+C              LUIGI   BRUGNANO  (brugnano@math.unifi.it)
 C
 C
 C     This program is free software; you can redistribute it and/or
@@ -67,9 +67,9 @@ C                 IMPLEMENTATION DETAILS ARE IN REFERENCES [1-5].
 C
 C
 C
-C     AUTHORS:    C.MAGHERINI, 
+C     AUTHORS:    C.MAGHERINI,
 C     --------    DIPARTIMENTO DI MATEMATICA APPLICATA "U.DINI"
-C                 VIA BUONARROTI, 1/C 
+C                 VIA BUONARROTI, 1/C
 C                 56127 PISA
 C                 ITALY
 C                 E-MAIL: CECILIA.MAGHERINI@ING.UNIPI.IT
@@ -95,14 +95,14 @@ C     ----------------
 C
 C     RELEASE HISTORY:   1.0,  October, 2005
 C     ---------------    - first version released;
-C                        
+C
 C                        1.1,  July, 2006
 C                        Main features (wrt 1.0):
-C                        - improved definition of the 
+C                        - improved definition of the
 C                          coefficients of the methods
 C                        - the results described
 C                          in reference [1], have been better
-C                          exploited for the definition of 
+C                          exploited for the definition of
 C                          the stopping criterion for
 C                          the splitting Newton blended iteration
 C                        - improved choice of the initial profile
@@ -114,11 +114,11 @@ C                        - new function CONTSOL, to be used when
 C                          continuous output is desired
 C                        - minor changes concerning the
 C                          order variation strategy.
-C 
+C
 C                        1.1.1, September, 2006
 C                        - some minor bugs fixed
-C                          
-C                             
+C
+C
 C
 C     REFERENCES:
 C     -----------
@@ -158,11 +158,11 @@ C
 C
 C
 C    REMARK:   The code BiMD has been written using a style very similar to the one
-C    -------   used in the codes RADAU and GAM. Indeed, some subroutines and comments 
+C    -------   used in the codes RADAU and GAM. Indeed, some subroutines and comments
 C              have been imported from such codes. Moreover, the name and the meaning
-C              of a number of input parameters and variables have been fully inherited 
+C              of a number of input parameters and variables have been fully inherited
 C              from them.
-C               
+C
 C -----------------------------------------------------------------------------------
 C -----------------------------------------------------------------------------------
 C
@@ -215,27 +215,27 @@ C Y0            INITIAL CONDITION
 C
 C H             INITIAL STEPSIZE
 C
-C RTOL-ATOL     RELATIVE AND ABSOLUTE TOLERANCES. 
-C               ATOL CAN BE EITHER SCALAR OR A 
+C RTOL-ATOL     RELATIVE AND ABSOLUTE TOLERANCES.
+C               ATOL CAN BE EITHER SCALAR OR A
 C               VECTOR OF LENGTH M.
-C 
+C
 C ITOL          SWITCH FOR ATOL:
-C               
-C               ITOL = 0 --> ATOL IS SCALAR. 
-C                            THE CODE PROVIDES A NUMERICAL SOLUTION 
-C                            WITH THE LOCAL ERROR OF Y(I) ROUGHLY SMALLER 
-C                            THAN ATOL + RTOL*ABS(Y(I))   
-C                        
-C               ITOL = 1 --> ATOL IS AN ARRAY OF LENGTH M 
+C
+C               ITOL = 0 --> ATOL IS SCALAR.
+C                            THE CODE PROVIDES A NUMERICAL SOLUTION
+C                            WITH THE LOCAL ERROR OF Y(I) ROUGHLY SMALLER
+C                            THAN ATOL + RTOL*ABS(Y(I))
+C
+C               ITOL = 1 --> ATOL IS AN ARRAY OF LENGTH M
 C                            THE LOCAL ERROR OF Y(I) IS KEPT
-C                            BELOW ATOL(I) + RTOL*ABS(Y(I))   
+C                            BELOW ATOL(I) + RTOL*ABS(Y(I))
 C
 C JAC           SUBROUTINE EVALUATING THE JACOBIAN OF F (DUMMY, IF IJAC=0)
 C karline: removed ierr from call
-C
-C      subroutine jac(m,t,y,jac,ldjac,rpar,ipar)
+C francesca: added mu, ml
+C      subroutine jac(m,t,y,ml,mu,jac,ldjac,rpar,ipar)
 C      double precision t,y,jac,rpar(*)
-C      integer m,ldjac,ierr,ipar(*)
+C      integer m,ldjac,ierr,ipar(*),ml,mu
 C      dimension y(m),jac(ldjac,m)
 CC     m      size of the continuous problem
 CC     t,y      is the point where the Jacobian is evaluated
@@ -366,8 +366,8 @@ C            CAN BE USED FOR COMMUNICATION BETWEEN YOUR CALLING
 C            PROGRAM AND THE FCN, JAC, MAS AND SOLOUT SUBROUTINES.
 C
 C SOLOUT     NAME (EXTERNAL) OF SUBROUTINE PROVIDING THE NUMERICAL
-C            SOLUTION DURING INTEGRATION. 
-C            IF IOUT = 1, IT IS CALLED AFTER EACH SUCCESSFUL STEP.  
+C            SOLUTION DURING INTEGRATION.
+C            IF IOUT = 1, IT IS CALLED AFTER EACH SUCCESSFUL STEP.
 C            SUPPLY A DUMMY SUBROUTINE IF IOUT = 0.
 C            IT MUST HAVE THE FOLLOWING FORM:
 C
@@ -380,13 +380,13 @@ CC     m                is the size of the problem
 CC     k                is the block-size of the method
 CC     ord              is the order of the method
 CC     t0               is the starting time point of the step
-CC     t                contains the (internal) mesh points of 
+CC     t                contains the (internal) mesh points of
 CC                      the step
 CC     y                is the current numerical solution
 CC     f                contains the values of fcn(t,y)
-CC     dd               contains the divided differences of y 
+CC     dd               contains the divided differences of y
 CC                      over the internal mesh points of the step
-CC                      (to be used, for example, if continuous 
+CC                      (to be used, for example, if continuous
 CC                      output is desired, see below)
 CC     rpar             possible external real parameters
 CC     ipar             possible external integer parameters
@@ -401,7 +401,7 @@ C
 C           CONTINUOUS OUTPUT:
 C           ------------------
 C
-C           DURING CALLS TO SOLOUT, A CONTINUOUS SOLUTION 
+C           DURING CALLS TO SOLOUT, A CONTINUOUS SOLUTION
 C           FOR THE INTERVAL [t0,t(k)] IS AVAILABLE THROUGH
 C           THE FUNCTION
 C
@@ -412,10 +412,10 @@ C           COMPONENT OF THE SOLUTION AT THE TIME POINT T.
 C
 C
 C IOUT      SWITCH FOR CALLING THE SUBROUTINE SOLOUT.
-C          
+C
 C           IOUT = 0, SOLOUT IS NEVER CALLED
-C           IOUT = 1, SOLOUT IS CALLED AFTER EACH 
-C                     SUCCESSFULL STEP         
+C           IOUT = 1, SOLOUT IS CALLED AFTER EACH
+C                     SUCCESSFULL STEP
 C
 C
 C
@@ -752,8 +752,6 @@ C ------------------------------------------------------------------------------
      &        INDFJ0,INDORD,INDSCALEXT,IND_DD,INDM0,INDTEMP
 
       LOGICAL STOPINT
-      CHARACTER (LEN=150) MSG
-
 
       STEP_ORD(1)= 3
       STEP_ORD(2)= 4
@@ -767,8 +765,7 @@ C     INITIAL STEP-SIZE
       IF (H.EQ.0D0) THEN
           H=1.D-6
       ELSEIF(H.LT.0D0) THEN
-          WRITE(MSG,*) 'WRONG INPUT H=',H
-          CALL rprint(MSG)
+        CALL Rprintd1('Wrong input H = ',H)
          STOPINT=.TRUE.
       END IF
 
@@ -781,8 +778,7 @@ C--------------------------------------------------
       ELSE
          MAXSTEP=IWORK(1)
          IF (MAXSTEP.LE.0) THEN
-             WRITE(MSG,*) 'WRONG INPUT IWORK(1)=',IWORK(1)
-             CALL rprint(MSG)
+        CALL Rprinti1('Wrong input iwork(1) = ',IWORK(1))
              STOPINT=.TRUE.
          END IF
       ENDIF
@@ -793,8 +789,7 @@ C--------------------------------------------------
          ORDMIN = IWORK(2)
          indord = ORDMIN/2-1
          IF ((indord.LE.0).OR.(indord.GT.NMETH)) THEN
-             WRITE(MSG,*) 'WRONG INPUT IWORK(2)=',IWORK(2)
-             CALL rprint(MSG)
+        CALL Rprinti1('Wrong input iwork(2) = ',IWORK(2))
              STOPINT=.TRUE.
          END IF
          ORDMIN = 2*(indord+1)
@@ -807,18 +802,15 @@ C--------------------------------------------------
          ORDMAX = IWORK(3)
          indord = ORDMAX/2 - 1
          IF ((indord.LE.0).OR.(indord.GT.NMETH)) THEN
-             WRITE(MSG,*) 'WRONG INPUT IWORK(3)=',IWORK(3)
-             CALL rprint(MSG)
+        CALL Rprinti1('Wrong input iwork(3) = ',IWORK(3))
              STOPINT=.TRUE.
          END IF
          ORDMAX = 2*(indord+1)
       ENDIF
 
       IF (ORDMIN.GT.ORDMAX) THEN
-        WRITE(MSG,1000) IWORK(2),IWORK(3)
- 1000   FORMAT('INVALID VALUES FOR IWORK(2)=',i3,' (ORDMIN)',
-     &             '               AND IWORK(3)=',i3,' (ORDMAX)')
-        CALL rprint(MSG)
+        CALL Rprinti1('Invalid values for ORDMIN= ',IWORK(2))
+        CALL Rprinti1('Invalid values for ORDMAX= ',IWORK(3))
         STOPINT=.TRUE.
       END IF
 
@@ -827,8 +819,7 @@ C--------------------------------------------------
       ELSE
          ITMAX(1) = IWORK(4)
          IF (ITMAX(1).LE.0) THEN
-             WRITE(MSG,*) 'WRONG INPUT IWORK(4)=',IWORK(4)
-             CALL rprint(MSG)
+          CALL Rprinti1('Wrong input iwork(4) = ',IWORK(4))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -838,8 +829,7 @@ C--------------------------------------------------
       ELSE
          ITMAX(2) = IWORK(5)
          IF (ITMAX(2).LE.0) THEN
-             WRITE(MSG,*) 'WRONG INPUT IWORK(5)=',IWORK(5)
-             CALL rprint(MSG)
+        CALL Rprinti1('Wrong input iwork(5) = ',IWORK(5))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -849,8 +839,7 @@ C--------------------------------------------------
       ELSE
          ITMAX(3) = IWORK(6)
          IF (ITMAX(3).LE.0) THEN
-             WRITE(MSG,*) 'WRONG INPUT IWORK(6)=',IWORK(6)
-             CALL rprint(MSG)
+        CALL Rprinti1('Wrong input iwork(6) = ',IWORK(6))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -860,8 +849,7 @@ C--------------------------------------------------
       ELSE
          ITMAX(4) = IWORK(7)
          IF (ITMAX(4).LE.0) THEN
-             WRITE(MSG,*) 'WRONG INPUT IWORK(7)=',IWORK(7)
-             CALL rprint(MSG)
+        CALL Rprinti1('Wrong input iwork(7) = ',IWORK(7))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -871,8 +859,7 @@ C--------------------------------------------------
       ELSE
          ITMAX(5) = IWORK(8)
          IF (ITMAX(5).LE.0) THEN
-             WRITE(MSG,*) 'WRONG INPUT IWORK(8)=',IWORK(8)
-             CALL rprint(MSG)
+        CALL Rprinti1('Wrong input iwork(8) = ',IWORK(8))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -883,28 +870,21 @@ C--------------------------------------------------
                 IWORK(11) = 0
         ELSE
           IF (IWORK(9).EQ.0) THEN
-             WRITE(MSG,1010) IWORK(9)
-             CALL rprint(MSG)
- 1010        FORMAT('INVALID VALUES FOR IWORK(9)=',I2,
-     &                  'IT MUST BE GREATER THAN 0')
+        CALL Rprinti1('Invalid value iwork(9), should be >0 ',iwork(9))
              STOPINT = .TRUE.
           END IF
           IF ((IWORK(9)+IWORK(10)+IWORK(11)).NE.M) THEN
-            WRITE(MSG,1020) IWORK(9), IWORK(10), IWORK(11)
-            CALL rprint(MSG)
- 1020       FORMAT('INVALID VALUES FOR IWORK(9)=',I5,
-     &                 '                   IWORK(10)=',I5,
-     &                 '               AND IWORK(11)=',I5)
+           CALL Rprinti3('invalid values for iwork(9:11)', 
+     &     IWORK(9), IWORK(10), IWORK(11))
               STOPINT=.TRUE.
           END IF
       END IF
 
-      IF ((IMAS.NE.0).AND.((MLMAS.GT.MLJAC).OR.(MUMAS.GT.MUJAC))) 
+      IF ((IMAS.NE.0).AND.((MLMAS.GT.MLJAC).OR.(MUMAS.GT.MUJAC)))
      &THEN
-        WRITE (MSG,*)
-     &   'BANDWITH OF "MAS" NOT SMALLER THAN BANDWITH OF "JAC"'
+        CALL Rprint(
+     &   'Bandwidth of MAS not smaller than bandwidth of JAC')
           STOPINT=.TRUE.
-          CALL rprint(MSG)
       END IF
 
       IF (WORK(1) .EQ. 0D0) THEN
@@ -912,33 +892,28 @@ C--------------------------------------------------
       ELSE
          UROUND = WORK(1)
          IF ((UROUND.LE.0D0).OR.(UROUND.GE.1D0)) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(1)=',WORK(1)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(1) = ',WORK(1))
              STOPINT=.TRUE.
          END IF
       END IF
 
       IF (RTOL.LE.UROUND) THEN
-          WRITE(MSG,*) 'RTOL IS TOO SMALL'
-          CALL rprint(MSG)
+        CALL Rprint('rtol is too small')
           STOPINT = .TRUE.
       END IF
 
       IF (ITOL.EQ.0) THEN
         IF (ATOL(1).LE.0D0) THEN
-          WRITE(MSG,*) 'ATOL IS TOO SMALL'
-          CALL rprint(MSG)
+        CALL Rprint('atol is too small' )
           STOPINT = .TRUE.
         END IF
       ELSE
         DO I=1,M
           IF (ATOL(I).LE.0D0) THEN
-            WRITE(MSG,1025) I
-            CALL rprint(MSG)
+        CALL Rprinti1('Atol is too small for index', I)
             STOPINT=.TRUE.
           END IF
         END DO
- 1025     FORMAT('ATOL(',I5,') IS TOO SMALL')
       END IF
 
       IF (WORK(2) .EQ. 0D0) THEN
@@ -954,8 +929,7 @@ C--------------------------------------------------
       ELSE
          FACNEWTV(1) = WORK(3)
          IF ((FACNEWTV(1).LE.0D0).OR.(FACNEWTV(1).GE.1D0)) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(3)=',WORK(3)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(3)=',WORK(3))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -965,8 +939,7 @@ C--------------------------------------------------
       ELSE
          FACNEWTV(2) = WORK(4)
          IF ((FACNEWTV(2).LE.0D0).OR.(FACNEWTV(2).GE.1D0)) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(4)=',WORK(4)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(4) = ',WORK(4))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -976,8 +949,7 @@ C--------------------------------------------------
       ELSE
          FACNEWTV(3) = WORK(5)
          IF ((FACNEWTV(3).LE.0D0).OR.(FACNEWTV(3).GE.1D0)) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(5)=',WORK(5)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(5) = ',WORK(5))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -987,8 +959,7 @@ C--------------------------------------------------
       ELSE
          FACNEWTV(4) = WORK(6)
          IF ((FACNEWTV(4).LE.0D0).OR.(FACNEWTV(4).GE.1D0)) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(6)=',WORK(6)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(6) = ',WORK(6))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -998,8 +969,7 @@ C--------------------------------------------------
       ELSE
          FACNEWTV(5) = WORK(7)
          IF ((FACNEWTV(5).LE.0D0).OR.(FACNEWTV(5).GE.1D0)) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(7)=',WORK(7)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(7) = ',WORK(7))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -1009,8 +979,7 @@ C--------------------------------------------------
       ELSE
          FACNSMALL = WORK(8)
          IF ((FACNSMALL.LE.0D0).OR.(FACNSMALL.GE.1D0)) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(8)=',WORK(8)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(8) = ',WORK(8))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -1020,8 +989,7 @@ C--------------------------------------------------
       ELSE
          FACNRESTR = WORK(9)
          IF ((FACNRESTR.LE.0D0).OR.(FACNRESTR.GE.1D0)) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(9)=',WORK(9)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(9) = ',WORK(9))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -1031,8 +999,7 @@ C--------------------------------------------------
       ELSE
          FACL = WORK(10)
          IF (FACL.LT.0D0) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(10)=',WORK(10)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(10) = ',WORK(10))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -1042,15 +1009,12 @@ C--------------------------------------------------
       ELSE
          FACR = WORK(11)
          IF(FACR.LE.0D0) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(11)=',WORK(11)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(11) = ',WORK(11))
              STOPINT=.TRUE.
          END IF
          IF(FACL.GE.FACR) THEN
-            WRITE(MSG,1030) WORK(10),WORK(11)
-            CALL rprint(MSG)
-1030       FORMAT('INVALID VALUES FOR WORK(10)=',e10.2,' (FACL)',
-     &             '               AND WORK(11)=',e10.2,' (FACR)')
+        CALL Rprintd1('Invalid values for work(10),FACL ', WORK(10))
+        CALL Rprintd1('Invalid values for work(10),FACR ', WORK(11))
             STOPINT=.TRUE.
          END IF
       END IF
@@ -1060,8 +1024,7 @@ C--------------------------------------------------
       ELSE
          SFTY = WORK(12)
          IF(SFTY.LE.0D0) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(13)=',WORK(12)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(13) = ',WORK(12))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -1071,8 +1034,7 @@ C--------------------------------------------------
       ELSE
          SFTYUP = WORK(13)
          IF(SFTYUP.LE.0D0) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(13)=',WORK(13)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(13) = ',WORK(13))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -1082,8 +1044,7 @@ C--------------------------------------------------
       ELSE
          SFTYDN = WORK(14)
          IF(SFTYDN.LE.0D0) THEN
-             WRITE(MSG,*) 'WRONG INPUT WORK(14)=',WORK(14)
-             CALL rprint(MSG)
+        CALL Rprintd1('Wrong input work(14) = ',WORK(14))
              STOPINT=.TRUE.
          END IF
       END IF
@@ -1146,8 +1107,7 @@ C---------------------------------------------------------
 
       INDIPVT = 41
       IF ((INDIPVT + M-1) .GT. LIWORK) THEN
-        WRITE(MSG,*) 'INSUFF. STORAGE FOR IWORK, MIN. LIWORK=',INDIPVT+M-1
-          CALL rprint(MSG)
+        CALL Rprinti1('Insuff. storage for iwork, min. = ',INDIPVT+M-1)
         IDID = -1
         RETURN
       END IF
@@ -1172,8 +1132,7 @@ C---------------------------------------------------------
       INDEJ0      = INDFJ0      + M
 
       IF ((INDEJ0 + M-1) .GT. LWORK) THEN
-        WRITE(MSG,*) 'INSUFF. STORAGE FOR WORK, MIN. LWORK=',INDEJ0+M-1
-        CALL rprint(MSG)
+        CALL Rprinti1('Insuff. storage for work, min.=',INDEJ0+M-1)
         IDID = -1
         RETURN
       END IF
@@ -1188,7 +1147,7 @@ C---------------------------------------------------------
             WORK(INDTOLEXT+I-1) = DMIN1(1D-2,1D2*ATOL(I))
          END DO
       END IF
-         
+
       CALL  BIM0(M,FCN,JAC,NMETH,STEP_ORD(indord),Y0,WORK(INDF0),
      &           T0,TEND,H,RTOL,ATOL,ITOL,
      &           MAXSTEP,ORDMIN,ORDMAX,ITMAX,UROUND,HMAX,FACNEWTV,
@@ -1460,8 +1419,6 @@ C     Parameters for the stop criterion, when the solution is 'small'.
      &           cscal8=16d1,
      &           cscal10=9d2,
      &           cscal12=7d3)
-      CHARACTER (LEN=150) MSG
-
 
 
 C-------------------------------------------------------------------------------------------------------------------
@@ -1489,7 +1446,7 @@ C     OTHER INITIALIZATIONS
          INDEXD = 2
       ELSE
          INDEXD = 3
-      ENDIF   
+      ENDIF
 
       IF (JBAND) THEN
          CSIS  = DBLE(2*M*(MLJAC+MUJAC))
@@ -1542,7 +1499,7 @@ C -------------------------------------------------------
       CALFACT0 = .TRUE.
       LINEAR   = .FALSE.
       QINF     = .FALSE.
-      
+
       NJ0     = 0D0
       NERRLOC = 0D0
       H0      = 0D0
@@ -1557,31 +1514,23 @@ C -------------------------------------------------------
 
       IERR = 0
       IF (IMAS.NE.0) THEN
-C Karline: changed	  
+C Karline: changed
           CALL MAS(M,M0,LDMAS,RPAR,IPAR)
           IF (IERR.NE.0) THEN
-             WRITE(MSG,1010) IERR
- 1010        FORMAT('ERROR CODE IERR = ', I3, 
-     &               'RETURNED BY THE SUBROUTINE MAS')
-             CALL rprint(MSG)
-             WRITE(MSG,900) T0
-             CALL rprint(MSG)
+        CALL Rprinti1('Error Ierr returned by the subroutine MAS',IERR)
+        CALL Rprintd1('Exit at t = ', T0)
              IDID = -6
              GOTO 800
           END IF
       END IF
 C Karline: changed
-      IERR = 0 
+      IERR = 0
       CALL FCN(M,T0,Y0,F0,RPAR,IPAR)
 C      CALL FCN(M,T0,Y0,F0,IERR,RPAR,IPAR)
 
       IF (IERR.NE.0) THEN
-          WRITE(MSG,1020) IERR
- 1020     FORMAT('ERROR CODE IERR = ', I3, 
-     &               'RETURNED BY THE SUBROUTINE FCN')
-          CALL rprint(MSG)
-          WRITE(MSG,900) T0
-          CALL rprint(MSG)
+        CALL Rprinti1('Error Ierr returned by the subroutine FCN',IERR)
+        CALL Rprintd1('Exit at t = ', T0)
           IDID = -6
           GOTO 800
       END IF
@@ -1601,7 +1550,7 @@ c     MAIN LOOP
 100   CONTINUE
 
       IF (K .EQ. KOLD) GOTO 140
-      
+
 C     THE ORDER OF THE METHOD HAS BEEN CHANGED
       ESP = 1D0/DBLE(K+1)
       IF (ORD .LT. ORDMAX)
@@ -1753,7 +1702,7 @@ C     JACOBIAN EVALUATION
         END DO
         IERR=0
 C Karline: changed
-      IERR = 0 
+      IERR = 0
         CALL FCN(M,T0,DELJ0,FJ0,RPAR,IPAR)
         NFEVAL = NFEVAL + 1
         NODJ0 = (IERR.NE.0)
@@ -1811,16 +1760,12 @@ C     NUMERICAL JACOBIAN
                  Y0(I) = YSAFE+DELT
                  IERR = 0
 C Karline: changed
-      IERR = 0 
+      IERR = 0
                  CALL FCN(M,T0,Y0,FJ0,RPAR,IPAR)
                  IF (IERR.NE.0) THEN
-                     WRITE(MSG,1030) IERR
-                     CALL rprint(MSG)
- 1030                FORMAT('ERROR CODE IERR = ', I3, 
-     &               'RETURNED BY THE SUBROUTINE FCN DURING',
-     &               'THE NUMERICAL EVALUATION OF THE JACOBIAN')
-                    WRITE(MSG,900) T0
-                    CALL rprint(MSG)
+        CALL Rprinti1('Error Ierr returned by the subroutine FNC',IERR)
+        CALL Rprint('during the numerical evaluation of the Jacobian')
+        CALL Rprintd1('Exit at t = ', T0)
                     GOTO 800
                  END IF
                  IF (JBAND) THEN
@@ -1838,15 +1783,10 @@ C Karline: changed
 C     ANALYTICAL JACOBIAN
               IERR = 0
 C karline: changed
-              CALL JAC(M,T0,Y0,J0,LDJAC,RPAR,IPAR)
+              CALL JAC(M,T0,Y0,MLJAC,MUJAC,J0,LDJAC,RPAR,IPAR)
               IF (IERR.NE.0) THEN
-                 WRITE(MSG,1040) IERR
-                 CALL rprint(MSG)
-
- 1040            FORMAT('ERROR CODE IERR = ', I3, 
-     &           'RETURNED BY THE SUBROUTINE JAC')
-                 WRITE(MSG,900) T0
-                 CALL rprint(MSG)
+        CALL Rprinti1('Error Ierr returned by the subroutine JAC',IERR)
+        CALL Rprintd1('Exit at t = ', T0)
                  IDID = -6
                  GOTO 800
               END IF
@@ -1857,7 +1797,7 @@ C karline: changed
               DO I=1,M
                 DELJ00(I) = DELJ0(I)
               END DO
-           ENDIF   
+           ENDIF
            NJ00   = NJ0
            NODJ00 = NODJ0
 
@@ -1971,19 +1911,15 @@ c     COMPUTE AND FACTORIZE THE ITERATION MATRIX THETA
          IF (INFO.NE.0) THEN
                NSING = NSING + 1
                IF (NSING.GT.5) THEN
-              WRITE(MSG,*) 'MATRIX IS REPEATEDLY SINGULAR, IER= ',INFO
-                  CALL rprint(MSG)
-                  WRITE(MSG,900) T0
-                  CALL rprint(MSG)
+        CALL Rprinti1('Matrix is repeatedly singular, IER= ',INFO )
+        CALL Rprintd1('Exit at t = ', T0)
                   IDID = -4
                   GOTO 800
                ELSE
                   H = H*.5D0
                   IF (.1d0*DABS(H) .LE. DABS(T0)*UROUND) THEN
-                    WRITE(MSG,*) 'STEPSIZE TOO SMALL, H=',H
-                    CALL rprint(MSG)
-                    WRITE(MSG,900) T0
-                    CALL rprint(MSG)
+        CALL Rprintd1('Stepsize too small, h = ',H)
+        CALL Rprintd1('Exit at t = ', T0)
                     IDID = -3
                     GOTO 800
                   END IF
@@ -2102,10 +2038,8 @@ C     SOLUTION INITIALIZATION
       IF ( (.NOT.EXTRAP).OR.(NFAILCONV.GT.flmx) ) THEN
 C     THE SOLUTION IS INITIALIZED WITH THE CONSTANT PROFILE
          IF (NFAILCONV.GT.flhlt) THEN
-             WRITE(MSG,*) 'TOO MANY CONSECUTIVE NEWTON FAILURES'
-             CALL rprint(MSG)
-             WRITE(MSG,900) T0
-             CALL rprint(MSG)
+        CALL Rprint('Too many consecutive Newton failures' )
+        CALL Rprintd1('Exit at t = ', T0)
              IDID = -5
              GOTO 800
          END IF
@@ -2130,7 +2064,7 @@ C     NEWTON ITERATION
 200   CONTINUE
       IERR0=0
       DO I=1,K
-C karline: changed	  
+C karline: changed
         IERR = 0
         CALL FCN(M,T(I),Y(1,I),F(1,I),RPAR,IPAR)
         IERR0 = IERR0+IERR
@@ -2208,7 +2142,7 @@ C-------------------------------------------------------------------------------
 
       IERR0 = 0
       DO I=1,K
-C karline:changed	  
+C karline:changed
         IERR = 0
         CALL FCN(M,T(I),Y(1,I),F(1,I),RPAR,IPAR)
         IERR0 = IERR0 + IERR
@@ -2243,8 +2177,8 @@ C     NEWTON HAS FAILED
           CALJAC   = .NOT.TRUEJAC
           TRUEJAC  = .TRUE.
 
-          IF (NFAILCONV.EQ.1) 
-     &       EXTRAPS = EXTRAP0.AND.(IT.GT.MAXIT).AND.(RHO.LT.RHOBAD)       
+          IF (NFAILCONV.EQ.1)
+     &       EXTRAPS = EXTRAP0.AND.(IT.GT.MAXIT).AND.(RHO.LT.RHOBAD)
 
           EXTRAP   = EXTRAPS
           RESTRICT = .FALSE.
@@ -2288,7 +2222,7 @@ C     LOCAL ERROR ESTIMATION
       IF ((IMAS.NE.0).AND.(NFERRCONS.GT.3).AND.
      &    (DABS(NERRLOC - NERRLOC0).LT.1D-4)
      &    .AND. (NERR.GE.1D0)) THEN
-c         write(MSG,*) 'WARNING: POSSIBLE INCONSISTENT INITIAL VALUE'
+c         cwrite(MSG,*) 'WARNING: POSSIBLE INCONSISTENT INITIAL VALUE'
          NERR = .9D0
       END IF
 
@@ -2349,7 +2283,7 @@ C     STEP ACCEPTED
       IF (IOUT.EQ.1) THEN
         CALL SOLOUT(M,K,ORD,T0,T,Y,F,DD,RPAR,IPAR,IRTRN)
         IF (IRTRN.LT.0) GOTO 800
-      END IF  
+      END IF
 
       IF (LAST) GOTO 600
 
@@ -2505,7 +2439,7 @@ C ORDER REDUCTION RECOVERY
 C ---------------------------------------------------------------
       STAGNA = (RATH .GT. rath1).AND. (RATH .LT. rath2)
       IF ( (INDEXD.LE.1).OR.
-     &     (IT.GT.INDEXD+1).OR.(IT0.GT.INDEXD+1) ) 
+     &     (IT.GT.INDEXD+1).OR.(IT0.GT.INDEXD+1) )
      &THEN
          STAGNA= STAGNA.AND.
      &       (RATRHO .GT. ratrho1).AND.(RATRHO.LT.ratrho2)
@@ -2560,7 +2494,7 @@ c IN THIS CASE, THE SPECTRAL RADIUS DOESN'T BEHAVES LIKE rho=rhoti/q.
      &       GOTO 500
 
              NU1    = DMAX1((DBLE(IT)*DLOG(RHO))/DLOG(RHO/RATH),
-     &                       DBLE(INDEXD))        
+     &                       DBLE(INDEXD))
              NUUP1  = DMAX1(DBLE(INDEXD),(DBLE(IT)*DLOG(RHO))/
      &                DLOG(RHO*(H/HNUP1)*(RHOIUP/RHOI)) )
 
@@ -2613,18 +2547,14 @@ c IN THIS CASE, THE SPECTRAL RADIUS DOESN'T BEHAVES LIKE rho=rhoti/q.
 
       IF (.1d0*DABS(T0-TEND)/DBLE(K).GT.dabs(T0)*UROUND) THEN
          IF (.1d0*DABS(H) .LE. DABS(T0)*UROUND) THEN
-            WRITE(MSG,*) 'STEPSIZE TOO SMALL, H=',H
-            CALL rprint(MSG)
-            WRITE(MSG,900) T0
-            CALL rprint(MSG)
+        CALL Rprintd1('Stepsize too small, h = ',H)
+        CALL Rprintd1('Exit at t = ', T0)
             IDID = -3
             GOTO 800
          END IF
          IF (NSTEPS .GE. MAXSTEP) THEN
-         WRITE(MSG,*) 'MORE THAN NMAX = ',MAXSTEP, ' STEPS ARE NEEDED'
-            CALL rprint(MSG)
-            WRITE(MSG,900) T0
-            CALL rprint(MSG)
+        CALL Rprinti1('More than nmax steps are needed', MAXSTEP)
+        CALL Rprintd1('Exit at t = ', T0)
             IDID = -2
             GOTO 800
          END IF
@@ -2652,7 +2582,7 @@ C     INTEGRATION END
       END DO
       T0 = T(K)
 
-900   FORMAT(' EXIT AT T = ',D18.4)
+
 800   RETURN
 
       END

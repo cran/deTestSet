@@ -9,7 +9,8 @@
 ## =============================================================================
 
 transistor <- function(times = seq(0, 0.2, 0.001), yini = NULL, dyini = NULL,
-  parms=list(), method = "mebdfi", maxsteps = 1e5, ...) {
+                       parms=list(), printmescd = TRUE, method = mebdfi, 
+                       atol = 1e-6, rtol = 1e-6, maxsteps = 1e5, ...) {
 
 ### check input 
     parameter <- c(ub=6, uf=0.026, alpha=0.99, beta=1e-6,
@@ -29,7 +30,8 @@ transistor <- function(times = seq(0, 0.2, 0.001), yini = NULL, dyini = NULL,
            -yini[5]/(c4*r7), -10.00564453, -10.00564453))
 
     checkini(8, yini, dyini)
-    
+	
+	prob <- transistorprob()
 ### solve
 
    ind <- c(8,0,0)  # index of the system
@@ -41,12 +43,12 @@ transistor <- function(times = seq(0, 0.2, 0.001), yini = NULL, dyini = NULL,
       useres <- TRUE
 
     if (useres)
-      return(dae(y = yini, dy = dyini, times = times,
+      out<-dae(y = yini, dy = dyini, times = times,
                   res = "transres", nind = ind,
                   dllname = "deTestSet",  initfunc = "transpar",
                   jactype = "bandint", banddown = 2, bandup = 1,
-                  parms = parameter, maxsteps = maxsteps) )
-
+                  parms = parameter, maxsteps = maxsteps, atol=atol, rtol=rtol, ...) 
+    else { 
      mass <- matrix(nrow = 3, ncol = 8, data=0)
      mass[1,2] <- parameter["c1"]
      mass[1,5] <- parameter["c3"]
@@ -66,7 +68,32 @@ transistor <- function(times = seq(0, 0.2, 0.001), yini = NULL, dyini = NULL,
                 banddown = 2, bandup = 1,
                 dllname = "deTestSet", initfunc = "transpar",
                 parms = parameter,
-                method = method, maxsteps = maxsteps, ...)
-  return(out)
+                method = method, maxsteps = maxsteps,atol=atol, rtol=rtol, ...)
+	}
+  if(printmescd) 
+    out <- printpr (out, prob, "transistor", rtol, atol)	
+	return(out)
 }
+
+
+
+
+
+transistorprob <- function(){
+	fullnm <- "Transistor Amplifier"
+	problm <- 'transamp'
+	type <- 'DAE'
+	neqn <- 8
+	ndisc <- 0
+	t <- matrix(1,2)
+	t[1] <- 0
+	t[2] <- 0.2
+	numjac <- FALSE
+	mljac <- 2
+	mujac <- 1
+	
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
+}
+
 

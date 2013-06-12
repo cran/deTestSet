@@ -88,7 +88,7 @@ around the implemented DAE solvers}
   will be used to label the columns of the output value.
 
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
+\author{Karline Soetaert <karline.soetaert@nioz.nl>}
 
 \details{
   This is simply a wrapper around the various dae solvers.

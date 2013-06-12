@@ -15,7 +15,8 @@
 # 
 # ---------------------------------------------------------------------
 nand <- function(times = 0:80, yini = NULL, dyini = NULL,
-                 parms=list(), method = "mebdfi", maxsteps = 1e5, ...) {
+                 parms=list(), printmescd = TRUE, method = mebdfi,
+                 atol = 1e-6, rtol = 1e-6, maxsteps = 1e5, ...) {
 
 ### check input 
     parameter <- c(RGS = 4, RGD = 4, RBS = 10, RBD = 10,
@@ -37,11 +38,34 @@ nand <- function(times = 0:80, yini = NULL, dyini = NULL,
 ### solve
 
    ind <- c(14, 0, 0)  # index of the system
-
+   
+   prob <- nandprob()
+    
    out <- dae(y = yini, dy=dyini, times = times, res = "nandres", nind = ind,
           dllname = "deTestSet",  initfunc = "nandpar", method = method,
-          parms = parameter, maxsteps = maxsteps, ...)
+          parms = parameter, maxsteps = maxsteps, rtol=rtol, atol=atol, ...)
 
-  return(out)
+                        
+   if(printmescd) 
+     out <- printpr (out, prob, "nand", rtol, atol)	
+   return(out)
 }
+
+  
+nandprob <- function(){ 
+	fullnm <- 'NAND gate'
+	problm <- 'nand'
+	type   <- 'IDE'
+	neqn   <- 14
+	t <- matrix(1,2)
+	t[1]   <- 0
+	t[2]   <- 80
+	numjac <- TRUE
+	mljac  <- neqn
+	mujac  <- neqn
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
+}
+
+ 
 

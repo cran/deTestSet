@@ -19,13 +19,36 @@ c
 c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
 
+
+
+c----------------------------------------------------------------------
+c     residual function
+c----------------------------------------------------------------------
+      SUBROUTINE emepres(T,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
+
+      implicit none
+      DOUBLE PRECISION T, Y(66), DELTA(66), YPRIME(66),RPAR(*), CJ
+      INTEGER I, J, IERR, N, IPAR(*)
+C
+      IERR = 0
+      N = 66
+      CALL  emepfunc(N, T, Y, DELTA, rpar, ipar)
+C
+      DO J = 1,N
+         DELTA(J) = YPRIME(J)-DELTA(J)
+      ENDDO
+
+C
+      RETURN
+      END
+
 c----------------------------------------------------------------------
 c     derivative function
 c----------------------------------------------------------------------
 
       subroutine emepfunc(neqn,time,y,dy,rpar,ipar)
-      integer neqn,ierr,ipar(*)
-      double precision time,y(neqn),yprime(neqn),dy(neqn),rpar(*)
+      integer neqn,ipar(*)
+      double precision time,y(neqn),dy(neqn),rpar(*)
 
       DOUBLE PRECISION M, O2, XN2, RPATH3, RPATH4
       DOUBLE PRECISION S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11
@@ -284,13 +307,45 @@ C
       RETURN
       END
 
+
+c----------------------------------------------------------------------
+c     jacobian function for residual function
+c----------------------------------------------------------------------
+
+      SUBROUTINE emepjacres(T,Y,YPRIME,DFDY,CON,RPAR,IPAR)
+      INTEGER NEQN,MN, ml, mu,  IPAR(*)
+      PARAMETER (NEQN=66, MN = 66)
+      DOUBLE PRECISION T,Y(NEQN),YPRIME(NEQN),DFDY(MN,NEQN),CON,RPAR(*)
+      ml = 0
+      mu = 0
+
+
+      call emepjac(neqn,t,y,ml,mu,dfdy,mn,rpar,ipar)
+
+       do i=1,neqn
+         do  j=1,neqn
+            dfdy(i,j) = -dfdy(i,j)
+         enddo
+      enddo
+c compute pd = -df/dy + con*M
+      do j=1,neqn
+         dfdy(j,j) = dfdy(j,j)+1.0d0/con
+      enddo
+c
+
+      return
+      end
+
+
+
 c----------------------------------------------------------------------
 c     jacobian function
 c----------------------------------------------------------------------
 
-      subroutine emepjac(ldim,neqn,time,y,yprime,jac,ierr,rpar,ipar)
-      integer ldim,neqn,ierr,ipar(*)
-      double precision time,y(neqn),yprime(neqn),jac(ldim,neqn),rpar(*)
+
+      subroutine emepjac(neqn,time,y,ml,mu,jac,ldim,rpar,ipar)
+      integer ldim,neqn,ierr,ipar(*), ml, mu
+      double precision time,y(neqn),jac(ldim,neqn),rpar(*)
 
       INTEGER I, J
       DOUBLE PRECISION M, O2, XN2, RPATH3, RPATH4
@@ -898,7 +953,7 @@ c----------------------------------------------------------------------
 
       subroutine emepsoln(neqn,y)
       integer neqn
-      double precision y(neqn)
+      double precision y(66)
 C
 C  RADAU5 applied to EMEP problem, Tend = 417600
 C

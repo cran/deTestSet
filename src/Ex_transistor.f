@@ -55,16 +55,16 @@ C
       DELTA(6) = -C4*YPRIME(6)              -DELTA(6)
       DELTA(7) = -C5*YPRIME(7)+C5*YPRIME(8) -DELTA(7)
       DELTA(8) =  C5*YPRIME(7)-C5*YPRIME(8) -DELTA(8)
-      
+
       RETURN
       END
 
 c----------------------------------------------------------------------------
 
       subroutine transfunc(neqn,t,y,dy,rpar,ipar)
-      IMPLICIT double precision (A-H,O-Z)      
+      IMPLICIT double precision (A-H,O-Z)
       double precision t,y(neqn),dy(neqn), rpar(*)
-	    integer ipar(*)      
+	    integer ipar(*)
 
       double precision ub,uf,alpha,beta,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,
      +                 pi,uet,fac1,fac2,c1,c2,c3,c4,c5
@@ -72,11 +72,11 @@ c----------------------------------------------------------------------------
 
       common /transcom/ub, uf, alpha, beta, r0, r1, r2, r3, r4,
      +          r5, r6, r7, r8, r9, c1, c2, c3, c4, c5
-      
+
       uet   = 0.1d0*sin(200d0*pi*t)
       fac1  = beta*(exp((y(2)-y(3))/uf)-1d0)
       fac2  = beta*(exp((y(5)-y(6))/uf)-1d0)
-      
+
       dy(1) = (y(1)-uet)/r0
       dy(2) = y(2)/r1+(y(2)-ub)/r2+(1d0-alpha)*fac1
       dy(3) = y(3)/r3-fac1
@@ -85,18 +85,19 @@ c----------------------------------------------------------------------------
       dy(6) = y(6)/r7-fac2
       dy(7) = (y(7)-ub)/r8+alpha*fac2
       dy(8) = y(8)/r9
-      
+
       return
       end
 c----------------------------------------------------------------------
 c     jacobian function
 c----------------------------------------------------------------------
 
-      subroutine transjac(T,y,yprime,dfdy,con,rpar,ipar)
-      IMPLICIT double precision (A-H,O-Z)      
+
+      subroutine transjac(neqn,t,y,ml,mu,dfdy,ldim,rpar,ipar)
+      IMPLICIT double precision (A-H,O-Z)
       integer n,i,ipar(*)
     	parameter(n=8, mebnd=8)
-      double precision t,y(n),dfdy(mebnd,n),yprime(n),rpar(*)     
+      double precision t,y(n),dfdy(mebnd,n),yprime(n),rpar(*)
 
       double precision ub,uf,alpha,beta,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,
      +                 pi,uet,fac1,fac2,c1,c2,c3,c4,c5

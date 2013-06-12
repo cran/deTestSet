@@ -3010,17 +3010,13 @@ c     obtained at the last successfully computed step
 
       INTEGER L,K,M
       DOUBLE PRECISION T,YC,YOUT(M),T0,TSTEP(K),DD(K+1,M)
-      CHARACTER (LEN=150) MSG
       INTEGER I
       DOUBLE PRECISION DT      
 
       IF (TSTEP(1).LE.T0) THEN
-         WRITE(MSG,10) T
-          CALL REXIT (msg)
- 10      FORMAT('WARNING: IN CALLING TO SUBROUTINE CONTSOL',
-     &              'THE INPUT PARAMETER T_0 MUST BE STRICTLY LOWER',
-     &              'THAN TSTEP(1). THE APPROXIMATION OF THE SOLUTION', 
-     &              'AT T = ',D18.4, 'IS NOT RETURNED.')
+        CALL Rprint('Warning in calling subroutine CONTSOL the input')
+        CALL Rprint('par. T_0 must be strictly lower than TSTEP(1)')
+        CALL Rprintd1('The solution is not returned at t = ', T)
          RETURN
       END IF
       

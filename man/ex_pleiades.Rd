@@ -10,7 +10,9 @@ It is a set of nonstiff ordinary differential equations of dimension 28.
 
 }
 \usage{
-pleiades (times = seq(0, 3.0, by = 0.01), yini = NULL, method = lsoda, ...)
+pleiades (times = seq(0, 3.0, by = 0.01), yini = NULL, 
+          printmescd = TRUE, method = lsoda,
+          atol = 1e-6, rtol = 1e-6, ...)
 }
 
 \arguments{
@@ -23,6 +25,15 @@ pleiades (times = seq(0, 3.0, by = 0.01), yini = NULL, method = lsoda, ...)
   }
   \item{method }{the solver to use
   }
+  \item{atol }{absolute error tolerance, either a scalar or a vector,
+    one value for each y.
+  }
+  \item{rtol }{relative error tolerance, either a scalar or a vector,
+    one value for each y,
+  }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 1e13  are printed
+    }
   \item{... }{additional arguments passed to the solver .
   }
 }
@@ -38,7 +49,7 @@ pleiades (times = seq(0, 3.0, by = 0.01), yini = NULL, method = lsoda, ...)
   of the output value.
       
 }
-\author{Karline Soetaert 
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia
 }

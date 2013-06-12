@@ -9,8 +9,8 @@
 ## =============================================================================
 
 emep  <- function (times = seq(14400, 417600, by = 400), yini = NULL,
-                   parms = list(), rtol = 1e-5, atol = 0.1,
-                   maxsteps = 1e5, ...) {
+                    parms = list(), printmescd = TRUE, method = bimd, 
+                    atol = 0.1, rtol = 1e-5, maxsteps = 1e5, ...) {
 
 ### check input 
 
@@ -30,9 +30,47 @@ emep  <- function (times = seq(14400, 417600, by = 400), yini = NULL,
        "ETRO2H", "PRRO2H", "MEKO2H", "MALO2H", "MACR", "ISNI", "ISRO2H", 
        "MARO2", "MAPAN", "CH2CCH3", "ISONO3", "ISNIR", "MVKO2H", "CH2CHR", 
        "ISNO3H", "ISNIRH", "MARO2H")
-   
-   out <- ode(func = "emepfunc", parms = NULL, dllname = "deTestSet", y = yini,
-              jacfunc = "emepjac", times = times, initfunc = NULL,
+
+    prob <- emepprob()
+
+	useres <- FALSE
+    if (is.character(method)) {
+   	   if (method %in% c("mebdfi", "daspk"))
+	    	useres <- TRUE
+    } else  if("res" %in% names(formals(method)))
+	       useres <- TRUE   
+  
+      if (useres) {
+      #out <- ode(func = "emepfunc", parms = NULL,dllname = "deTestSet",y = yini,
+      #        times = times, initfunc = NULL,  method=method,
+      #        rtol = rtol, atol = atol, maxsteps = maxsteps, ...)
+      dyini <- rep(0,66)
+      checkini(66, yini, dyini)
+	  	out <-dae(y = yini, dy = dyini, times = times, res = "emepres",parms=NULL,
+          dllname = "deTestSet", jacres = "emepjacres",initfunc = NULL, 
+          method=method,rtol=rtol,atol=atol,maxsteps = maxsteps,  ...)
+           }
+    else
+      out <- ode(func = "emepfunc", parms = NULL, dllname = "deTestSet", y = yini,
+              jacfunc = "emepjac", times = times,initfunc = NULL, method=method,
               rtol = rtol, atol = atol, maxsteps = maxsteps, ...)
+                
+   if(printmescd) 
+     out <- printpr (out, prob, "emep", rtol, atol)	
    return(out)
+}
+
+emepprob <- function(){ 
+	fullnm <- 'EMEP problem'
+	problm <- 'EMEP'
+	type   <- 'ODE'
+	neqn   <- 66
+	t <- matrix(1,2)
+	t[1]   <- 14400
+	t[2]   <- 417600
+	numjac <- FALSE
+	mljac  <- neqn
+	mujac  <- neqn
+	return(list(fullnm=fullnm, problm=problm,type=type,neqn=neqn,
+					t=t,numjac=numjac,mljac=mljac,mujac=mujac))
 }

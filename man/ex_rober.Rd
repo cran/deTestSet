@@ -9,7 +9,8 @@ It is an ODE, 3 equations
 }
 \usage{
 rober  (times = 10^(seq(-5, 11, by = 0.1)), yini = NULL, 
-  parms = list(), atol = 1e-10, rtol = 1e-10, maxsteps = 1e5, ...)  
+        parms = list(), printmescd = TRUE,   
+        atol = 1e-14, rtol = 1e-10, maxsteps = 1e5, ...)  
 }
 
 \arguments{
@@ -31,6 +32,10 @@ rober  (times = 10^(seq(-5, 11, by = 0.1)), yini = NULL,
   \item{maxsteps }{maximal number of steps per output interval taken by 
     the solver
   }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 1e13  are printed
+    }
+  
   \item{... }{additional arguments passed to the solver .
   }
 }
@@ -46,7 +51,7 @@ rober  (times = 10^(seq(-5, 11, by = 0.1)), yini = NULL,
   of the output value.
       
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia
 }

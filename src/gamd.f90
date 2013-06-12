@@ -1,7 +1,3 @@
-        SUBROUTINE rprint(msg)
-         CHARACTER (len=*) msg
-         CALL dblepr(msg, 150, 0, 0)
-        END SUBROUTINE
 
 
 !! THE CODE GAMD NUMERICALLY SOLVES A (POSSIBLY STIFF)
@@ -4208,12 +4204,13 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     !!                     THE CODE KEEPS THE LOCAL ERROR OF Y(I) BELOW
     !!                     RTOL(I)*ABS(Y(I))+ATOL(I).
     !!
+    !! Modified to be used in R
     !!     JAC         NAME (EXTERNAL) OF THE SUBROUTINE WHICH COMPUTES
     !!                 THE PARTIAL DERIVATIVES OF F(T,Y) WITH RESPECT TO Y
     !!                 (THIS ROUTINE IS ONLY CALLED IF IJAC=1; SUPPLY
     !!                 A DUMMY SUBROUTINE IN THE CASE IJAC=0).
     !!                 FOR IJAC=1, THIS SUBROUTINE MUST HAVE THE FORM
-    !!                    SUBROUTINE JAC(R,T,Y,DFY,LDFY,RPAR,IPAR)
+    !!                    SUBROUTINE JAC(R,T,ML,MU,Y,DFY,LDFY,RPAR,IPAR)
     !!                    DOUBLE PRECISION T,Y(R),DFY(LDFY,R)
     !!                    DFY(1,1)= ...
     !!                 LDFY, THE COLUMN-LENGTH OF THE ARRAY, IS
@@ -4500,9 +4497,9 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     !!
     !!   INPUT VARIABLES
     !!------------------------------------
-    INTEGER, INTENT(IN) :: R, ITOL, IJAC, IMAS, IOUT, IPAR(1), LIWORK, LWORK
+    INTEGER, INTENT(IN) :: R, ITOL, IJAC, IMAS, IOUT, IPAR(*), LIWORK, LWORK
 
-    REAL(PREC), INTENT(IN) :: TEND, ATOL(1), RTOL(1), RPAR(1)
+    REAL(PREC), INTENT(IN) :: TEND, ATOL(*), RTOL(*), RPAR(*)
     !!
     !!   INPUT/OUTPUT VARIABLES
     !!------------------------------------
@@ -4520,7 +4517,6 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     INTEGER ::  IEYP, IEFP, IEDN,IEF,IEF1, IEJF0,IELU, ISTORE, &
          &   I,IEIPIV, IESC, NIND1, NIND2, NIND3
     LOGICAL ::  ARRET, JBAND, IMPLCT
-	CHARACTER (LEN=150) :: MSG
 
     !!
     !!   EXTERNAL FUNCTIONS
@@ -4528,19 +4524,18 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     !!EXTERNAL FCN, JAC, MAS, SOLOUT
     INTERFACE
        !!-----------------------------------------------------------------------
-       SUBROUTINE fcn(neqn,t,y,dy,ierr,rpar,ipar)
+       SUBROUTINE fcn(neqn,t,y,dy,rpar,ipar)
          USE PRECISION
          IMPLICIT NONE
          INTEGER, INTENT(IN) :: neqn, ipar(*)
-         INTEGER, INTENT(IN OUT):: ierr
          REAL(PREC), INTENT(IN) :: t,y(neqn),rpar(*)
          REAL(PREC), INTENT(OUT) :: dy(neqn)
        END SUBROUTINE fcn
        !!-----------------------------------------------------------------------
-       SUBROUTINE jac(neqn,t,y,jacob,ldim,rpar,ipar)
+       SUBROUTINE jac(neqn,t,y,mu,ml,jacob,ldim,rpar,ipar)
          USE PRECISION
          IMPLICIT NONE
-         INTEGER, INTENT(IN) :: neqn,ldim,ipar(*)
+         INTEGER, INTENT(IN) :: neqn,ldim,ipar(*),mu,ml
          REAL(PREC), INTENT(IN) :: t,y(neqn),rpar(*)
          REAL(PREC), INTENT(OUT) :: jacob(ldim,neqn)
        END SUBROUTINE jac
@@ -4557,9 +4552,9 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
          USE PRECISION
          IMPLICIT NONE
          INTEGER, INTENT(IN) :: R, DBLK, ORD, IPAR(*),NT1
-         INTEGER, INTENT(IN OUT) :: IRTRN
+         INTEGER, INTENT(OUT) :: IRTRN
          REAL(PREC), INTENT(IN) :: TP(*),RPAR(*),F1(R,*)
-         REAL(PREC), INTENT(OUT) :: YP(R,*)
+         REAL(PREC), INTENT(IN) :: YP(R,*)
        END SUBROUTINE solout
     END INTERFACE
     !! -------------------------------------------------------------------------
@@ -4574,8 +4569,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        NMAX=IWORK(2)
        IF (NMAX.LE.0) THEN
-          WRITE(msg,*)' WRONG INPUT IWORK(2)=',IWORK(2)
-          CALL RPRINT(msg)
+      CALL Rprinti1('Wrong input iwork(2) = ',IWORK(2))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4585,8 +4579,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        ORDMIN=(IWORK(3)-1)/2
         IF ((ORDMIN.LE.0).OR.(ORDMIN.GT.4)) THEN
-          WRITE(msg,*)' CURIOUS INPUT IWORK(3)=',IWORK(3)
-          CALL RPRINT(msg)
+      CALL Rprinti1('Curious input iwork(3) = ',IWORK(3))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4596,8 +4589,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        ORDMAX=(IWORK(4)-1)/2
        IF ((ORDMAX.LE.0).OR.(ORDMAX.GT.4).OR.(ORDMAX.LT.ORDMIN)) THEN
-          WRITE(msg,*)' CURIOUS INPUT IWORK(4)=',IWORK(4)
-          CALL RPRINT(msg)
+      CALL Rprinti1('Curious input iwork(4) = ',IWORK(4))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4607,8 +4599,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        ITINT(1)=IWORK(5)
        IF (ITINT(1).LE.0) THEN
-          WRITE(msg,*)' CURIOUS INPUT IWORK(5)=',IWORK(5)
-          CALL RPRINT(msg)
+      CALL Rprinti1('Curious input iwork(5) = ',IWORK(5))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4619,8 +4610,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        ITINT(2)=IWORK(6)
        IF (ITINT(2).LT.0) THEN
-          WRITE(msg,*)' CURIOUS INPUT IWORK(6)=',IWORK(6)
-          CALL RPRINT(msg)
+      CALL Rprinti1('Curious input iwork(6) = ',IWORK(6))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4630,8 +4620,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        ITINT(3)=IWORK(7)
        IF (ITINT(3).LT.0) THEN
-          WRITE(msg,*)' CURIOUS INPUT IWORK(7)=',IWORK(7)
-          CALL RPRINT(msg)
+      CALL Rprinti1('Curious input iwork(7) = ',IWORK(7))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4642,8 +4631,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
 
       IF (NIND1.EQ.0) NIND1=R
       IF (NIND1+NIND2+NIND3.NE.R) THEN
-         WRITE(msg,*)' CURIOUS INPUT FOR IWORK(25,26,27)=',NIND1,NIND2,NIND3
-          CALL RPRINT(msg)
+      CALL Rprinti3('Curious input iwork(25,26,27) ',NIND1,NIND2,NIND3)
          ARRET=.TRUE.
       END IF
 
@@ -4653,8 +4641,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        ITINT(4)=IWORK(8)
        IF (ITINT(4).LT.0) THEN
-          WRITE(msg,*)' CURIOUS INPUT IWORK(8)=',IWORK(8)
-          CALL RPRINT(msg)
+      CALL Rprinti1('Curious input iwork(8) = ',IWORK(8))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4665,8 +4652,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        UROUND=WORK(1)
        IF (UROUND.LE.1.0D-19.OR.UROUND.GE.1.0D0) THEN
-          WRITE(msg,*)'COEFFICIENTS HAVE 20 DIGITS, UROUND=',WORK(1)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Coefficients have 20 digits, Uround = ',WORK(1))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4685,8 +4671,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        THET=WORK(3)
        IF (THET .GT. 1d0) THEN
-          WRITE(msg,*)' CURIOUS INPUT WORK(3)=',WORK(3)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Curious input work(3) = ',WORK(3))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4699,8 +4684,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
        FACNEWT=WORK(4)
        FACNEWT=MAX(FACNEWT,EPS/RTOL(1) )
        IF (FACNEWT.GE.1.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(4) ',WORK(4)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(4) ',WORK(4))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4718,8 +4702,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
        FACNORD(1) = WORK(15)
        FACNORD(1) = MAX(FACNORD(1) ,EPS/RTOL(1) )
        IF (FACNEWT.GE.1.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(15) ',WORK(15)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(15) ',WORK(15))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4737,8 +4720,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
        FACNORD(2) = WORK(16)
        FACNORD(2) = MAX(FACNORD(2) ,EPS/RTOL(1) )
        IF (FACNORD(2).GE.1.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(16) ',WORK(16)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(16) ',WORK(16))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4756,8 +4738,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
        FACNORD(3) = WORK(17)
        FACNORD(3) = MAX(FACNORD(3), EPS/RTOL(1) )
        IF (FACNORD(3).GE.1.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(17) ',WORK(17)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(17) ',WORK(17))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4775,8 +4756,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
        FACNORD(4) = WORK(18)
        FACNORD(4) = MAX(FACNORD(4),EPS/RTOL(1) )
        IF (FACNORD(4).GE.1.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(18) ',WORK(18)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(18) ',WORK(18))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4795,8 +4775,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
        END IF
     END DO
     IF (MINVAL(TETAK0).LE.0.0D0) THEN
-       WRITE(msg,*)'WRONG INPUT FOR WORK(5:8) ',WORK(5:8)
-       CALL RPRINT(msg)
+      CALL Rprintd4('Wrong input for work(5:8) ',WORK(5:8))
        ARRET=.TRUE.
     END IF
 
@@ -4809,8 +4788,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        CS(2) = WORK(9)
        IF (CS(2).LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(9) ',WORK(9)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(9) ',WORK(9))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4822,8 +4800,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        CS(3) = WORK(10)
        IF (CS(3).LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(10) ',WORK(10)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(10) ',WORK(10))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4835,8 +4812,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        CS(4) = WORK(11)
        IF (CS(4).LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(11) ',WORK(11)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(11) ',WORK(11))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4848,8 +4824,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        FACL = WORK(12)
        IF (FACL.LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(12) ',WORK(12)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(12) ',WORK(12))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4861,8 +4836,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        FACR = WORK(13)
        IF (FACR.LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(13) ',WORK(13)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(13) ',WORK(13))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4873,8 +4847,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        SFDOWN = WORK(14)
        IF (SFDOWN.LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(14) ',WORK(14)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(14) ',WORK(14))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4885,8 +4858,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        SFUP = WORK(15)
        IF (SFUP.LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(15) ',WORK(15)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(15) ',WORK(15))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4897,8 +4869,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        SFSAME = WORK(16)
        IF (SFSAME.LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(16) ',WORK(16)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(16) ',WORK(16))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4910,8 +4881,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        SF = WORK(17)
        IF (SF.LE.0.0D0) THEN
-          WRITE(msg,*)'WRONG INPUT FOR WORK(17) ',WORK(17)
-          CALL RPRINT(msg)
+      CALL Rprintd1('Wrong input for work(17) ',WORK(17))
           ARRET=.TRUE.
        END IF
     END IF
@@ -4919,15 +4889,14 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     IF (ITOL.EQ.0) THEN
        IF (ATOL(1).LE.0.D0.OR.RTOL(1).LE. EPS) THEN
 
-          WRITE (msg,*) ' TOLERANCES ARE TOO SMALL'
-          CALL RPRINT(msg)
+      CALL Rprint('Tolerances are too small')
+      
           ARRET=.TRUE.
        END IF
     ELSE
        DO I=1,R
           IF (ATOL(I).LE.0.D0.OR.RTOL(I).LE. EPS) THEN
-             WRITE (msg,*) ' TOLERANCES(',I,') ARE TOO SMALL'
-             CALL RPRINT(msg)
+      CALL Rprint('Tolerances(',I,') are too small')
              ARRET=.TRUE.
           END IF
        END DO
@@ -4967,8 +4936,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
           END IF
     !! ------   BANDWITH OF "MAS" NOT SMALLER THAN BANDWITH OF "JAC"
           IF (MLMAS.GT.MLJAC.OR.MUMAS.GT.MUJAC) THEN
-             WRITE (msg,*) 'BANDWITH OF "MAS" NOT SMALLER THAN BANDWITH OF "JAC"'
-             CALL RPRINT(msg)
+      CALL Rprint('Bandwidth of MAS not smaller than bandwidth of JAC')
             ARRET=.TRUE.
           END IF
       ELSE
@@ -4996,8 +4964,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
 !!      ISTORE = IELU + R*LDLU - 1
       ISTORE = 21
       IF(ISTORE.GT.LWORK)THEN
-         WRITE(msg,*)' INSUFFICIENT STORAGE FOR WORK, MIN. LWORK=',ISTORE
-          CALL RPRINT(msg)
+      CALL Rprinti1('Insufficient storage for work, min. is ',ISTORE)
          ARRET=.TRUE.
       END IF
 !! -------- ENTRY POINTS FOR INTEGER WORKSPACE
@@ -5006,8 +4973,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
 !!      ISTORE=IEIPIV+R-1
       ISTORE = 27
       IF (ISTORE.GT.LIWORK) THEN
-         WRITE(msg,*)' INSUFF. STORAGE FOR IWORK, MIN. LIWORK=',ISTORE
-         CALL RPRINT(msg)
+      CALL Rprinti1('Insuff. storage for iwork, min.  = ',ISTORE)
          ARRET=.TRUE.
       END IF
     !! -------- WHEN A FAIL HAS OCCURED, GAM RETURNs WITH IDID=-1
@@ -5020,7 +4986,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     !! -------------------------------------------------------------------------
     !!     CALL TO CORE INTEGRATOR
     !! -------------------------------------------------------------------------
-    CALL ETRO(R, FCN, T0, Y0(1), TEND, HMAX, H, RTOL, ATOL, ITOL,                       &
+    CALL ETRO(R, FCN, T0, Y0, TEND, HMAX, H, RTOL, ATOL, ITOL,                       &
          &   JAC, IJAC, MLJAC, MUJAC, MAS, MLMAS, MUMAS, SOLOUT, IOUT, IDID, NMAX,   &
          &   UROUND, THET, FACNEWT, FACNORD, TETAK0, CS, FACL, FACR, SFDOWN,         &
          &   SFUP, SFSAME, SF, ORDMIN, ORDMAX, ITINT, ITMAX,                         &
@@ -5077,9 +5043,9 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
       !!   INPUT VARIABLES
       !!------------------------------------
       INTEGER, INTENT(IN) ::  R, ORDMIN, ORDMAX,  ITOL, IJAC, MLJAC, MUJAC, MLMAS, MUMAS, IOUT, &
-           &         IPAR(1), ITINT(4),  IJOB, NMAX, LDJAC, LDLU, LDMAS, NIND1, NIND2, NIND3
+           &         IPAR(*), ITINT(4),  IJOB, NMAX, LDJAC, LDLU, LDMAS, NIND1, NIND2, NIND3
 
-      REAL(PREC), INTENT(IN)  :: TEND, ATOL(1), RTOL(1), RPAR(1), FACNORD(4),&
+      REAL(PREC), INTENT(IN)  :: TEND, ATOL(*), RTOL(*), RPAR(*), FACNORD(4),&
            &                  HMAX, THET, FACNEWT, TETAK0(4), CS(4), FACL, FACR,       &
            &                  SFDOWN, SFUP, SFSAME, SF, UROUND
 
@@ -5098,7 +5064,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
       !!
       !!   LOCAL VARIABLES
       !!------------------------------------
-      REAL(PREC), ALLOCATABLE :: SCAL(:), YP(:,:), FP(:,:),             &
+      REAL(PREC), ALLOCATABLE :: SCAL(:), YP(:,:), FP(:,:),        &
            &       F(:,:),DN(:), F1(:,:), JF0(:,:), LU(:,:), FMAS(:,:)
 
       INTEGER, ALLOCATABLE :: IPIV(:)
@@ -5122,8 +5088,42 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
       !!
       !!   EXTERNAL FUNCTIONS
       !!------------------------------------
-      EXTERNAL FCN,JAC,MAS,SOLOUT
-      CHARACTER (len=150) msg
+      !!EXTERNAL FCN,JAC,MAS,SOLOUT
+       INTERFACE
+       !!-----------------------------------------------------------------------
+       SUBROUTINE fcn(neqn,t,y,dy,rpar,ipar)
+         USE PRECISION
+         IMPLICIT NONE
+         INTEGER, INTENT(IN) :: neqn, ipar(*)
+         REAL(PREC), INTENT(IN) :: t,y(neqn),rpar(*)
+         REAL(PREC), INTENT(OUT) :: dy(neqn)
+       END SUBROUTINE fcn
+       !!-----------------------------------------------------------------------
+       SUBROUTINE jac(neqn,t,y,mu,ml,jacob,ldim,rpar,ipar)
+         USE PRECISION
+         IMPLICIT NONE
+         INTEGER, INTENT(IN) :: neqn,ldim,ipar(*),mu,ml
+         REAL(PREC), INTENT(IN) :: t,y(neqn),rpar(*)
+         REAL(PREC), INTENT(OUT) :: jacob(ldim,neqn)
+       END SUBROUTINE jac
+       !!-----------------------------------------------------------------------
+       SUBROUTINE mas(neqn,am,ldim,rpar,ipar)
+         USE PRECISION
+         IMPLICIT NONE
+         INTEGER, INTENT(IN) :: neqn, ldim, ipar(*)
+         REAL(PREC), INTENT(IN) :: rpar(*)
+         REAL(PREC), INTENT(OUT) :: am(ldim,neqn)
+        END SUBROUTINE mas
+       !!-----------------------------------------------------------------------
+       SUBROUTINE SOLOUT(R,TP,YP,F1,NT1,DBLK,ORD,RPAR,IPAR,IRTRN)
+         USE PRECISION
+         IMPLICIT NONE
+         INTEGER, INTENT(IN) :: R, DBLK, ORD, IPAR(*),NT1
+         INTEGER, INTENT(OUT) :: IRTRN
+         REAL(PREC), INTENT(IN) :: TP(*),RPAR(*),F1(R,*)
+         REAL(PREC), INTENT(IN) :: YP(R,*)
+       END SUBROUTINE solout
+    END INTERFACE
       !! -------- CONSTANTS
 
 
@@ -5175,9 +5175,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
       NFCN = NFCN + 1
       IF (IERR.NE.0) THEN
          IDID=-5
-         WRITE(msg,*) 'GAM: ERROR: ',&
-    &              'cannot handle IERR = -1 in (T0,Y0)'
-          CALL RPRINT(msg)
+      CALL Rprint('GAM: ERROR: cannot handle IERR = -1 in (T0,Y0)')
           RETURN
       ENDIF
 
@@ -5224,9 +5222,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
                   CALL FCN(R,T0,Y0,DN,RPAR,IPAR)  ! removed ierr
                   IF (IERR.NE.0) THEN
                     IDID=-5
-                     WRITE(msg,*) 'GAM: ERROR: ',&
-      &              'cannot handle IERR = -1 in numerical Jacobians'
-                    CALL RPRINT(msg)
+       CALL Rprint('ERROR:  IERR = -1 in numerical Jacobians')
                     RETURN
                   ENDIF
                   IF (JBAND) THEN
@@ -5241,7 +5237,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
             ELSE
                !! -------- COMPUTE JACOBIAN MATRIX ANALYTICALLY
 
-               CALL JAC(R,T0,Y0(1),JF0(1,1),LDJAC,RPAR,IPAR)
+               CALL JAC(R,T0,Y0(1),MLJAC,MUJAC,JF0(1,1),LDJAC,RPAR,IPAR)
 
             END IF
             NJAC = NJAC + 1
@@ -5332,10 +5328,10 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
                IF (IER.NE.0) THEN
                   NSING = NSING + 1
                   IF (NSING.GT.5) THEN
-                     WRITE(msg,*) 'MATRIX IS REPEATEDLY SINGULAR, IER= ',IER
-                     CALL RPRINT(msg)
-                     WRITE(msg,900) T0
-                     CALL RPRINT(msg)
+      CALL Rprinti1('Matrix is repeatedly singular, IER= ',IER)
+      
+      CALL Rprintd1(' exit of GAM at t = ',T0)
+      
                      IDID=-4
                      GOTO 800
                   ELSE
@@ -5603,7 +5599,9 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
                IF (IOUT.NE.0) THEN
                   !!--------- CALL SOLOUT
                   IRTRN = 0
-                  CALL SOLOUT(R,TP(1),YP(1,1),F1(1,1),NT1,DBLKOLD,ORDOLD,RPAR,IPAR,IRTRN)
+
+                  CALL SOLOUT(R,TP,YP,F1 &
+                             &      ,NT1,DBLKOLD,ORDOLD,RPAR,IPAR,IRTRN)
                   IF (IRTRN.LT.0) GOTO 800
                END IF
                IF (NSTEPS .EQ. 0) THEN
@@ -5623,19 +5621,15 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
          IF (0.1d0*ABS(T0-TEND)/DBLK .GT. ABS(T0)*EPS ) THEN
 
             IF (0.1d0*ABS(H) .LE. ABS(T0+EPS)*EPS) THEN
-               WRITE(msg,*) ' STEPSIZE TOO SMALL, H=',H
-               CALL RPRINT(msg)
-               WRITE(msg,900) T0
-               CALL RPRINT(msg)
+      CALL Rprintd1(' Stepsize too small, h = ',H)
+      CALL Rprintd1(' exit of GAM at t = ',T0)
                IDID=-3
                !!  GOTO 800
                EXIT LOOP_TIME
             END IF
             IF (NSTEPS.GT.NMAX) THEN
-               WRITE(msg,*) ' MORE THAN NMAX =',NMAX,'STEPS ARE NEEDED'
-               CALL RPRINT(msg)
-               WRITE(msg,900) T0
-               CALL RPRINT(msg)
+      CALL Rprinti1('More than nmax = Steps are needed', NMAX)
+      CALL Rprintd1(' exit of GAM at t = ',T0)
                IDID=-2
                !!  GOTO 800
                EXIT LOOP_TIME
@@ -5651,9 +5645,8 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
             EXIT LOOP_TIME
          END IF
     END DO LOOP_TIME
-    DEALLOCATE( SCAL, YP, FP, F,DN, F1, JF0, LU, FMAS, IPIV  )
+    DEALLOCATE( SCAL, YP, FP, F,DN, F1, JF0, LU, FMAS, IPIV)
 
-900      FORMAT(' EXIT OF GAM AT T=',E18.4)
 800      RETURN
      END SUBROUTINE ETRO
 
@@ -5677,7 +5670,7 @@ SUBROUTINE contout(R,T,TP,FF,DBLK,NT1, CONTR)
   !!   INPUT VARIABLES
   !!------------------------------------
   INTEGER, INTENT(IN) ::  R, DBLK, NT1
-  REAL(PREC) :: CONTR(R)
+  REAL(PREC), INTENT(OUT) :: CONTR(R)
   REAL(PREC), INTENT(IN) ::  T, TP(DBLK+1), FF(R,DBLK+1)
   !!
   !!   LOCAL VARIABLES
@@ -5691,9 +5684,8 @@ SUBROUTINE contout(R,T,TP,FF,DBLK,NT1, CONTR)
   N = DBLK+1
   NTi = MAX(1,NT1)
   NT2 = NTi+1
-  YP = FF(I,NTi)
   DO I = 1, R
-    YP = FF(I,NT1)
+    YP = FF(I,NTi)
     DO J=NT2,N
        YP = YP*(T-TP(J)) + FF(I,J)
     ENDDO

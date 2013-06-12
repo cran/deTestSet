@@ -161,7 +161,7 @@ SEXP call_dop(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
   int  j, nt, latol, lrtol, lrw, liw;
   int  isForcing;
-  double *Atol, *Rtol, hini=0, *ww;
+  double *Atol, *Rtol, *ww;
   int itol, iout, idid, mflag;
 
   /* pointers to functions passed to FORTRAN */
@@ -302,8 +302,9 @@ SEXP call_dop(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   saveOut (tin, xytmp);              /* save final condition */
 
 /*                   ####   returning output   ####                           */    
-  rwork[0] = hini;
-  rwork[1] = tin ;
+  rwork[0] = rwork[6];
+  rwork[1] = rwork[6];
+  rwork[2] = tin ;
   terminate(idid,5,16,5,0);       
   
 /*                   ####     termination      ####                           */    

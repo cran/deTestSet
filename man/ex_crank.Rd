@@ -10,8 +10,9 @@ It is a differential algebraic equation of index 2, 24 equations.
 }
 \usage{
 crank (times=seq(0, 0.1, by = 0.001), yini = NULL, dyini = NULL, 
-  parms = list(), method = "mebdfi", maxsteps = 1e+06, 
-  options = list(), ...) 
+       parms = list(), printmescd = TRUE, method = mebdfi, 
+       atol = 1e-6, rtol = 1e-6, maxsteps = 1e+06, 
+       options = list(), ...) 
 }
 
 \arguments{
@@ -32,6 +33,15 @@ crank (times=seq(0, 0.1, by = 0.001), yini = NULL, dyini = NULL,
   \item{maxsteps }{maximal number of steps per output interval taken by 
     the solver
   }
+    \item{atol }{absolute error tolerance, either a scalar or a vector,
+    one value for each y.
+  }
+  \item{rtol }{relative error tolerance, either a scalar or a vector,
+    one value for each y,
+  }
+  \item{printmescd }{if TRUE  the mixed error significant digits computed using
+    the  reference solution at time 0.1  are printed
+    }
   \item{options }{a list which specifies the initial conditions used \code{ini},
     whether the problem is stiff, and the damping. The default is 
     \code{list(ini=1,stiff=0,damp=0)} 
@@ -51,7 +61,7 @@ crank (times=seq(0, 0.1, by = 0.001), yini = NULL, dyini = NULL,
   of the output value.
       
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>
+\author{Karline Soetaert <karline.soetaert@nioz.nl>
 
 Francesca Mazzia  <mazzia@dm.uniba.it>
 }
@@ -59,7 +69,7 @@ Francesca Mazzia  <mazzia@dm.uniba.it>
 out <- crank()
 plot(out, lwd = 2, which = 1:9)
 
-# compare  with reference solution (only  the first seven component)
+# compare  with reference solution (only  the first seven components)
 refsol <- reference("crank")
 max(abs(out[nrow(out),2:8] - refsol[1:7])/refsol[1:7])     
 }
