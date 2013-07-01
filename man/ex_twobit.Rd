@@ -62,11 +62,14 @@ Francesca Mazzia
 }
 \examples{
 
-out <- twobit()
+out <- twobit(times = seq(0, 100, by = 0.5))
 plot(out, lwd = 2, which = c("x49", "x130", "x148"), mfrow = c(3, 1))
 
+\dontrun{
+  out <- twobit()
 # compare with reference solution
-max(abs(out[nrow(out),-1] - reference("twobit")))    
+  max(abs(out[nrow(out),-1] - reference("twobit")))    
+}
 }
 \references{
 \url{http://www.dm.uniba.it/~testset}

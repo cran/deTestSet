@@ -1,4 +1,4 @@
-5537a79a320d2ac302be6d8725dff055 *DESCRIPTION
+98e076326a8cc68675d309f80ac45154 *DESCRIPTION
 7c7fbd51d29c58fd0800f0eadeba0354 *NAMESPACE
 61a51a713dce716ac03d697f982dc5e2 *R/Utilities.R
 5779a420d2bc94821ce4e67d841b5eba *R/bimd.R
@@ -30,12 +30,12 @@ e7b34d3b51d612490d4a615d95b443b0 *R/functions.R
 11117eb1121a190b4795ac75021b9155 *R/gam.R
 f107db5e3ea84be7af17101e2615a37a *R/mebdfi.R
 6b16f3c6ea8b7944df6a389398e5443f *R/printmessage.R
+5989c255a06a79b6583e9300198c5e23 *inst/COPYRIGHTS
 366863bd60be611b9cef9c9b58cb6b37 *inst/doc/car.f
 5ce2af703cfe715b8d2d696f176dc004 *inst/doc/carc.c
 d68ff2fc755596afa42f77b6bfb75b6b *inst/doc/deTestSet.R
 4f9cac76133f210331a8a47a7cff4249 *inst/doc/deTestSet.Rnw
 32d6f1c60bead0372a6313783f2b9deb *inst/doc/deTestSet.pdf
-db9105d7bb1c4db77fbf651e31e4f680 *inst/doc/docs.bib
 46863084b396155719f354879076dbc3 *inst/doc/examples/Brusselator1D.R
 9398cace7cae4c0e044edc1b379f10f6 *inst/doc/examples/E5.R
 7399b4fd558efb4cae72d477db6d1b39 *inst/doc/examples/andrews.R
@@ -71,7 +71,7 @@ d7453170ad595efcd8f52e06044a5eb7 *man/ex_ring.Rd
 f1c8d756fda6cb5473578b5d0a8a62c7 *man/ex_rober.Rd
 78a099fc6873c08f481fd00539f4940d *man/ex_transistor.Rd
 78c9cf8f50a2128d361f2da5d22b1816 *man/ex_tube.Rd
-4502800c870c3d36fce72e813028e069 *man/ex_twobit.Rd
+f4894b4d352044a5ee56bec7c42e0e20 *man/ex_twobit.Rd
 b05108fa4ff28814b6e5de94e6e070a2 *man/ex_vdpol.Rd
 a9b5922bbac1901ae6630de5265170b4 *man/ex_wheelset.Rd
 60b55ee78db60c272660b0d2999fcbb7 *man/gamd.Rd
@@ -105,3 +105,5 @@ f5dae7ecf3a11ca7a79a45ab6edb6cea *src/dopri8.f
 b129fcd7626604c057ab258ed0f42aa6 *src/forcings.c
 494e5439c000f3fc60566c8edd981c4e *src/gamd.f90
 3e95905a6a1ac2cb170d5effb21223ef *src/mebdfi.f
+4f9cac76133f210331a8a47a7cff4249 *vignettes/deTestSet.Rnw
+db9105d7bb1c4db77fbf651e31e4f680 *vignettes/docs.bib
