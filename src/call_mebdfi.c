@@ -64,20 +64,19 @@ static void C_res_func (double *t, double *y, double *yprime, double *cj,
                        double *delta, int *ires, double *yout, int *iout)
 {                             
   int i;
-  SEXP R_fcall, ans;
+  SEXP R_fcall, Time, ans;
 
-  REAL(Time)[0] = *t;
   for (i = 0; i < n_eq; i++)
     {
       REAL(Y)[i] = y[i];
       REAL (YPRIME)[i] = yprime[i];
     }
-  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME));   incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                  incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                       incr_N_Protect();
+  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); incr_N_Protect();
+  PROTECT(ans = eval(R_fcall, R_envir));                incr_N_Protect();
 
   for (i = 0; i < n_eq; i++)  	delta[i] = REAL(ans)[i];
-  my_unprotect(2);
-//  Rprintf(" %g", *t)
+  my_unprotect(3);
 }
 
 /* interface between fortran call to jacobian and R function */
@@ -228,7 +227,6 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 
   /* initialise global variables... */
 
-  PROTECT(Time = NEW_NUMERIC(1));                    incr_N_Protect();
   PROTECT(Rin  = NEW_NUMERIC(2));                    incr_N_Protect();
   PROTECT(Y = allocVector(REALSXP,n_eq));            incr_N_Protect();
   PROTECT(YPRIME = allocVector(REALSXP,n_eq));       incr_N_Protect();

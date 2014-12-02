@@ -404,6 +404,8 @@ C --- INITIAL PREPARATIONS
       LAST=.FALSE. 
       HLAMB=0.D0
       IASTI=0
+      NONSTI=0
+      
       CALL FCN(N,X,Y,K1,RPAR,IPAR)
       HMAX=ABS(HMAX)     
       IORD=5  

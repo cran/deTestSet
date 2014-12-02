@@ -78,17 +78,17 @@ static void C_deriv_func_gb (int *neq, double *t, double *y,
                           double *ydot, double *yout, int *iout)
 {
   int i;
-  SEXP R_fcall, ans;
+  SEXP R_fcall, Time, ans;
 
-                              REAL(Time)[0] = *t;
   for (i = 0; i < *neq; i++)  REAL(Y)[i] = y[i];
 
+  PROTECT(Time = ScalarReal(*t));                  incr_N_Protect();
   PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));   incr_N_Protect();
   PROTECT(ans = eval(R_fcall, R_envir));           incr_N_Protect();
 
   for (i = 0; i < *neq; i++)   ydot[i] = REAL(ans)[i];
 
-  my_unprotect(2);
+  my_unprotect(3);
 }
 
 /* deriv output function - for ordinary output variables */
@@ -97,18 +97,18 @@ static void C_deriv_out_gb (int *nOut, double *t, double *y,
                        double *ydot, double *yout)
 {
   int i;
-  SEXP R_fcall, ans;
+  SEXP R_fcall, Time, ans;
 
-  REAL(Time)[0] = *t;
   for (i = 0; i < n_eq; i++)
       REAL(Y)[i] = y[i];
 
+  PROTECT(Time = ScalarReal(*t));                   incr_N_Protect();
   PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));   incr_N_Protect();
   PROTECT(ans = eval(R_fcall, R_envir));            incr_N_Protect();
 
   for (i = 0; i < *nOut; i++) yout[i] = REAL(ans)[i + n_eq];
 
-  my_unprotect(2);
+  my_unprotect(3);
 }
 /* the mass matrix function */
 static void C_mas_func (int *neq, double *am, int *lmas,
@@ -155,7 +155,7 @@ static void saveOut (double t, double *y) {
 static void C_solout_gam (int * neq, double * tp, double * yp, double * ff,
   int *nt, int * dblk, int * ord, double * rpar, int * ipar, int * irtrn)
 {
-
+  *irtrn = 1;
   while ((tp[0] <= tt[it]) && (tt[it] < tp[*dblk])) {
  	  F77_CALL(contout) (neq, &tt[it], tp, ff, dblk, nt, ytmp);
     saveOut(tt[it], ytmp);
@@ -169,6 +169,7 @@ static void C_solout_bim (int * m, int *k, int * ord,
    double * t0, double * tstep, double * y, double * f,
    double *dd, double * rpar, int * ipar, int * irtrn)
 {
+  *irtrn = 1;
   while ((*t0 <= tt[it]) && (tt[it] < tstep[*k-1])) {
  	  F77_CALL(contsolall) (&tt[it], m, k, t0, tstep, dd, ytmp);
     saveOut(tt[it], ytmp);
@@ -184,17 +185,17 @@ static void C_jac_func_gb (int *neq, double *t, double *y, int *ml,
 	    int *mu, double *pd,  int *nrowpd, double *yout, int *iout)
 {
   int i;
-  SEXP R_fcall, ans;
+  SEXP R_fcall, Time, ans;
 
-                             REAL(Time)[0] = *t;
   for (i = 0; i < *neq; i++) REAL(Y)[i] = y[i];
 
+  PROTECT(Time = ScalarReal(*t));                 incr_N_Protect();
   PROTECT(R_fcall = lang3(R_jac_func,Time,Y));    incr_N_Protect();
   PROTECT(ans = eval(R_fcall, R_envir));          incr_N_Protect();
 
   for (i = 0; i < *neq * *nrowpd; i++)  pd[i] = REAL(ans)[i];
 
-  my_unprotect(2);
+  my_unprotect(3);
 }
 
 /* give name to data types */

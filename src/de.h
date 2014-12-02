@@ -5,7 +5,7 @@
   global R variables 
 ============================================================================*/
 SEXP YOUT, YOUT2, ISTATE, RWORK, IROOT;    /* returned to R */
-SEXP Time, Y, YPRIME , Rin;
+SEXP Y, YPRIME , Rin;
 
 /*============================================================================
   global C variables 

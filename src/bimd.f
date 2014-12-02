@@ -1422,6 +1422,8 @@ C     Parameters for the stop criterion, when the solution is 'small'.
 
 
 C-------------------------------------------------------------------------------------------------------------------
+      IRTRN = 1
+
 C STATISTICS
 C
       NFEVAL = 0
@@ -2194,7 +2196,7 @@ C-------------------------------------------------------------------------------
 C     LOCAL ERROR ESTIMATION
 
       NERRLOC0 = NERRLOC
-
+      
       GOTO (310,320,320,320,320) ORD_IND
 310   CALL localerr4(M,F0,F,H,ERR,SCAL,NERR,NERRUP,NLINSYS,
      &               THETA,VMAX,IPVT,LDLU,MLJAC,MUJAC,IJOB,

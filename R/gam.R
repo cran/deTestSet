@@ -18,6 +18,23 @@ gamd <- function(y, times, func, parms, nind = c(length(y),0,0),
 {
 
 ### check input
+### check input
+  if (is.list(func)) {            # a list of compiled codes
+      if (!is.null(jacfunc) & "jacfunc" %in% names(func))
+         stop("If 'func' is a list that contains jacfunc, argument 'jacfunc' should be NULL")
+      if (!is.null(initfunc) & "initfunc" %in% names(func))
+         stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
+      if (!is.null(dllname) & "dllname" %in% names(func))
+         stop("If 'func' is a list that contains dllname, argument 'dllname' should be NULL")
+      if (!is.null(initforc) & "initforc" %in% names(func))
+         stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
+     if (!is.null(func$jacfunc))  jacfunc <- func$jacfunc
+     if (!is.null(func$initfunc)) initfunc <- func$initfunc
+     if (!is.null(func$dllname))  dllname <- func$dllname     
+     if (!is.null(func$initforc)) initforc <- func$initforc
+     func <- func$func
+  }
+
   hmax <- checkInput (y, times, func, rtol, atol,
     jacfunc, NULL, 0, hmax, hini, dllname)
   n <- length(y)
@@ -78,7 +95,7 @@ gamd <- function(y, times, func, parms, nind = c(length(y),0,0),
   flist     <- list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   ModelInit <- NULL
 
-  if (is.character(func)) {   # function specified in a DLL
+  if (is.character(func)  | class(func) == "CFunc") {   # function specified in a DLL
     DLL <- checkDLL(func,jacfunc,dllname,
                     initfunc,verbose,nout, outnames)
 

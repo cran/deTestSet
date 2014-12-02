@@ -1801,6 +1801,7 @@ C ---------------------------------------------------------------------------
       DOUBLE PRECISION VDS, VGS, VBS, VGD, VBD,GDSP,GDSM
       EXTERNAL GDSP, GDSM
 
+      ierr = 0
       IF ( VDS .GT. 0.d0 ) THEN
          IDS = GDSP (NED,VDS, VGS, VBS,ierr)
       ELSE IF ( VDS .EQ. 0.d0) THEN
@@ -1827,7 +1828,7 @@ C ---------------------------------------------------------------------------
      *               DELTA, CTIME, STIFF,
      *               CURIS, VTH, VDD, VBB, CLOAD, COUT
 C
-
+      ierr = 0
       IF(NED.EQ.0) THEN
 C --- Depletion-type
         VT0=-2.43d0
@@ -1887,6 +1888,7 @@ C --- Three enhancement-type transistors in series
      *               DELTA, CTIME, STIFF,
      *               CURIS, VTH, VDD, VBB, CLOAD, COUT
 
+      ierr = 0
       IF(NED.EQ.0) THEN
 C --- Depletion-type
         VT0=-2.43d0

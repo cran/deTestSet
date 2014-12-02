@@ -562,6 +562,8 @@ C ----------------------------------------------------------
       LOGICAL REJECT,LAST,EVENT
       EXTERNAL FCN
       COMMON /CONDO8/XOLD,HOUT
+C karline: INITIALISATION of this variable....
+      NONSTI=0
 C *** *** *** *** *** *** ***
 C  INITIALISATIONS
 C *** *** *** *** *** *** *** 

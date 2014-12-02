@@ -1,4 +1,5 @@
 useDynLib(deTestSet)
+import(deSolve)
 export(andrews)
 export(beam)
 export(caraxis)

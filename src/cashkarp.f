@@ -474,6 +474,8 @@ C --- INITIAL PREPARATIONS
       HLAMB=0.D0
       IASTI=0
       IASTIS=0
+      NONSTI=0
+      
 cF we use the shampine algorithm to compute the contnuous
 cF extension
       HERMITE = .true.
