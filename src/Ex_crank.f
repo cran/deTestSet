@@ -49,8 +49,7 @@ c----------------------------------------------------------------------
       parameter(neqn = 24)
       double precision t,y(neqn),yprime(neqn),f(neqn),rpar(*)
 
-      integer i,ires, ityp, iequa, icall 
-      double precision dy(24)
+      integer i
 
 c     default - linear stiffness term ipar(1) = 0
 c     default - no damping            ipar(2) = 0
@@ -68,7 +67,7 @@ c
 c----------------------------------------------------------------------
 
       subroutine crankfunc(neqn,t,y,f,rpar,ip)
-      integer neqn,ierr,ip(*),iopt(2)
+      integer neqn,ip(*),iopt(2)
 
       double precision t,y(neqn),f(neqn),rpar(*)
 
@@ -204,7 +203,7 @@ C       Q, QD for FE coefficients and time derivatives,
 C       MQ, KQ, DQ, BQ, c1, c2, c12, c21 for FE matrices and vectors,
 C       up to NQMAX = 20 variables.
 C
-        INTEGER  NQMAX, I, J, JJ, NQ, NP, NL, NX
+        INTEGER  NQMAX, I, J, NQ, NP, NL, NX
         PARAMETER( NQMAX = 20 )
         DOUBLE PRECISION
      *           Q(NQMAX), QD(NQMAX), MQ(NQMAX,NQMAX),

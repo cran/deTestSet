@@ -39,7 +39,7 @@ c----------------------------------------------------------------------
 
       implicit none
       DOUBLE PRECISION T, Y(20), DELTA(20), YPRIME(20),RPAR(*), CJ
-      INTEGER I, J, IERR, N, IPAR(*)
+      INTEGER J, IERR, N, IPAR(*)
 C
       IERR = 0
       N = 20
@@ -58,8 +58,8 @@ c     derivative function
 c----------------------------------------------------------------------
 
       subroutine polfunc(neqn,t,y,f,rpar,ipar)
-      integer neqn,ierr,ipar(*)
-      double precision t,y(neqn),yprime(neqn),f(neqn),rpar(*)
+      integer neqn,ipar(*)
+      double precision t,y(neqn),f(neqn),rpar(*)
 
       double precision k1,k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,
      +  k13,k14,k15,k16,k17,k18,k19,k20,k21,k22,k23,k24,k25,r(25)
@@ -154,7 +154,7 @@ c     jacobian function
 c----------------------------------------------------------------------
 
       subroutine poljac(neqn,t,y,ml,mu,dfdy,ldim,rpar,ipar)
-      integer ldim,neqn,ierr,ipar(*),ml,mu
+      integer ldim,neqn,ipar(*),ml,mu
       double precision t,y(neqn),dfdy(ldim,neqn),rpar(*)
 
       integer i,j

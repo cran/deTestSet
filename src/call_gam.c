@@ -1,6 +1,7 @@
 #include <time.h>
 #include <string.h>
 #include "de.h"
+#include "externalptr.h"
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    differential algebraic equation solvers gamd and bimd.
@@ -225,8 +226,8 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
   int  j, nt, latol, lrtol, imas, mlmas, mumas, type;
   int  isForcing, runOK;
-  double *Atol, *Rtol, hini, sum;
-  int itol, ijac, mflag,  ml, mu, iout, idid, liw, lrw;
+  double *Atol, *Rtol, hini;
+  int itol, ijac, ml, mu, iout, idid, liw, lrw, sum;
 
   /* pointers to functions passed to FORTRAN */
   C_jac_func_type_gb   *jac_func_gb = NULL;
@@ -241,7 +242,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /*                      #### initialisation ####                              */
   init_N_Protect();
 
-  type  = INTEGER(Type)[0];       /* jacobian type */
+  type  = INTEGER(Type)[0];     /* jacobian type */
   ijac  = INTEGER(jT)[0];       /* jacobian type */
   n_eq = LENGTH(y);             /* number of equations */
   nt   = LENGTH(times);         /* number of output times */
@@ -250,7 +251,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   tt = (double *) R_alloc(nt, sizeof(double));
   for (j = 0; j < nt; j++) tt[j] = REAL(times)[j];
 
-  mflag = INTEGER(verbose)[0];
+//  mflag = INTEGER(verbose)[0];
 
   /* is function a dll ?*/
   isDll = inherits(derivfunc, "NativeSymbol");
@@ -286,7 +287,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   if (type == 1) {
     liw = 27;
     lrw = 21;
-  } else if (type == 2) {
+  } else  {       //  if (type == 2)
     liw = n_eq + 40;
     lrw = INTEGER(LRW)[0];
  }
@@ -317,7 +318,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
  /* pointers to functions deriv_func, jac_func, jac_vec, root_func, passed to FORTRAN */
   if (isDll)  { /* DLL address passed to FORTRAN */
-      deriv_func = (C_deriv_func_type *) R_ExternalPtrAddr(derivfunc);
+      deriv_func = (C_deriv_func_type *) R_ExternalPtrAddrFn_(derivfunc);
 
  	   /* overruling deriv_func if forcing */
       if (isForcing) {
@@ -334,7 +335,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
   if (!isNull(jacfunc))   {
       if (isDll)
-	      jac_func_gb = (C_jac_func_type_gb *) R_ExternalPtrAddr(jacfunc);
+	      jac_func_gb = (C_jac_func_type_gb *) R_ExternalPtrAddrFn_(jacfunc);
 	    else  {
 	      R_jac_func = jacfunc;
 	      jac_func_gb= C_jac_func_gb;
@@ -401,7 +402,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   INTEGER(ISTATE)[0] = idid;
 
 /* nsteps */
-  sum = 0.;
+  sum = 0;
   runOK = 0;
   if (type == 1)  {
     for (j = 11; j < 23; j++) sum = sum + iwork[j];
@@ -417,7 +418,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
     INTEGER(ISTATE)[4] = iwork[23];
 
 /* number rejected steps */
-    sum = 0.;
+    sum = 0;
     for (j = 11; j < 15; j++) sum = sum + iwork[j];
     INTEGER(ISTATE)[5] = INTEGER(ISTATE)[1]- sum;
 	if(idid > 0) runOK = 1;
@@ -435,7 +436,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
     INTEGER(ISTATE)[4] = iwork[13];
 
 /* number rejected steps */
-    sum = 0.;
+    sum = 0;
     for (j = 25; j < 29; j++) sum = sum + iwork[j];
     INTEGER(ISTATE)[5] = INTEGER(ISTATE)[1]- sum;
     if(idid >= 0)  runOK = 1;

@@ -25,8 +25,8 @@ c----------------------------------------------------------------------
 
       SUBROUTINE twobres(t,Y,YPRIME,CJ,DF,IERR,RPAR,IPAR)
       IMPLICIT NONE
-	    INTEGER I, N
-	    parameter(N=350)
+        INTEGER I, N
+        parameter(N=350)
       DOUBLE PRECISION T,CJ,Y(N), YPRIME(N), DF(N),RPAR(*)
       INTEGER ierr, IPAR(*)
 
@@ -50,14 +50,17 @@ c-----------------------------------------------------------------------
       external FCN,GCN
 
       do 10 i=1,175
- 10      x(i)=y(i+175)
+        x(i)=y(i+175)
+ 10   continue
       CALL FCN(175,t,x,res, ierr)
 
       do 20 i=1,175
- 20      dy(i)=res(i)
+        dy(i)=res(i)
+ 20   continue
       call GCN(175,x,res)
       do 30 i=1,175
- 30      dy(i+175)=y(i)-res(i)
+        dy(i+175)=y(i)-res(i)
+ 30   continue
 
       RETURN
       END
@@ -72,7 +75,8 @@ c-----------------------------------------------------------------------
       external FCN,GCN
 
       do 10 i=1,175
- 10      x(i)=y(i+175)
+        x(i)=y(i+175)
+ 10   continue
       CALL FCN(175,t,x,res, ierr)
 
       IF ( IERR .EQ. -1 ) THEN
@@ -80,11 +84,12 @@ c-----------------------------------------------------------------------
         RETURN
       ENDIF
       do 20 i=1,175
- 20      dy(i)=res(i)
+        dy(i)=res(i)
+ 20   continue
       call GCN(175,x,res)
       do 30 i=1,175
- 30      dy(i+175)=y(i)-res(i)
-
+        dy(i+175)=y(i)-res(i)
+ 30   continue
       RETURN
       END
 
@@ -94,8 +99,8 @@ c----------------------------------------------------------------------
 
       SUBROUTINE twobinit(NEQN,T,Y,YPRIME)
       IMPLICIT NONE
+      integer neqn, i,j
       DOUBLE PRECISION Y(NEQN),T,YPRIME(NEQN), U(175)
-      integer neqn,incon,i,j
       double precision RGS, RGD, RBS, RBD, CGS, CGD, CBD, CBS,
      *               DELTA, CTIME, STIFF,
      *               CURIS, VTH, VDD, VBB, CLOAD, COUT
@@ -1806,7 +1811,7 @@ C ---------------------------------------------------------------------------
          IDS = GDSP (NED,VDS, VGS, VBS,ierr)
       ELSE IF ( VDS .EQ. 0.d0) THEN
          IDS = 0.d0
-      ELSE IF ( VDS .LT. 0.d0) THE N
+      ELSE IF ( VDS .LT. 0.d0) THEN
          IDS = GDSM (NED,VDS, VGD, VBD,ierr)
       END IF
 

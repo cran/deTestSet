@@ -1,5 +1,9 @@
 useDynLib(deTestSet)
 import(deSolve)
+importFrom("grDevices", "dev.interactive")
+importFrom("graphics", "par")
+importFrom("stats", "aggregate", "dist")
+
 export(andrews)
 export(beam)
 export(caraxis)

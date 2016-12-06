@@ -40,7 +40,7 @@ c----------------------------------------------------------------------
       SUBROUTINE tuberes(X,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       integer N
-     	parameter(N=49)
+      parameter(N=49)
       DIMENSION Y(N),DELTA(N),IPAR(*),RPAR(*),YPRIME(N)
       double precision nu,g,rho,rcrit,length,k,d,b,pi,a,c,v,x
 c      

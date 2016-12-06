@@ -41,7 +41,7 @@ c----------------------------------------------------------------------
 
       SUBROUTINE wheelres(X,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-    	Integer M
+
       parameter (N=17)
 
       DIMENSION Y(N), DELTA(N), YPRIME(N),RPAR(2),IPAR(2)

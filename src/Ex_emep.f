@@ -28,7 +28,7 @@ c----------------------------------------------------------------------
 
       implicit none
       DOUBLE PRECISION T, Y(66), DELTA(66), YPRIME(66),RPAR(*), CJ
-      INTEGER I, J, IERR, N, IPAR(*)
+      INTEGER J, IERR, N, IPAR(*)
 C
       IERR = 0
       N = 66
@@ -344,7 +344,7 @@ c----------------------------------------------------------------------
 
 
       subroutine emepjac(neqn,time,y,ml,mu,jac,ldim,rpar,ipar)
-      integer ldim,neqn,ierr,ipar(*), ml, mu
+      integer ldim,neqn,ipar(*), ml, mu
       double precision time,y(neqn),jac(ldim,neqn),rpar(*)
 
       INTEGER I, J
@@ -409,10 +409,11 @@ C..  Newer assumption, from Atkisnon , 1991
       RPATH4 = 0.35D0
 C=======================================================================
 C
-      DO 10 I = 1, 66
+      DO 11 I = 1, 66
       DO 10 J = 1, 66
          JAC(I,J) = 0.0D0
    10 CONTINUE
+   11 CONTINUE
       JAC(1,1) = -RC(5)*Y(36)-RC(11)*Y(14)-RC(17)*Y(15)-RC(72)*Y(23)-RC(
      &79)*(Y(24)+Y(57))-RC(15)*Y(39)-RC(60)*(Y(19)+Y(26)+Y(27)+Y(29)+Y(3
      &1)+Y(33)+Y(35)+Y(43)+Y(45)+Y(59)+Y(61)+Y(60))

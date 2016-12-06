@@ -285,7 +285,8 @@ C -------- NRDENS   NUMBER OF DENSE OUTPUT COMPONENTS
             END IF
             IF (NRDENS.EQ.N) THEN
                 DO 16 I=1,NRDENS
-  16            IWORK(20+I)=I
+                IWORK(20+I)=I
+  16            CONTINUE 
             END IF
       END IF
       NSTIFFCOND=IWORK(7)
@@ -513,26 +514,30 @@ C removed ierr
          IF (IERR .NE. 0 ) GOTO 333
 
          DO 220 I=1,N
-  220      Y1(I)=Y(I)+HST*A21*K1(I)
+          Y1(I)=Y(I)+HST*A21*K1(I)
+  220    CONTINUE 
 
 C removed ierr
          IERR = 0
          CALL FCN(N,X+C2*HST,Y1,K2,RPAR,IPAR)
          IF (IERR .NE. 0 ) GOTO 333
          DO 230 I=1,N
-  230      Y1(I)=Y(I)+HST*(A31*K1(I)+A32*K2(I))
+          Y1(I)=Y(I)+HST*(A31*K1(I)+A32*K2(I))
+  230    CONTINUE 
 C removed ierr
          IERR = 0
          CALL FCN(N,X+C3*HST,Y1,K3,RPAR,IPAR)
          IF (IERR .NE. 0 ) GOTO 333
          DO 240 I=1,N
-  240     Y1(I)=Y(I)+HST*(A41*K1(I)+A42*K2(I)+A43*K3(I))
+          Y1(I)=Y(I)+HST*(A41*K1(I)+A42*K2(I)+A43*K3(I))
+  240    CONTINUE 
 C removed ierr
          IERR = 0
          CALL FCN(N,X+C4*HST,Y1,K4,RPAR,IPAR)
          IF (IERR .NE. 0 ) GOTO 333
          DO 250 I=1,N
-  250     YSTI(I)=Y(I)+HST*(A51*K1(I)+A52*K2(I)+A53*K3(I)+A54*K4(I))
+          YSTI(I)=Y(I)+HST*(A51*K1(I)+A52*K2(I)+A53*K3(I)+A54*K4(I))
+  250    CONTINUE 
 C removed ierr
          IERR = 0
          CALL FCN(N,X+C5*HST,YSTI,K5,RPAR,IPAR)
@@ -765,25 +770,29 @@ C removed ierr
       END IF
 
       DO 22 I=1,N
-  22  Y1(I)=Y(I)+H*A21*K1(I)
+      Y1(I)=Y(I)+H*A21*K1(I)
+  22  CONTINUE 
 C removed ierr
       IERR = 0
       CALL FCN(N,X+C2*H,Y1,K2,RPAR,IPAR)
       IF (IERR .NE. 0 ) GOTO 444
       DO 23 I=1,N
-  23  Y1(I)=Y(I)+H*(A31*K1(I)+A32*K2(I))
+      Y1(I)=Y(I)+H*(A31*K1(I)+A32*K2(I))
+  23  CONTINUE 
 C removed ierr
       IERR = 0
       CALL FCN(N,X+C3*H,Y1,K3,RPAR,IPAR)
       IF (IERR .NE. 0 ) GOTO 444
       DO 24 I=1,N
-  24  Y1(I)=Y(I)+H*(A41*K1(I)+A42*K2(I)+A43*K3(I))
+      Y1(I)=Y(I)+H*(A41*K1(I)+A42*K2(I)+A43*K3(I))
+  24  CONTINUE 
 C removed ierr
       IERR = 0
       CALL FCN(N,X+C4*H,Y1,K4,RPAR,IPAR)
       IF (IERR .NE. 0 ) GOTO 444
       DO 25 I=1,N
-  25  YSTI(I)=Y(I)+H*(A51*K1(I)+A52*K2(I)+A53*K3(I)+A54*K4(I))
+      YSTI(I)=Y(I)+H*(A51*K1(I)+A52*K2(I)+A53*K3(I)+A54*K4(I))
+  25  CONTINUE 
 C removed ierr
       IERR = 0
       CALL FCN(N,X+C5*H,YSTI,K5,RPAR,IPAR)
@@ -908,7 +917,7 @@ C ------- STIFFNESS DETECTION  based on approximation of eigenvalues
  64         CONTINUE
             IF (STDEN.GT.0.D0) HLAMB=H*SQRT(STNUM/STDEN)
 
- 188   format(1x,'The first est',i5,3g22.10)
+C 188   format(1x,'The first est',i5,3g22.10)
             IF (HLAMB.GT.3.25D0 .OR. .NOT.(HLAMB .GT. 0.0d0) ) THEN
                NONSTI=0
                IASTI=IASTI+1
@@ -992,7 +1001,8 @@ C --- ERROR ESTIMATION
           DO 42 I=1,N
            SK=ATOL(I)+RTOL(I)*MAX(ABS(Y(I)),ABS(Y1(I)))
            errta=errta+(VSTI(I)/sk)**2.0d0
-  42       ERRy=ERRy+(K4(I)/SK)**2.0d0
+           ERRy=ERRy+(K4(I)/SK)**2.0d0
+  42       CONTINUE 
         END IF
         ERRy=SQRT(ERRy/N)
         errta=sqrt(errta/n)
@@ -1091,7 +1101,8 @@ c set up continuous output
 c initialize the variables for the next step
           DO 44 I=1,N
             k1(i)=k2(i)
-  44        Y(I)=Y1(I)
+            Y(I)=Y1(I)
+  44      CONTINUE 
 
 c initialize the variables related to ys for the next step
       IF (NSTIFFCOND .GT. 0) THEN
@@ -1425,12 +1436,14 @@ C ---- COMPARED TO THE SOLUTION
         DO 10 I=1,N
         SK=ATOLI+RTOLI*ABS(Y(I))
         DNF=DNF+(F0(I)/SK)**2
-  10    DNY=DNY+(Y(I)/SK)**2
+        DNY=DNY+(Y(I)/SK)**2
+  10    CONTINUE 
       ELSE
         DO 11 I=1,N
         SK=ATOL(I)+RTOL(I)*ABS(Y(I))
         DNF=DNF+(F0(I)/SK)**2
-  11    DNY=DNY+(Y(I)/SK)**2
+        DNY=DNY+(Y(I)/SK)**2
+  11    CONTINUE 
       END IF
       IF (DNF.LE.1.D-10.OR.DNY.LE.1.D-10) THEN
          H=1.0D-6
@@ -1443,7 +1456,8 @@ C ---- COMPARED TO THE SOLUTION
         H=SIGN(H,POSNEG)
 C ---- PERFORM AN EXPLICIT EULER STEP
        DO 12 I=1,N
-  12   Y1(I)=Y(I)+H*F0(I)
+       Y1(I)=Y(I)+H*F0(I)
+  12   CONTINUE 
 C removed ierr
        IERR = 0
        CALL FCN(N,X+H,Y1,F1,RPAR,IPAR)
@@ -1454,11 +1468,13 @@ C ---- ESTIMATE THE SECOND DERIVATIVE OF THE SOLUTION
       IF (ITOL.EQ.0) THEN
         DO 15 I=1,N
         SK=ATOLI+RTOLI*ABS(Y(I))
-  15    DER2=DER2+((F1(I)-F0(I))/SK)**2
+        DER2=DER2+((F1(I)-F0(I))/SK)**2
+  15    CONTINUE 
       ELSE
         DO 16 I=1,N
         SK=ATOL(I)+RTOL(I)*ABS(Y(I))
-  16    DER2=DER2+((F1(I)-F0(I))/SK)**2
+        DER2=DER2+((F1(I)-F0(I))/SK)**2
+  16    CONTINUE 
       END IF
       DER2=SQRT(DER2)/H
 C ---- STEP SIZE IS COMPUTED SUCH THAT
@@ -1495,12 +1511,14 @@ C ----   H = 0.01 * NORM (Y0) / NORM (F0)
         DO 10 I=1,N
         SK=ATOLI+RTOLI*MAX(ABS(Y(I)),ABS(Y(I)))
         DNF=DNF+(F0(I)/SK)**2
-  10    DNY=DNY+(Y(I)/SK)**2
+        DNY=DNY+(Y(I)/SK)**2
+  10    CONTINUE 
       ELSE
         DO 11 I=1,N
         SK=ATOL(I)+RTOL(I)*MAX(ABS(Y(I)),ABS(Y(I)))
         DNF=DNF+(F0(I)/SK)**2
-  11    DNY=DNY+(Y(I)/SK)**2
+        DNY=DNY+(Y(I)/SK)**2
+  11    CONTINUE 
       END IF
 
       IF (DNF.LE.1.D-10.OR.DNY.LE.1.D-10) THEN
@@ -1520,11 +1538,13 @@ C ---- HST IS THE STEP USED FOR THE COMPUTATION OF ETA
       IF (ITOL.EQ.0) THEN
         DO 15 I=1,N
         SK=ATOLI+RTOLI*MAX(ABS(Y(I)),ABS(Y(I)))
-  15    DER2=DER2+((F1(I)-F0(I))/SK)**2
+        DER2=DER2+((F1(I)-F0(I))/SK)**2
+  15    CONTINUE 
       ELSE
         DO 16 I=1,N
         SK=ATOL(I)+RTOL(I)*MAX(ABS(Y(I)),ABS(Y(I)))
-  16    DER2=DER2+((F1(I)-F0(I))/SK)**2
+        DER2=DER2+((F1(I)-F0(I))/SK)**2
+  16    CONTINUE 
       END IF
 
 

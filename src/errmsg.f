@@ -42,7 +42,7 @@ C printing with one integer and a double
       subroutine rprintd4(msg, d1, d2, d3, d4)
       character (len=*) msg
       double precision dbl(4), d1, d2, d3, d4
-      integer i1
+
         DBL(1) = d1
         DBL(2) = d2
         DBL(3) = d3

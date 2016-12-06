@@ -35,10 +35,10 @@ c----------------------------------------------------------------------
 
       SUBROUTINE transres (T,Y,YPRIME,cj,DELTA,IERR,RPAR,IPAR)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-	    PARAMETER (NEQN = 8)
+        PARAMETER (NEQN = 8)
       DIMENSION Y(NEQN),DELTA(NEQN),YPRIME(NEQN),IPAR(*),RPAR(*)
       double precision ub,uf,alpha,beta,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,
-     +                 pi,uet,fac1,fac2,c1,c2,c3,c4,c5
+     +                 pi,uet,c1,c2,c3,c4,c5
       parameter (pi=3.1415926535897931086244d0)
 
       common /transcom/ub, uf, alpha, beta, r0, r1, r2, r3, r4,
@@ -64,7 +64,7 @@ c----------------------------------------------------------------------------
       subroutine transfunc(neqn,t,y,dy,rpar,ipar)
       IMPLICIT double precision (A-H,O-Z)
       double precision t,y(neqn),dy(neqn), rpar(*)
-	    integer ipar(*)
+        integer ipar(*)
 
       double precision ub,uf,alpha,beta,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,
      +                 pi,uet,fac1,fac2,c1,c2,c3,c4,c5
@@ -96,11 +96,11 @@ c----------------------------------------------------------------------
       subroutine transjac(neqn,t,y,ml,mu,dfdy,ldim,rpar,ipar)
       IMPLICIT double precision (A-H,O-Z)
       integer n,i,ipar(*)
-    	parameter(n=8, mebnd=8)
-      double precision t,y(n),dfdy(mebnd,n),yprime(n),rpar(*)
+        parameter(n=8, mebnd=8)
+      double precision t,y(n),dfdy(mebnd,n),rpar(*)
 
       double precision ub,uf,alpha,beta,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,
-     +                 pi,uet,fac1,fac2,c1,c2,c3,c4,c5
+     +                 pi,c1,c2,c3,c4,c5
       parameter (pi=3.1415926535897931086244d0)
 
       common /transcom/ub, uf, alpha, beta, r0, r1, r2, r3, r4,

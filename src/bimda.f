@@ -38,15 +38,15 @@ C ------------------------------------------------------------------------------
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c                                                         c
 c     In case the ISNAN function is not supported.        c
-c                                                         c
+c   karline: added underscore                             c
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      logical function isnan(A)
+      logical function isnan_(A)
       implicit none
       double precision A, B
       logical X
       B = A
       X = ( A .EQ. B )
-      isnan = (.NOT.X)
+      isnan_ = (.NOT.X)
       return
       end
 
@@ -141,7 +141,12 @@ C ------------------------------------------------------------------------------
      & B24_3_1 =  0D0)
 C ---------------------------------------------------------------------------------------
 
-      goto(10,20) imas+1
+      if (imas .eq. 0) then
+        goto 10
+      else if (imas .eq. 1) then
+        goto 20  
+      endif  
+C      goto(10,20) imas+1
 
 10    continue
 c     ODE CASE
@@ -403,7 +408,12 @@ C ------------------------------------------------------------------------------
 
 C ---------------------------------------------------------------------------------------
 
-      goto(10,20) imas+1
+      if (imas .eq. 0) then
+        goto 10
+      else if (imas .eq. 1) then
+        goto 20  
+      endif  
+C      goto(10,20) imas+1
 
 10    continue
 c     ODE case
@@ -767,7 +777,12 @@ C ------------------------------------------------------------------------------
 
 C ---------------------------------------------------------------------------------------
 
-      goto(10,20) imas+1
+      if (imas .eq. 0) then
+        goto 10
+      else if (imas .eq. 1) then
+        goto 20  
+      endif  
+C      goto(10,20) imas+1
 
 10    continue
 c     ODE case
@@ -1339,7 +1354,12 @@ C ------------------------------------------------------------------------------
 
 C ---------------------------------------------------------------------------------------
 
-      goto(10,20) imas+1
+      if (imas .eq. 0) then
+        goto 10
+      else if (imas .eq. 1) then
+        goto 20  
+      endif  
+C      goto(10,20) imas+1
 
 10    continue
 c     ODE case
@@ -2096,8 +2116,13 @@ C ------------------------------------------------------------------------------
 
 
 C ---------------------------------------------------------------------------------------
+      if (imas .eq. 0) then
+        goto 10
+      else if (imas .eq. 1) then
+        goto 20  
+      endif  
 
-      goto(10,20) imas+1
+C      goto(10,20) imas+1
 
 10    continue
 c     ODE case
@@ -2576,7 +2601,18 @@ c     Local variables
      &           PSI12_5 =  21D1,
      &           PSI12_6 =-252D0)
 
-      goto (10,20,30,40,50) ord_ind
+       if (ord_ind .eq. 1) then
+         goto 10
+       else if (ord_ind .eq. 2) then
+         goto 20  
+       else if (ord_ind .eq. 3) then
+         goto 30  
+       else if (ord_ind .eq. 4) then
+         goto 20  
+       else if (ord_ind .eq. 5) then
+         goto 50  
+       endif  
+C      goto (10,20,30,40,50) ord_ind
 
 10    continue
       do i=1,m
@@ -2659,7 +2695,12 @@ c     Local variables
 
       call sollu(m,theta,ldlu,Z(1,2),mljac,mujac,ipvt,ijob(1))
 
-      goto (10,20) imas+1
+      if (imas .eq. 0) then
+        goto 10
+      else if (imas .eq. 1) then
+        goto 20  
+      endif  
+C      goto (10,20) imas+1
 
 10    continue
 c     ODE case
@@ -2747,7 +2788,12 @@ c     Local variables
 
       call sollu(m,theta,ldlu,Z(1,2),mljac,mujac,ipvt,ijob(1))
 
-      goto (10,20) imas+1
+      if (imas .eq. 0) then
+        goto 10
+      else if (imas .eq. 1) then
+        goto 20  
+      endif  
+C      goto (10,20) imas+1
 
 10    continue
 c     ODE case
@@ -2883,8 +2929,12 @@ c     Output parameter
 c     Local variables
       integer i
       double precision dbk,dh,dh0,cp,cp0,cp1,cp2
-
-      goto (10,20,20,20,20) ord_ind
+      if (ord_ind .eq. 1) then
+        goto 10
+      else if (ord_ind .le. 5) then
+        goto 20  
+      endif  
+C      goto (10,20,20,20,20) ord_ind
 
 10    continue
       cp  = 2d0/dble(k)*h/(h+h0)
@@ -3127,14 +3177,16 @@ C-----------------------------------------------------------------------
         IF (T .EQ. 0.D0) GO TO 80
         T = 1.D0/T
         DO 30 I = KP1,N
- 30       A(I,K) = -A(I,K)*T
+          A(I,K) = -A(I,K)*T
+ 30     CONTINUE 
         DO 50 J = KP1,N
           T = A(M,J)
           A(M,J) = A(K,J)
           A(K,J) = T
           IF (T .EQ. 0.D0) GO TO 45
           DO 40 I = KP1,N
- 40         A(I,J) = A(I,J) + A(I,K)*T
+            A(I,J) = A(I,J) + A(I,K)*T
+ 40       CONTINUE 
  45       CONTINUE
  50       CONTINUE
  60     CONTINUE
@@ -3176,7 +3228,8 @@ C-----------------------------------------------------------------------
         B(M) = B(K)
         B(K) = T
         DO 10 I = KP1,N
- 10       B(I) = B(I) + A(I,K)*T
+          B(I) = B(I) + A(I,K)*T
+ 10     CONTINUE 
  20     CONTINUE
       DO 40 KB = 1,NM1
         KM1 = N - KB
@@ -3184,7 +3237,8 @@ C-----------------------------------------------------------------------
         B(K) = B(K)/A(K,K)
         T = -B(K)
         DO 30 I = 1,KM1
- 30       B(I) = B(I) + A(I,K)*T
+         B(I) = B(I) + A(I,K)*T
+ 30     CONTINUE 
  40     CONTINUE
  50   B(1) = B(1)/A(1,1)
       RETURN
@@ -3195,27 +3249,29 @@ C----------------------- END OF SUBROUTINE SOL -------------------------
       integer lda,n,ipvt(n),ijob
       double precision a(lda,n),b(n)
 
-      goto (1,2) ijob
-
-1     call sol(n,n,a,b,ipvt)
-      return
-
-2     call solb(n,lda,a,ml,mu,b,ipvt)
-      return
+C      goto (1,2) ijob
+      if (ijob .eq. 1) then
+       call sol(n,n,a,b,ipvt)
+        return
+      else if (ijob .eq. 2) then
+       call solb(n,lda,a,ml,mu,b,ipvt)
+       return
+      endif
       end
 
       subroutine declu(n,a,lda,ml,mu,ipvt,ijob,info)
       integer lda,n,ipvt(n),info,ijob
       double precision a(lda,n)
 
-      goto(1,2) ijob
+C      goto(1,2) ijob
 
-   1  call dec(n,n,a,ipvt,info)
-      return
-
-   2  call decb(n,lda,a,ml,mu,ipvt,info)
-      return
-
+      if (ijob .eq. 1) then
+        call dec(n,n,a,ipvt,info)
+        return
+      else if (ijob .eq. 2) then
+        call decb(n,lda,a,ml,mu,ipvt,info)
+        return
+      endif
       end
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccca
@@ -3223,7 +3279,7 @@ c
 C     SUBROUTINE DECB
 C
       SUBROUTINE DECB (N, NDIM, A, ML, MU, IP, IER)
-      REAL*8 A,T
+      REAL(kind=8) A,T
       DIMENSION A(NDIM,N), IP(N)
 C-----------------------------------------------------------------------
 C  MATRIX TRIANGULARIZATION BY GAUSSIAN ELIMINATION OF A BANDED
@@ -3261,9 +3317,11 @@ C-----------------------------------------------------------------------
       IF (ML .EQ. 0) GO TO 70
       IF (N .EQ. 1) GO TO 70
       IF (N .LT. MU+2) GO TO 7
-      DO 5 J = MU+2,N
-      DO 5 I = 1,ML
-  5   A(I,J) = 0.D0
+      DO 6 J = MU+2,N
+       DO 5 I = 1,ML
+        A(I,J) = 0.D0
+  5    CONTINUE 
+  6   CONTINUE 
   7   NM1 = N - 1
       DO 60 K = 1,NM1
         KP1 = K + 1
@@ -3282,7 +3340,8 @@ C-----------------------------------------------------------------------
         IF (T .EQ. 0.D0) GO TO 80
         T = 1.D0/T
         DO 30 I = MD1,MDL
- 30       A(I,K) = -A(I,K)*T
+          A(I,K) = -A(I,K)*T
+ 30     CONTINUE 
         JU = MIN0(MAX0(JU,MU+IP(K)),N)
         MM = MD
         IF (JU .LT. KP1) GO TO 55
@@ -3298,7 +3357,8 @@ C-----------------------------------------------------------------------
           JK = J - K
           DO 40 I = MD1,MDL
             IJK = I - JK
- 40         A(IJK,J) = A(IJK,J) + A(I,K)*T
+            A(IJK,J) = A(IJK,J) + A(I,K)*T
+ 40       CONTINUE 
  45       CONTINUE
  50       CONTINUE
  55     CONTINUE
@@ -3316,7 +3376,7 @@ C
 C     SUBROUTINE SOLB
 C
       SUBROUTINE SOLB (N, NDIM, A, ML, MU, B, IP)
-      REAL*8 A,B,T
+      REAL(kind=8) A,B,T
       DIMENSION A(NDIM,N), B(N), IP(N)
 C-----------------------------------------------------------------------
 C  SOLUTION OF LINEAR SYSTEM, A*X = B .
@@ -3346,7 +3406,8 @@ C-----------------------------------------------------------------------
         MDL = MIN(ML,N-K) + MD
         DO 10 I = MD1,MDL
           IMD = I + K - MD
- 10       B(IMD) = B(IMD) + A(I,K)*T
+          B(IMD) = B(IMD) + A(I,K)*T
+ 10     CONTINUE 
  20     CONTINUE
  25   CONTINUE
       DO 40 KB = 1,NM1
@@ -3357,7 +3418,8 @@ C-----------------------------------------------------------------------
         LM = MAX0(1,KMD+1)
         DO 30 I = LM,MDM
           IMD = I - KMD
- 30       B(IMD) = B(IMD) + A(I,K)*T
+          B(IMD) = B(IMD) + A(I,K)*T
+ 30     CONTINUE 
  40     CONTINUE
  50   B(1) = B(1)/A(MD,1)
       RETURN
@@ -3377,8 +3439,12 @@ C      Output
       double precision Mv(m)
 C     Local variables
       integer i,j
-
-      goto(10,20) ijob
+      if (ijob .eq. 1) then 
+        goto 10
+      else if (ijob .eq. 2) then
+        goto 20
+      endif    
+C      goto(10,20) ijob
 
 10    continue
 c     Full matrix

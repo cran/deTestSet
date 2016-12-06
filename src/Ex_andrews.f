@@ -228,7 +228,7 @@ c
 
 
       subroutine andjac(neqn,t,y,ml,mu,dfdy,ldim,rpar,ipar)
-      INTEGER NEQN,MN, ipar(*),ml,mu, ldim
+      INTEGER NEQN,ipar(*),ml,mu, ldim
 c      PARAMETER (NEQN=27, MN = 27)
       DOUBLE PRECISION T, Y(27), DFDY(27,27), rpar(*)
 

@@ -435,8 +435,8 @@ C     .. INTRINSIC FUNCTIONS ..
       INTRINSIC DABS,DMAX1
 C     ..
 C     .. COMMON BLOCKS ..
-      INTEGER IDOUB,ISAMP,JSTART,KFLAG,L,MAXORD,NBSOL,NCOSET,NDEC,
-     +     NEWPAR,NRE,NJE,NPSET,NQUSED,NRENEW,NSTEP
+      INTEGER JSTART,KFLAG,L,MAXORD,NBSOL,NCOSET,NDEC,
+     +     NRE,NJE,NPSET,NQUSED,NSTEP
       SAVE T,H,HMIN,HMAX,KFLAG,JSTART
 C     ..
 
@@ -931,7 +931,22 @@ C     THEIR DERIVATION IS GIVEN IN REFERENCE 1.
 C -------------------------------------------------------------------
       IF (NQ.GT.MAXORD) MAXORD = NQ
       NCOSET = NCOSET + 1
-      GO TO (10,20,30,40,50,60,70) NQ
+      IF (NQ .EQ. 1) THEN
+        GOTO 10
+      ELSE IF (NQ .EQ. 2) THEN
+        GOTO 20
+      ELSE IF (NQ .EQ. 3) THEN
+        GOTO 30
+      ELSE IF (NQ .EQ. 4) THEN
+        GOTO 40
+      ELSE IF (NQ .EQ. 5) THEN
+        GOTO 50
+      ELSE IF (NQ .EQ. 6) THEN
+        GOTO 60
+      ELSE IF (NQ .EQ. 7) THEN
+        GOTO 70
+      ENDIF        
+C      GO TO (10,20,30,40,50,60,70) NQ
 
    10 EL(1) = 1.0D+0
       ELST(1) = 1.5D+0
@@ -1052,7 +1067,7 @@ C     .. ARRAY ARGUMENTS ..
       INTEGER IPIV(N), MBND(4)
 C     ..
 C     .. LOCAL SCALARS ..
-      INTEGER I,J,J1,JJKK,FOUR,FIVE
+      INTEGER I,J,J1,JJKK
 C     ..
 C     .. EXTERNAL SUBROUTINES ..
       EXTERNAL DEC_mebdfi,pderv,DGBFA,resid
@@ -2199,7 +2214,7 @@ C     .. COMMON BLOCKS ..
 c      COMMON / STPSZE / HSTPSZ
       INTEGER IDOUB,ISAMP,IWEVAL,JCHANG,JSINUP,JSNOLD,L,M1,M2,MAXORD,
      +        MEQC1,MEQC2,MQ1TMP,MQ2TMP,NBSOL,NCOSET,NDEC,NEWPAR,
-     +        NRE,NJE,NPSET,NQ,NQUSED,NRENEW,NSTEP,NT
+     +        NRE,NJE,NPSET,NQ,NQUSED,NRENEW,NSTEP
       LOGICAL CFAIL,JNEWIM,SAMPLE
 C     ..
 C     .. SAVE STATEMENT ..
@@ -2208,7 +2223,7 @@ C     .. SAVE STATEMENT ..
      + MEQC2,MQ1TMP,MQ2TMP,ISAMP,IER,IREDO,IWEVAL
       SAVE EDN,EUP,BND,EDDN,EL,TQ,ELST,E,QI,QQQ,
      + RH,RMAX,TOLD,CRATE1,CRATE2,HOLD,
-     + TCRAT1,TCRAT2,AVNEW2,AVOLD2,AVNEWJ,AVOLDJ,UPBND,
+     + TCRAT1,TCRAT2,AVNEWJ,AVOLDJ,UPBND,
      + RC,VTOL,OLDLO,OVRIDE
       SAVE CFAIL,SAMPLE
 
@@ -3154,11 +3169,11 @@ C ----------------------------------------------------------------------
       FINISH = .FALSE.
       T=TOLD
       RMAX=2.0D+0
-      DO 460 J1=1,L
+      DO 465 J1=1,L
          DO 460 I=1,N
             Y(I,J1)=YHOLD(I,J1)
  460  CONTINUE
-
+ 465  CONTINUE
       IF(DABS(H).LE.HMIN*1.00001D+0) THEN
 C
 C   CORRECTOR CONVERGENCE COULD NOT BE ACHIEVED
@@ -3368,7 +3383,8 @@ C
          DO 5 I=12,2,-1
             I2=I-1
             HSTPSZ(1,I)=HSTPSZ(1,I2)
- 5       HSTPSZ(2,I)=HSTPSZ(2,I2)
+            HSTPSZ(2,I)=HSTPSZ(2,I2)
+ 5       CONTINUE
 C
 C          NOW INSERT VALUE OF H USED BEFORE THIS CALL
 C
@@ -4271,10 +4287,12 @@ C
             IF (LARGE(2) .EQ. 64 .AND. SMALL(2) .EQ. 0) THEN
                CRAY1(1) = 67291416
                DO 10 J = 1, 20
- 10               CRAY1(J+1) = CRAY1(J) + CRAY1(J)
+                 CRAY1(J+1) = CRAY1(J) + CRAY1(J)
+ 10            CONTINUE
                CRAY1(22) = CRAY1(21) + 321322
                DO 20 J = 22, 37
- 20               CRAY1(J+1) = CRAY1(J) + CRAY1(J)
+                 CRAY1(J+1) = CRAY1(J) + CRAY1(J)
+ 20            CONTINUE
                IF (CRAY1(38) .EQ. SMALL(1)) THEN
 *                  *** CRAY ***
 *                 SMALL(1) = 2332160919536140288

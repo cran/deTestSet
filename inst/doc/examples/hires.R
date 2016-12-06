@@ -78,8 +78,8 @@ exact <- c(y1 = 0.7371312573325668e-3, y2 = 0.1442485726316185e-3,
 print (max(abs(out1[nrow(out1),-1]   -exact)))
 print (max(abs(out2[nrow(out1),-1]   -exact)))
 print (max(abs(out3[nrow(out1),-1]   -exact)))
-print (max(abs(out4[nrow(out1),-1]   -exact)))
-print (max(abs(out6[nrow(out1),-1]   -exact)))
+#print (max(abs(out4[nrow(out1),-1]   -exact)))
+#print (max(abs(out6[nrow(out1),-1]   -exact)))
 
 # -------------------------------------------------------
 # run at high resolution for 5 days

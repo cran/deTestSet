@@ -111,7 +111,7 @@ c----------------------------------------------------------------------
 c     initial conditions...
 c----------------------------------------------------------------------
       SUBROUTINE fekinit(N,T,Y,YPRIME)
-      DOUBLE PRECISION Y(160),T,PI,RPAR(1),DY(160),YPRIME(160)
+      DOUBLE PRECISION Y(160),T,PI,RPAR(1),YPRIME(160)
       INTEGER N, NART, ipar(1)
       double precision alpha,beta
 C

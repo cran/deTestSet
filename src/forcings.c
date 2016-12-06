@@ -2,6 +2,8 @@
 to the integration routines */
 
 #include "de.h"
+#include "externalptr.h"
+
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    Forcing functions (compiled code)
    **FORCING FUNCTIONS**, or external variables need to be interpolated 
@@ -70,7 +72,7 @@ int initForcings(SEXP flist) {
       for (j = 0; j < i; j++) ivec[j] = INTEGER(Ivec)[j];
 
       fmethod = INTEGER(Ivec)[i];
-      initforcings = (init_func_type *) R_ExternalPtrAddr(initforc);
+      initforcings = (init_func_type *) R_ExternalPtrAddrFn_(initforc);
       initforcings(Initdeforc);
       isForcing = 1;
     }
@@ -209,7 +211,7 @@ int initEvents(SEXP elist, SEXP eventfunc) {
      } else {   
         /* a function: either R (typeevent=2) or compiled code (3)... */
         if (typeevent == 3)  {
-          event_func = (event_func_type *) R_ExternalPtrAddr(eventfunc);
+          event_func = (event_func_type *) R_ExternalPtrAddrFn_(eventfunc);
         } else {
           event_func = C_event_func;
           R_event_func = eventfunc; 

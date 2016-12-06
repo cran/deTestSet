@@ -9,7 +9,7 @@
 }
 \description{
   R package deTestSet contains the R-version of the ODE and DAE initial value 
-  problems test set from \url{http://www.dm.uniba.it/\~testset}.  
+  problems test set from the url: http://www.dm.uniba.it/\~testset.  
 
   If the test model problem is small enough, then it is implemented in
   pure R. For larger models, the problem is specified in FORTRAN code.

@@ -1,6 +1,7 @@
 #include <time.h>
 #include <string.h>
 #include "de.h"
+#include "externalptr.h"
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    Explicit runge-Kutta of order 8(5,3)
@@ -238,7 +239,7 @@ SEXP call_dop(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   
  /* pointers to functions deriv_func, jac_func, jac_vec, root_func, passed to FORTRAN */
   if (isDll)  { /* DLL address passed to FORTRAN */
-      deriv_func = (C_deriv_func_type *) R_ExternalPtrAddr(derivfunc);  
+      deriv_func = (C_deriv_func_type *) R_ExternalPtrAddrFn_(derivfunc);  
 	  
  	   /* overruling deriv_func if forcing */
       if (isForcing) {

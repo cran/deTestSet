@@ -4,6 +4,7 @@
 #include <Rdefines.h>
 #include <R_ext/Applic.h>
 #include "de.h"
+#include "externalptr.h"
 
 /*==================================================
 some functions for keeping track of how many SEXPs
@@ -64,7 +65,7 @@ void initParms(SEXP Initfunc, SEXP Parms) {
   if (inherits(Initfunc, "NativeSymbol")) {
     init_func_type *initializer;
     PROTECT(de_gparms = Parms); incr_N_Protect();
-    initializer = (init_func_type *) R_ExternalPtrAddr(Initfunc);
+    initializer = (init_func_type *) R_ExternalPtrAddrFn_(Initfunc);
     initializer(Initdeparms);
   }
 }
@@ -194,7 +195,7 @@ void F77_NAME(dblep0k) (const char *label, int *nchar, double *data, int *ndata)
 {
     int k, nc = *nchar;
 
-    if(nc < 0) nc = strlen(label);
+    if(nc < 0) nc = (int) strlen(label);
     if(nc > 255) {
 	warning("invalid character length in dblepr");
 	nc = 0;
@@ -215,7 +216,7 @@ void F77_NAME(intp0k) (const char *label, int *nchar, int *data, int *ndata)
 {
     int k, nc = *nchar;
 
-    if(nc < 0) nc = strlen(label);
+    if(nc < 0) nc = (int) strlen(label);
     if(nc > 255) {
 	warning("invalid character length in intpr");
 	nc = 0;

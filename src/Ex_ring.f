@@ -53,7 +53,7 @@ c     derivative function
 c----------------------------------------------------------------------
 
       subroutine ringfunc(neqn,t,y,f,rpar,ipar)
-      integer neqn,ierr,ipar(*)
+      integer neqn,ipar(*)
       double precision t,y(neqn),f(neqn),rpar(*)
 
       double precision c,cs,cp,r,rp,lh,ls1,ls2,ls3,rg1,rg2,rg3,ri,rc,

@@ -1568,7 +1568,18 @@ C     THE ORDER OF THE METHOD HAS BEEN CHANGED
       ERROR    = .FALSE.
       MINIT    = INDEXD
 C     DEFINE THE PARAMETERS DEPENDING ON THE ORDER OF THE METHOD
-      GOTO(105,110,115,120,125) ORD_IND
+      if (ord_ind .eq. 1) then
+        goto 105  
+      else if (ord_ind .eq. 2) then
+        goto 110  
+      else if (ord_ind .eq. 3) then
+        goto 115  
+      else if (ord_ind .eq. 4) then
+        goto 120  
+      else if (ord_ind .eq. 5) then
+        goto 125  
+      endif  
+C      GOTO(105,110,115,120,125) ORD_IND
 105   GAMMA  = gamma4
       RHOT   = rhot4
       RHOTUP = rhot6
@@ -2080,7 +2091,18 @@ C karline: changed
          GOTO 305
       END IF
 
-      GOTO (210,220,230,240,250) ORD_IND
+      if (ord_ind .eq. 1) then
+        goto 210  
+      else if (ord_ind .eq. 2) then 
+        goto 220  
+      else if (ord_ind .eq. 3) then
+        goto 230  
+      else if (ord_ind .eq. 4) then
+        goto 240  
+      else if (ord_ind .eq. 5) then
+        goto 250  
+      endif  
+C      GOTO (210,220,230,240,250) ORD_IND
 
 210   CALL blendstep4(M,Y0,F0,Y,F,H,THETA,IPVT,ERR,
      &                GAMMA,LDLU,MLJAC,MUJAC,IJOB,IMAS,
@@ -2197,7 +2219,12 @@ C     LOCAL ERROR ESTIMATION
 
       NERRLOC0 = NERRLOC
       
-      GOTO (310,320,320,320,320) ORD_IND
+      if (ord_ind .eq. 1) then
+        goto 310  
+      else if (ord_ind .le. 5) then 
+        goto 320  
+      endif  
+C      GOTO (310,320,320,320,320) ORD_IND
 310   CALL localerr4(M,F0,F,H,ERR,SCAL,NERR,NERRUP,NLINSYS,
      &               THETA,VMAX,IPVT,LDLU,MLJAC,MUJAC,IJOB,
      &               IMAS,LDMAS,MLMAS,MUMAS,M0,K,ORD_IND,

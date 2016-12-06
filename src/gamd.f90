@@ -129,14 +129,16 @@ SUBROUTINE DEC (N, NDIM, A, IP, IER)
         IF (T .EQ. 0.D0) GO TO 80
         T = 1.D0/T
         DO 30 I = KP1,N
- 30       A(I,K) = -A(I,K)*T
+          A(I,K) = -A(I,K)*T
+ 30     CONTINUE
         DO 50 J = KP1,N
           T = A(M,J)
           A(M,J) = A(K,J)
           A(K,J) = T
           IF (T .EQ. 0.D0) GO TO 45
           DO 40 I = KP1,N
- 40         A(I,J) = A(I,J) + A(I,K)*T
+            A(I,J) = A(I,J) + A(I,K)*T
+ 40       CONTINUE
  45       CONTINUE
  50       CONTINUE
  60     CONTINUE
@@ -183,7 +185,8 @@ SUBROUTINE SOL (N, NDIM, A, B, IP)
         B(M) = B(K)
         B(K) = T
         DO 10 I = KP1,N
- 10       B(I) = B(I) + A(I,K)*T
+          B(I) = B(I) + A(I,K)*T
+ 10     CONTINUE
  20     CONTINUE
       DO 40 KB = 1,NM1
         KM1 = N - KB
@@ -191,7 +194,8 @@ SUBROUTINE SOL (N, NDIM, A, B, IP)
         B(K) = B(K)/A(K,K)
         T = -B(K)
         DO 30 I = 1,KM1
- 30       B(I) = B(I) + A(I,K)*T
+          B(I) = B(I) + A(I,K)*T
+ 30     CONTINUE
  40     CONTINUE
  50   B(1) = B(1)/A(1,1)
       RETURN
@@ -244,9 +248,11 @@ SUBROUTINE DECB (N, NDIM, A, ML, MU, IP, IER)
       IF (ML .EQ. 0) GO TO 70
       IF (N .EQ. 1) GO TO 70
       IF (N .LT. MU+2) GO TO 7
-      DO 5 J = MU+2,N
+      DO 6 J = MU+2,N
       DO 5 I = 1,ML
-  5   A(I,J) = 0.D0
+        A(I,J) = 0.D0
+  5   CONTINUE
+  6   CONTINUE  
   7   NM1 = N - 1
       DO 60 K = 1,NM1
         KP1 = K + 1
@@ -265,7 +271,8 @@ SUBROUTINE DECB (N, NDIM, A, ML, MU, IP, IER)
         IF (T .EQ. 0.D0) GO TO 80
         T = 1.D0/T
         DO 30 I = MD1,MDL
- 30       A(I,K) = -A(I,K)*T
+          A(I,K) = -A(I,K)*T
+ 30     CONTINUE  
         JU = MIN0(MAX0(JU,MU+IP(K)),N)
         MM = MD
         IF (JU .LT. KP1) GO TO 55
@@ -281,7 +288,8 @@ SUBROUTINE DECB (N, NDIM, A, ML, MU, IP, IER)
           JK = J - K
           DO 40 I = MD1,MDL
             IJK = I - JK
- 40         A(IJK,J) = A(IJK,J) + A(I,K)*T
+            A(IJK,J) = A(IJK,J) + A(I,K)*T
+ 40       CONTINUE
  45       CONTINUE
  50       CONTINUE
  55     CONTINUE
@@ -305,7 +313,7 @@ SUBROUTINE SOLB (N, NDIM, A, ML, MU, B, IP)
   REAL(PREC), INTENT(IN) :: A(NDIM,N)
   REAL(PREC), INTENT(IN OUT) :: B(N)
   REAL(PREC) :: T
-  INTEGER :: MD, MD1,NM1,M, JU, I, J, K, KB,MDM,KMD, LM, MDL, IMD
+  INTEGER :: MD, MD1,NM1,M, I, K, KB,MDM,KMD, LM, MDL, IMD
 
   !!-----------------------------------------------------------------------
   !!  SOLUTION OF LINEAR SYSTEM, A*X = B .
@@ -335,7 +343,8 @@ SUBROUTINE SOLB (N, NDIM, A, ML, MU, B, IP)
         MDL = MIN(ML,N-K) + MD
         DO 10 I = MD1,MDL
           IMD = I + K - MD
- 10       B(IMD) = B(IMD) + A(I,K)*T
+          B(IMD) = B(IMD) + A(I,K)*T
+ 10     CONTINUE
  20     CONTINUE
  25   CONTINUE
       DO 40 KB = 1,NM1
@@ -346,7 +355,8 @@ SUBROUTINE SOLB (N, NDIM, A, ML, MU, B, IP)
         LM = MAX0(1,KMD+1)
         DO 30 I = LM,MDM
           IMD = I - KMD
- 30       B(IMD) = B(IMD) + A(I,K)*T
+          B(IMD) = B(IMD) + A(I,K)*T
+ 30     CONTINUE
  40     CONTINUE
  50   B(1) = B(1)/A(MD,1)
       RETURN
@@ -967,7 +977,7 @@ SUBROUTINE INTERP(R,TP,YP,T1,F1,NT1,DBLKOLD,DBLK,T0,Y0)
   INTEGER, INTENT(IN) :: R, DBLK, DBLKOLD, NT1
   REAL(PREC), INTENT(IN) :: F1(R,*), T1(*), Y0(R), T0
   REAL(PREC), INTENT(IN OUT) :: YP(R,*), TP(*)
-  INTEGER :: I,J, N, IT1, NT2, NTi
+  INTEGER :: J, N, IT1, NT2, NTi
 
   IF (DBLK < DBLKOLD) THEN
      NTi = MAX(5,NT1)
@@ -1095,7 +1105,7 @@ SUBROUTINE  TERMNOT3(R,FCN,H,IT,DN, F1,FP,YP,TP,NFCN,                    &
   !!   LOCAL VARIABLES
   !!------------------------------------
   INTEGER  :: J, IERR
-  REAL(PREC) ::  ERRVJ, SUM, FAC, ZP(R)
+  REAL(PREC) ::  ERRVJ, SUM, ZP(R)
 
   EXTERNAL FCN
   !!
@@ -1511,7 +1521,7 @@ SUBROUTINE  TERMNOT5(R,FCN,H,IT,DN, F1,FP,YP,TP,NFCN,                    &
   !!   LOCAL VARIABLES
   !!------------------------------------
   INTEGER  :: J, IERR
-  REAL(PREC) ::  ERRVJ, SUM, FAC, ZP(R)
+  REAL(PREC) ::  ERRVJ, SUM, ZP(R)
 
   EXTERNAL FCN
   !!
@@ -2104,7 +2114,7 @@ SUBROUTINE  TERMNOT7(R,FCN,H,IT,DN, F1,FP,YP,TP,NFCN,                    &
   !!   LOCAL VARIABLES
   !!------------------------------------
   INTEGER  :: J, IERR
-  REAL(PREC) ::  ERRVJ, SUM, FAC, ZP(R)
+  REAL(PREC) ::  ERRVJ, SUM, ZP(R)
 
   EXTERNAL FCN
   !!
@@ -2901,7 +2911,7 @@ SUBROUTINE  TERMNOT9(R,FCN,H,IT,DN, F1,FP,YP,TP,NFCN,                    &
   !!   LOCAL VARIABLES
   !!------------------------------------
   INTEGER  :: J, IERR
-  REAL(PREC) ::  ERRVJ, SUM, FAC, ZP(R)
+  REAL(PREC) ::  ERRVJ, SUM, ZP(R)
 
   EXTERNAL FCN
   !!
@@ -4514,7 +4524,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
          &                  SFDOWN, SFUP, SFSAME, SF, UROUND
     INTEGER :: ORDMIN, ORDMAX, ITINT(4), ITMAX, IJOB, NMAX, LDJAC, LDLU, LDMAS
     INTEGER ::  NDEC, NFCN, NJAC, NSTEP(4), NNEWT(4), NERR(4)
-    INTEGER ::  IEYP, IEFP, IEDN,IEF,IEF1, IEJF0,IELU, ISTORE, &
+    INTEGER ::  IEFP, ISTORE,                                                   &
          &   I,IEIPIV, IESC, NIND1, NIND2, NIND3
     LOGICAL ::  ARRET, JBAND, IMPLCT
 
@@ -5080,11 +5090,11 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
            &                  THETA, TETAK, TETAKOLD,THETAPREC,    &
            &                  HOLD, HDEC,  ERRNEWT, ERRNEWT0,ESP,  &
            &                  ERRUP, ERRSAME, ERRDOWN, RR, RRN, TH, THN, FACN
-      REAL(PREC) ::    DYTH,QNEWT, HHFAC, HACC, R0, HEXTRAP, CPORD(4), ERRSAMEOLD
+      REAL(PREC) :: HACC, HEXTRAP, CPORD(4), ERRSAMEOLD
 
-      INTEGER ::  IFAC,  IERR
+      INTEGER :: IERR
       LOGICAL :: JBAND, CALJAC, NEWJAC, JVAI, TER, EXTRAP
-      LOGICAL :: VAR, INDEX1, INDEX2, INDEX3
+      LOGICAL :: INDEX1, INDEX2, INDEX3
       !!
       !!   EXTERNAL FUNCTIONS
       !!------------------------------------

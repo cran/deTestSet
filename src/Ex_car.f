@@ -60,7 +60,7 @@ C
 c-----------------------------------------------------------------------
       subroutine carfunc(neqn,t,y,f,rpar,ipar)
       implicit none
-      integer neqn,ierr,ipar(*), i
+      integer neqn,ipar(*), i
       double precision t,y(neqn),f(neqn),rpar(*)      
       double precision xb,yb,Ll,Lr,xl,yl,xr,yr,lam1,lam2
 

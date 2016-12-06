@@ -607,48 +607,60 @@ C --- THE TWELVE STAGES
          CALL FCN(N,X,Y,K1,RPAR,IPAR)
       END IF
       DO 22 I=1,N 
-  22  Y1(I)=Y(I)+H*A21*K1(I)  
+      Y1(I)=Y(I)+H*A21*K1(I)  
+  22  CONTINUE
       CALL FCN(N,X+C2*H,Y1,K2,RPAR,IPAR)
       DO 23 I=1,N 
-  23  Y1(I)=Y(I)+H*(A31*K1(I)+A32*K2(I))  
+      Y1(I)=Y(I)+H*(A31*K1(I)+A32*K2(I))  
+  23  CONTINUE
       CALL FCN(N,X+C3*H,Y1,K3,RPAR,IPAR)
       DO 24 I=1,N 
-  24  Y1(I)=Y(I)+H*(A41*K1(I)+A43*K3(I))  
+      Y1(I)=Y(I)+H*(A41*K1(I)+A43*K3(I))
+  24  CONTINUE  
       CALL FCN(N,X+C4*H,Y1,K4,RPAR,IPAR)
       DO 25 I=1,N 
-  25  Y1(I)=Y(I)+H*(A51*K1(I)+A53*K3(I)+A54*K4(I))
+      Y1(I)=Y(I)+H*(A51*K1(I)+A53*K3(I)+A54*K4(I))
+  25  CONTINUE
       CALL FCN(N,X+C5*H,Y1,K5,RPAR,IPAR)
       DO 26 I=1,N 
-  26  Y1(I)=Y(I)+H*(A61*K1(I)+A64*K4(I)+A65*K5(I))
+      Y1(I)=Y(I)+H*(A61*K1(I)+A64*K4(I)+A65*K5(I))
+  26  CONTINUE
       CALL FCN(N,X+C6*H,Y1,K6,RPAR,IPAR)
       DO 27 I=1,N 
-  27  Y1(I)=Y(I)+H*(A71*K1(I)+A74*K4(I)+A75*K5(I)+A76*K6(I))
+      Y1(I)=Y(I)+H*(A71*K1(I)+A74*K4(I)+A75*K5(I)+A76*K6(I))
+  27  CONTINUE
       CALL FCN(N,X+C7*H,Y1,K7,RPAR,IPAR)
       DO 28 I=1,N 
-  28  Y1(I)=Y(I)+H*(A81*K1(I)+A84*K4(I)+A85*K5(I)+A86*K6(I)+A87*K7(I))  
+      Y1(I)=Y(I)+H*(A81*K1(I)+A84*K4(I)+A85*K5(I)+A86*K6(I)+A87*K7(I))  
+  28  CONTINUE
       CALL FCN(N,X+C8*H,Y1,K8,RPAR,IPAR)
       DO 29 I=1,N 
-  29  Y1(I)=Y(I)+H*(A91*K1(I)+A94*K4(I)+A95*K5(I)+A96*K6(I)+A97*K7(I)
+      Y1(I)=Y(I)+H*(A91*K1(I)+A94*K4(I)+A95*K5(I)+A96*K6(I)+A97*K7(I)
      &   +A98*K8(I))
+  29  CONTINUE
       CALL FCN(N,X+C9*H,Y1,K9,RPAR,IPAR)
       DO 30 I=1,N 
-  30  Y1(I)=Y(I)+H*(A101*K1(I)+A104*K4(I)+A105*K5(I)+A106*K6(I)
+      Y1(I)=Y(I)+H*(A101*K1(I)+A104*K4(I)+A105*K5(I)+A106*K6(I)
      &   +A107*K7(I)+A108*K8(I)+A109*K9(I))
+  30  CONTINUE
       CALL FCN(N,X+C10*H,Y1,K10,RPAR,IPAR)
       DO 31 I=1,N 
-  31  Y1(I)=Y(I)+H*(A111*K1(I)+A114*K4(I)+A115*K5(I)+A116*K6(I)
+      Y1(I)=Y(I)+H*(A111*K1(I)+A114*K4(I)+A115*K5(I)+A116*K6(I)
      &   +A117*K7(I)+A118*K8(I)+A119*K9(I)+A1110*K10(I))
+  31  CONTINUE
       CALL FCN(N,X+C11*H,Y1,K2,RPAR,IPAR)
       XPH=X+H
       DO 32 I=1,N 
-  32  Y1(I)=Y(I)+H*(A121*K1(I)+A124*K4(I)+A125*K5(I)+A126*K6(I)
+      Y1(I)=Y(I)+H*(A121*K1(I)+A124*K4(I)+A125*K5(I)+A126*K6(I)
      &   +A127*K7(I)+A128*K8(I)+A129*K9(I)+A1210*K10(I)+A1211*K2(I))
+  32  CONTINUE
       CALL FCN(N,XPH,Y1,K3,RPAR,IPAR)
       NFCN=NFCN+11
       DO 35 I=1,N 
       K4(I)=B1*K1(I)+B6*K6(I)+B7*K7(I)+B8*K8(I)+B9*K9(I)
      &   +B10*K10(I)+B11*K2(I)+B12*K3(I)
-  35  K5(I)=Y(I)+H*K4(I)
+      K5(I)=Y(I)+H*K4(I)
+  35  CONTINUE
 C --- ERROR ESTIMATION  
       ERR=0.D0
       ERR2=0.D0
@@ -659,7 +671,8 @@ C --- ERROR ESTIMATION
         ERR2=ERR2+(ERRI/SK)**2
         ERRI=ER1*K1(I)+ER6*K6(I)+ER7*K7(I)+ER8*K8(I)+ER9*K9(I)
      &      +ER10*K10(I)+ER11*K2(I)+ER12*K3(I)
-  41    ERR=ERR+(ERRI/SK)**2
+        ERR=ERR+(ERRI/SK)**2
+  41    CONTINUE
       ELSE
         DO 42 I=1,N 
         SK=ATOL(I)+RTOL(I)*MAX(ABS(Y(I)),ABS(K5(I)))
@@ -667,7 +680,8 @@ C --- ERROR ESTIMATION
         ERR2=ERR2+(ERRI/SK)**2
         ERRI=ER1*K1(I)+ER6*K6(I)+ER7*K7(I)+ER8*K8(I)+ER9*K9(I)
      &      +ER10*K10(I)+ER11*K2(I)+ER12*K3(I)
-  42    ERR=ERR+(ERRI/SK)**2
+        ERR=ERR+(ERRI/SK)**2
+  42  CONTINUE
       END IF  
       DENO=ERR+0.01D0*ERR2
       IF (DENO.LE.0.D0) DENO=1.D0
@@ -732,19 +746,22 @@ C ----    SAVE THE FIRST FUNCTION EVALUATIONS
    62       CONTINUE 
 C ---     THE NEXT THREE FUNCTION EVALUATIONS
             DO 51 I=1,N 
-  51           Y1(I)=Y(I)+H*(A141*K1(I)+A147*K7(I)+A148*K8(I)
+            Y1(I)=Y(I)+H*(A141*K1(I)+A147*K7(I)+A148*K8(I)
      &            +A149*K9(I)+A1410*K10(I)+A1411*K2(I)+A1412*K3(I)
      &            +A1413*K4(I))
+  51        CONTINUE
             CALL FCN(N,X+C14*H,Y1,K10,RPAR,IPAR)
             DO 52 I=1,N 
-  52           Y1(I)=Y(I)+H*(A151*K1(I)+A156*K6(I)+A157*K7(I)
+            Y1(I)=Y(I)+H*(A151*K1(I)+A156*K6(I)+A157*K7(I)
      &            +A158*K8(I)+A1511*K2(I)+A1512*K3(I)+A1513*K4(I)
      &            +A1514*K10(I))
+  52        CONTINUE
             CALL FCN(N,X+C15*H,Y1,K2,RPAR,IPAR)
             DO 53 I=1,N 
-  53           Y1(I)=Y(I)+H*(A161*K1(I)+A166*K6(I)+A167*K7(I)
+            Y1(I)=Y(I)+H*(A161*K1(I)+A166*K6(I)+A167*K7(I)
      &            +A168*K8(I)+A169*K9(I)+A1613*K4(I)+A1614*K10(I)
      &            +A1615*K2(I))
+  53        CONTINUE
             CALL FCN(N,X+C16*H,Y1,K3,RPAR,IPAR)
             NFCN=NFCN+3 
 C ---     FINAL PREPARATION
@@ -763,7 +780,8 @@ C ---     FINAL PREPARATION
          END IF
          DO 67 I=1,N
          K1(I)=K4(I)
-  67     Y(I)=K5(I)
+         Y(I)=K5(I)
+  67     CONTINUE
          XOLD=X
          X=XPH
          IF (IOUT.EQ.1.OR.IOUT.EQ.2.OR.EVENT) THEN
@@ -844,12 +862,14 @@ C ---- COMPARED TO THE SOLUTION
         DO 10 I=1,N 
         SK=ATOLI+RTOLI*ABS(Y(I))
         DNF=DNF+(F0(I)/SK)**2
-  10    DNY=DNY+(Y(I)/SK)**2 
+        DNY=DNY+(Y(I)/SK)**2 
+  10    CONTINUE
       ELSE
         DO 11 I=1,N 
         SK=ATOL(I)+RTOL(I)*ABS(Y(I))
         DNF=DNF+(F0(I)/SK)**2
-  11    DNY=DNY+(Y(I)/SK)**2 
+        DNY=DNY+(Y(I)/SK)**2 
+  11    CONTINUE
       END IF
       IF (DNF.LE.1.D-10.OR.DNY.LE.1.D-10) THEN
          H=1.0D-6
@@ -860,18 +880,21 @@ C ---- COMPARED TO THE SOLUTION
       H=SIGN(H,POSNEG) 
 C ---- PERFORM AN EXPLICIT EULER STEP
       DO 12 I=1,N
-  12  Y1(I)=Y(I)+H*F0(I)
+       Y1(I)=Y(I)+H*F0(I)
+  12  CONTINUE
       CALL FCN(N,X+H,Y1,F1,RPAR,IPAR) 
 C ---- ESTIMATE THE SECOND DERIVATIVE OF THE SOLUTION
       DER2=0.0D0
       IF (ITOL.EQ.0) THEN   
         DO 15 I=1,N 
-        SK=ATOLI+RTOLI*ABS(Y(I))
-  15    DER2=DER2+((F1(I)-F0(I))/SK)**2   
+         SK=ATOLI+RTOLI*ABS(Y(I))
+         DER2=DER2+((F1(I)-F0(I))/SK)**2   
+  15    CONTINUE
       ELSE
         DO 16 I=1,N 
         SK=ATOL(I)+RTOL(I)*ABS(Y(I))
-  16    DER2=DER2+((F1(I)-F0(I))/SK)**2   
+          DER2=DER2+((F1(I)-F0(I))/SK)**2  
+  16    CONTINUE 
       END IF
       DER2=SQRT(DER2)/H
 C ---- STEP SIZE IS COMPUTED SUCH THAT

@@ -1,6 +1,7 @@
 #include <time.h>
 #include <string.h>
 #include "de.h"
+#include "externalptr.h"
 
 /* globals for when mass matrix is used with func in a DLL with mass matrix   */
 int isMass;
@@ -125,7 +126,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   int    isForcing , Itol, *mbnd, mf, maxord, isOut;
   double *xytmp,  *xdytmp, *rwork, tin, tout, *Atol, *Rtol, tcrit, hini;
   double *delta=NULL, cj;
-  int    idid, *iwork, mflag, ires, ierr, funtype;
+  int    idid, *iwork, ires, ierr, funtype;
 
   C_res_func_type  *res_func = NULL;
   C_jac_func_type  *jac_func = NULL;
@@ -141,7 +142,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 
   n_eq = LENGTH(y);
   nt = LENGTH(times);
-  mflag = INTEGER(verbose)[0];        
+//  mflag = INTEGER(verbose)[0];        
   nout  = INTEGER(nOut)[0];
   funtype  = INTEGER(Funtype)[0]; /* 1 = res, 2 = func */
 
@@ -247,15 +248,15 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   isMass = 0;
   if (isDll == 1)  {       /* DLL address passed to fortran */
       if (funtype == 1) {
-        res_func = (C_res_func_type *) R_ExternalPtrAddr(resfunc);
+        res_func = (C_res_func_type *) R_ExternalPtrAddrFn_(resfunc);
          if(isForcing==1) {
-           DLL_res_func = (C_res_func_type *) R_ExternalPtrAddr(resfunc);
+           DLL_res_func = (C_res_func_type *) R_ExternalPtrAddrFn_(resfunc);
            res_func = (C_res_func_type *) DLL_res_func_forc;
          }
 
       } else if (funtype <= 3) {
         res_func = DLL_res_ode;
-        DLL_deriv_func = (C_deriv_func_type *) R_ExternalPtrAddr(resfunc);
+        DLL_deriv_func = (C_deriv_func_type *) R_ExternalPtrAddrFn_(resfunc);
         if(isForcing==1)
           res_func = (C_res_func_type *) DLL_res_func_forc2;
         if (funtype == 3) {    /* mass matrix */
@@ -282,7 +283,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   if (!isNull(jacfunc))
     {
       if (inherits(jacfunc,"NativeSymbol"))
-	      jac_func = (C_jac_func_type *) R_ExternalPtrAddr(jacfunc);
+	      jac_func = (C_jac_func_type *) R_ExternalPtrAddrFn_(jacfunc);
       else  {
 	      jac_func = (C_jac_func_type *) C_jac_func;
 	      PROTECT(R_daejac_func = jacfunc);         incr_N_Protect();
