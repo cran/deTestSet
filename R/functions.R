@@ -274,7 +274,7 @@ saveOutrk <- function(out, y, n, Nglobal, Nmtot, iin, iout)  {
 printpr <- function (out, prob, name, rtol, atol) {
    mescd <- NULL 
    if (nrow(out) > 0) 
-    if ( abs(out[nrow(out),1]-prob$t[2]) < 1e-10 ) { 
+    if ( abs(out[nrow(out),1]-prob$t[2])/(1+abs(prob$t[2])) < 1e-10 ) {
  	   ref = reference(name)
 	   mescd = min(-log10(abs(out[nrow(out),-1] - ref)/(atol/rtol+abs(ref))))
 	   printM(prob$fullnm)

@@ -242,7 +242,9 @@ C --- Enhancement-type
       END IF
       if(phi-vbs.lt.0d0.or.phi.lt.0d0)then
          ierr=-1
-         return
+!         return
+         nandGDSP = 0.D0
+         goto 100
       end if
 
       VTE = VT0 + CGAMMA * ( DSQRT(PHI-VBS) - DSQRT(PHI) )
@@ -256,7 +258,7 @@ C --- Enhancement-type
      *          (1.D0 + DELTA*VDS)
       END IF
 
-      RETURN
+100   RETURN
       END
 
       double precision FUNCTION nandGDSM (NED,VDS, VGD, VBD, ierr)
@@ -289,7 +291,9 @@ C --- Enhancement-type
 
       if(phi-vbd.lt.0d0.or.phi.lt.0d0)then
          ierr=-1
-         return
+!         return
+         nandGDSM = 0.D0
+         goto 100
       end if
 
       VTE = VT0 + CGAMMA * ( DSQRT(PHI-VBD) - DSQRT(PHI) )
@@ -303,7 +307,7 @@ C --- Enhancement-type
      *          (1.D0 - DELTA*VDS)
       END IF
 
-      RETURN
+100   RETURN
       END
 
 

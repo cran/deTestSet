@@ -283,15 +283,15 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
         }
         JF <- -1* jacfunc(Rin[1],y,parms,...)
         if (imp %in% c(23,24))  {
-          JF[bandup+1,]<-JF[bandup+1,]+Rin[2]
-          JF <- rbind(erow,JF)
+          JF[bandup+1,]<-JF[bandup+1,]+1/Rin[2]
+          JF <- rbind(JF,erow)
         } else
-          JF           <-JF + diag(ncol = n, nrow = n, x = Rin[2])
+          JF           <-JF + diag(ncol = n, nrow = n, x = 1/Rin[2])
         return(JF)
       }
       else
       {
-         if (imp %in% c(24,25))
+         if (imp %in% c(23,24))
            stop("cannot combine banded jacobian with mass")
          JacRes <- function(Rin,y,dy) {
           if(ynames) {
@@ -299,7 +299,7 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
             attr(dy,"names") <- dYnames
           }
           JF <- -1* jacfunc(Rin[1],y,parms,...)
-          JF <- JF + Rin[2]*mass
+          JF <- JF + 1/Rin[2]*mass
         return(JF)
         }
       }
@@ -343,7 +343,7 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
 ### the mbnd vector
   mbnd   <- vector("integer",4)
   mbnd[] <- 0
-  if (imp %in% c(25,24)) { # sparse Jacobian
+  if (imp %in% c(23,24)) { # sparse Jacobian
     mbnd[1] <- banddown
     mbnd[2] <- bandup
     mbnd[3] <- bandup + banddown +1
@@ -351,7 +351,6 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
 
   }
   if (imp<23) mbnd[]<-n
-
 ### tolerances
   if (length(atol)==n) {
     if (length(rtol) == n)

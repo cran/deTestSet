@@ -20,6 +20,7 @@
  int type ;     /* 1 = dopri 8, 2 = dopri5, 3 = cashkarp */
  int lrc;
 
+  C_deriv_func_type *deriv_func;
 
 /* definition of the calls to the FORTRAN subroutines in file cash.f, dopri853 and 
    dopri5.f */
@@ -167,7 +168,6 @@ SEXP call_dop(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
   /* pointers to functions passed to FORTRAN */
   C_solout_type         *solout = NULL;
-
 /******************************************************************************/
 /******                         STATEMENTS                               ******/
 /******************************************************************************/

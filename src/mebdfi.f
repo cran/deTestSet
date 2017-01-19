@@ -94,6 +94,7 @@ C              THE CALL WITH IDID = 1 IS SIMPLY THE FIRST
 C              INITIALISING STEP FOR THE CODE.  THE USER
 C              THEN NEEDS TO CONTINUE WITH IDID=0,-1,2 OR 3 AS ABOVE.
 C     LOUT   = THE LOGICAL OUTPUT CHANNEL FOR MESSAGE PASSING.
+C              removed
 C     MBND   = AN ARRAY OF DIMENSION 4 FOR USE WHEN THE NEWTON ITERATION
 C              MATRIX IS BANDED.  IF THIS MATRIX HAS ML DIAGONALS
 C              BELOW THE MAIN DIAGONAL AND MU DIAGONALS ABOVE THE
@@ -384,7 +385,7 @@ c
       IERR = 0
 c
 c     THE ERROR FLAG IS INITIALISED
-      CALL OVDRIV(N,MBND(4),T0,HO,Y0,YPRIME,TOUT,TEND,MF,IDID,LOUT,
+      CALL OVDRIV(N,MBND(4),T0,HO,Y0,YPRIME,TOUT,TEND,MF,IDID,
      +    WORK(3),WORK(I1),WORK(I2),WORK(I3),WORK(I4),WORK(I5),WORK(I6),
      +     WORK(I7),WORK(I8),WORK(I9),WORK(I10),IWORK(15),
      +     MBND,IWORK(1),IWORK(2),IWORK(3),MAXDER,ITOL,RTOL,ATOL,RPAR,
@@ -405,7 +406,7 @@ C     <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       END
 C--------------------------------------------------------------------------
 C KS: added NPD to check pw and pwcopy
-      SUBROUTINE OVDRIV(N,NPD,T0,HO,Y0,YPRIME,TOUT,TEND,MF,IDID,LOUT,Y,
+      SUBROUTINE OVDRIV(N,NPD,T0,HO,Y0,YPRIME,TOUT,TEND,MF,IDID,Y,
      +     YHOLD,YNHOLD,YMAX,ERRORS,SAVE1,SAVE2,SCALE,ARH,PW,PWCOPY,
      +     IPIV,MBND,NIND1,NIND2,NIND3,MAXDER,ITOL,RTOL,ATOL,RPAR,
      +     IPAR,pderv,resid,NQUSED,NSTEP,NFAIL,NRE,NJE,NDEC,NBSOL,
@@ -417,7 +418,7 @@ C
 C     START OF PROGRAM PROPER
 C
 C     .. SCALAR ARGUMENTS ..
-      INTEGER IDID,LOUT,MF,N,NPD,MAXDER,ITOL
+      INTEGER IDID,MF,N,NPD,MAXDER,ITOL
 C     ..
 C     .. ARRAY ARGUMENTS ..
       DIMENSION  ARH(N),ERRORS(N),PW(NPD*N),PWCOPY(NPD*N),SAVE1(N),
@@ -435,7 +436,7 @@ C     .. INTRINSIC FUNCTIONS ..
       INTRINSIC DABS,DMAX1
 C     ..
 C     .. COMMON BLOCKS ..
-      INTEGER JSTART,KFLAG,L,MAXORD,NBSOL,NCOSET,NDEC,
+      INTEGER JSTART,KFLAG,MAXORD,NBSOL,NCOSET,NDEC,
      +     NRE,NJE,NPSET,NQUSED,NSTEP
       SAVE T,H,HMIN,HMAX,KFLAG,JSTART
 C     ..
@@ -676,9 +677,9 @@ C     <<<<<<<<<<<<<<<<<
       CALL STIFF(H,HMAX,HMIN,JSTART,KFLAG,MF,MBND,
      +    NIND1,NIND2,NIND3,T,TOUT,TEND,Y,YPRIME,N,NPD,
      +    YMAX,ERRORS,SAVE1,SAVE2,SCALE,PW,PWCOPY,YHOLD,
-     +    YNHOLD,ARH,IPIV,LOUT,MAXDER,ITOL,RTOL,ATOL,RPAR,IPAR,
+     +    YNHOLD,ARH,IPIV,MAXDER,ITOL,RTOL,ATOL,RPAR,IPAR,
      +    pderv,resid,NQUSED,NSTEP,NFAIL,NRE,NJE,NDEC,NBSOL,
-     +    NPSET,NCOSET,MAXORD,MAXSTP,UROUND,EPSJAC,HUSED,IERR)
+     +    NPSET,NCOSET,MAXORD,UROUND,EPSJAC,HUSED,IERR)
 
       KGO = 1 - KFLAG
       IF (KGO.EQ.1) THEN
@@ -1033,7 +1034,7 @@ C --------------------- END OF SUBROUTINE COSET ---------------------
       END
 
       SUBROUTINE PSET(Y,YPRIME,N,NPD,H,T,UROUND,EPSJAC,CON,MITER,MBND,
-     +     NIND1,NIND2,NIND3,IER,pderv,resid,NRENEW,YMAX,SAVE1,SAVE2,
+     +     IER,pderv,resid,NRENEW,YMAX,SAVE1,SAVE2,
      +     SAVE3,PW,PWCOPY,WRKSPC,IPIV,ITOL,RTOL,ATOL,NPSET,NJE,NRE,
      +     NDEC,IPAR,RPAR,IERR)
 
@@ -1931,7 +1932,7 @@ C     ** ERROR ASSOCIATED WITH METHOD OF ORDER TWO LOWER.
       END
 C--------------------------------------------------------------------------
 
-      SUBROUTINE PRDICT(T,H,Y,L,N,IPAR,RPAR,IERR)
+      SUBROUTINE PRDICT(T,H,Y,L,N)
 
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
 C **********************************************************************
@@ -1942,7 +1943,7 @@ C     .. SCALAR ARGUMENTS ..
       INTEGER L,N
 C     ..
 C     .. ARRAY ARGUMENTS ..
-      DIMENSION  Y(N,12),IPAR(*),RPAR(*)
+      DIMENSION  Y(N,12)
 C     ..
 C     .. LOCAL SCALARS ..
       INTEGER I,J2
@@ -1990,12 +1991,14 @@ C     .. COMMON BLOCKS ..
       INTEGER NBSOL,NRE
 
 CKS: add this save statement?
-C      SAVE D1
+      SAVE D1
 C     ..
 C     .. DATA STATEMENTS ..
 
       DATA  ZERO/0.0D+0/
 C     ..
+
+
 
       DO 5 I=1,N
          AYI = DABS(Y(I,1))
@@ -2117,9 +2120,9 @@ C--------------------------------------------------------------------------
       SUBROUTINE STIFF(H,HMAX,HMIN,JSTART,KFLAG,MF,MBND,
      +     NIND1,NIND2,NIND3,T,TOUT,TEND,Y,YPRIME,N,NPD,
      +     YMAX,ERROR,SAVE1,SAVE2,SCALE,PW,PWCOPY,YHOLD,
-     +     YNHOLD,ARH,IPIV,LOUT,MAXDER,ITOL,RTOL,ATOL,RPAR,IPAR,
+     +     YNHOLD,ARH,IPIV,MAXDER,ITOL,RTOL,ATOL,RPAR,IPAR,
      +     pderv,resid,NQUSED,NSTEP,NFAIL,NRE,NJE,NDEC,NBSOL,NPSET,
-     +     NCOSET,MAXORD,MAXSTP,UROUND,EPSJAC,HUSED,IERR)
+     +     NCOSET,MAXORD,UROUND,EPSJAC,HUSED,IERR)
 
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
 C     ------------------------------------------------------------------
@@ -2185,7 +2188,7 @@ C              HAS BEEN EVALUATED FOR THE CURRENT STEP
 C **********************************************************************
 
 C     .. SCALAR ARGUMENTS ..
-      INTEGER JSTART,KFLAG,LOUT,MF,N,ITOL,NPD
+      INTEGER JSTART,KFLAG,MF,N,ITOL,NPD
 C     ..
 C     .. ARRAY ARGUMENTS ..
       DIMENSION HSTPSZ(2,14)
@@ -2330,7 +2333,7 @@ C     *****************************************************
       CALL CPYARY(N*L,Y,YHOLD)
       QI = H*EL(1)
       QQ = ONE/QI
-      CALL PRDICT(T,H,Y,L,N,IPAR,RPAR,IERR)
+      CALL PRDICT(T,H,Y,L,N)
       IF(IERR.NE.0) THEN
          H=H/2
          IERR = 0
@@ -2428,7 +2431,7 @@ C     ------------------------------------------------------------------
       IF (JCHANG.EQ.1) THEN
 C        IF WE HAVE CHANGED STEPSIZE THEN PREDICT A VALUE FOR Y(T+H)
 C        AND EVALUATE THE DERIVATIVE THERE (STORED IN SAVE2())
-         CALL PRDICT(T,H,Y,L,N,IPAR,RPAR,IERR)
+         CALL PRDICT(T,H,Y,L,N)
          IF(IERR.NE.0) GOTO 8000
          DO 95 I=1,N
             YPRIME(I)=(Y(I,1)-ARH(I))/QI
@@ -2520,7 +2523,7 @@ C
 
 
       CALL PSET(Y,YPRIME,N,NPD,H,T,UROUND,EPSJAC,QI,MITER,MBND,
-     +   NIND1,NIND2,NIND3,IER,pderv,resid,NRENEW,YMAX,SAVE1,SAVE2,
+     +   IER,pderv,resid,NRENEW,YMAX,SAVE1,SAVE2,
      +   SCALE,PW,PWCOPY,ERROR,IPIV,ITOL,RTOL,ATOL,NPSET,NJE,NRE,NDEC
      +     ,IPAR,RPAR,IERR)
       IF(IERR.NE.0) GOTO 8000
@@ -2673,7 +2676,7 @@ C ----------------------------------------------------------------------
             ARH(I) = ARH(I) + EL(JP1)*Y(I,J1)
  200     CONTINUE
  210  CONTINUE
-      CALL PRDICT(T,H,Y,L,N,IPAR,RPAR,IERR)
+      CALL PRDICT(T,H,Y,L,N)
       IF(IERR.NE.0) GOTO 8000
 
       DO 215 I=1,N
@@ -2843,6 +2846,7 @@ C
       HOLD = H
 C FM: added FFAIL=0.0d0 to avoid uninitialised value(s)
       FFAIL = 0.5d0
+      FRFAIL = 0.5d0
       IF(NQ.GT.1) FFAIL = 0.5D+0/DBLE(FLOAT(NQ))
       IF(NQ.GT.2) FRFAIL = 0.5D+0/DBLE(FLOAT(NQ-1))
       EFAIL = 0.5D+0/DBLE(FLOAT(L))
@@ -3003,6 +3007,7 @@ C **********************************************************************
          PR3 = 1.D+20
          FAC = 1.5D+0
          IF(IEMB.EQ.1) FAC = 1.8D+0
+         VHOLD = 0.0d0
          DO 400 I = 1,N
             AYI = DABS(Y(I,1))
             IF(ITOL.EQ.1) THEN
@@ -3538,7 +3543,7 @@ C      DOUBLE PRECISION FUNCTION DLAMCH( CMACH ) - removed
          QTR = ONE / 4
          SAVEC = C
          C = DLAMC3( C, -A )
-         LBETA = C + QTR
+         LBETA = INT(C + QTR)
 *
 *        Now determine whether rounding or chopping occurs,  by adding a
 *        bit  less  than  beta/2  and a  bit  more  than  beta/2  to  a.
@@ -4119,6 +4124,7 @@ C      DOUBLE PRECISION FUNCTION DLAMCH( CMACH ) - removed
       RECBAS = ONE / BETA
       Z = BETA - ONE
       Y = ZERO
+      OLDY = ZERO
       DO 20 I = 1, P
          Z = Z*RECBAS
          IF( Y.LT.ONE )

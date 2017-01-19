@@ -18,6 +18,7 @@
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 int maxt;
+  C_deriv_func_type     *deriv_func;  
 
 /* definition of the calls to the FORTRAN subroutines in file gamd.f**/
 
@@ -230,7 +231,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   int itol, ijac, ml, mu, iout, idid, liw, lrw, sum;
 
   /* pointers to functions passed to FORTRAN */
-  C_jac_func_type_gb   *jac_func_gb = NULL;
+  C_jac_func_type_gb    *jac_func_gb = NULL;
   C_solout_type         *solout = NULL;
   C_solout_type_bim     *solout_bim = NULL;
   C_mas_type            *mas_func = NULL;

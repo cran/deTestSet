@@ -225,6 +225,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 
   mbnd  = (int *) R_alloc(4, sizeof(int));
   for (j = 0; j<4; j++) mbnd[j] = INTEGER(Mbnd)[j];
+  nrowpd = mbnd[3];
 
   /* initialise global variables... */
 

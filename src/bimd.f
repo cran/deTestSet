@@ -183,7 +183,7 @@ C             AFTER A FLOATING-POINT EXCEPTION  (E.G., BY USING THE OPTION
 C             -FPE; SEE YOUR FORTRAN COMPILER REFERENCE MANUAL).
 C                       THE ISNAN LOGICAL FUNCTION IS REQUIRED, TO RECOGNIZE NANs. IF
 C                       NOT SUPPORTED BY YOUR COMPILER, A STANDARD ONE IS PROVIDED AT
-C                       THE TOP OF THE SUBBIM.F FILE.
+C                       THE TOP OF THE SUBBIM.F FILE.  Karline: ISNANUM
 C
 C
 C -----------------------------------------------------------------------------------
@@ -1259,7 +1259,7 @@ C
      &        TRUEJAC,STAGNA,
      &        LINEAR,CALJAC0,CALFACT0,
      &        QINF,QINFJ,QINFF,NQINF,SMALLM,
-     &        NODJ0,NODJ00,ISNAN,ERROR,ESTIM,ESTIM1
+     &        NODJ0,NODJ00,ISNANUM,ERROR,ESTIM,ESTIM1
 
 C
 C  CONSTANT PARAMETERS
@@ -1441,6 +1441,9 @@ C
 
 C-------------------------------------------------------------------------------------------------------------------
 C     OTHER INITIALIZATIONS
+CF
+      qinfj = .FALSE.
+      qinff = .FALSE.
 
       IF (INDEX1.EQ.M) THEN
          INDEXD = 1
@@ -1482,6 +1485,53 @@ C     VECTOR TO BE USED FOR THE ESTIMATE OF JACOBIAN VARIATION
       ORD_IND = INT(ORD/2) - 1
       K       = STEP_ORD(ORD_IND)
       KOLD    = 0
+CF Initialize the parameters
+      GAMMA  = 0.0d0
+      RHOT   = 0.0d0
+      RHOTUP = 0.0d0
+      RHOI   = 0.0d0
+      RHOIUP = 0.0d0
+      RHOOLD = 0.0d0
+      RHOMU  = 0.0d0
+      RHOML  = 0.0d0
+      RHOJ0  = 0.0d0
+      RHOFATT = 0.0d0
+      SISERR = 0
+      SISERRUP  = 0
+      FATERR = 0.0d0
+      VMAX(1)  = 0.0d0
+      VMAX(2)  = 0.0d0
+      VMAX(3)  = 0.0d0
+      VMAX(4)  = 0.0d0
+      VMAX(5)  = 0.0d0
+      VMAX(6)  = 0.0d0
+      VMAX(7)  = 0.0d0
+      VMAX(8)  = 0.0d0
+      FATDJ0 = 0.0d0
+      FATDJ0I = 0.0d0
+      tolrhoJ0 = 0.0d0
+      DELTAH2= 0.0d0
+      DELTAH1SF = 0.0d0
+      CFAT1  = 0.0d0
+      CFAT2  = 0.0d0
+      cscal = 0.0d0
+      NORD     = 0
+      NJ00 = 0
+      NERROR = 0
+      MINIT = 0
+      MAXIT = 0
+      MAXf0 = 0
+      it0 = 0
+      it = 0
+      hj0 = 0
+      fminy0 = 0.0d0
+      extraps = .false.
+      espup = 0.0d0
+      espdn = 0.0d0
+      esp = 0.0d0
+      error = .false.
+      mudif = 0
+CF
       H       = DMIN1(H,HMAX)
 C -------------------------------------------------------
 C     INITIAL STEPSIZE TOO SMALL !!!!!
@@ -2133,7 +2183,7 @@ C      GOTO (210,220,230,240,250) ORD_IND
       IT = IT + 1
       CALL NORM(M,K,SCAL,ERR,NERR,NERRUP)
 c CHECK FOR NANs
-      IF (ISNAN(NERR).OR.ISNAN(NERRUP)) THEN
+      IF (ISNANUM(NERR).OR.ISNANUM(NERRUP)) THEN
          NERR = 2D0*NERRSTOP + 1D0
          EXTRAP0 = .FALSE.
          EXTRAPS = .FALSE.
@@ -2238,7 +2288,7 @@ C      GOTO (310,320,320,320,320) ORD_IND
 
 400   CONTINUE
 
-      IF (ISNAN(NERR).OR.ISNAN(NERRUP)) THEN
+      IF (ISNANUM(NERR).OR.ISNANUM(NERRUP)) THEN
           NERR = 2D0*NERRSTOP + 1D0
           EXTRAP0 = .FALSE.
           EXTRAPS = .FALSE.

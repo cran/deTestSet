@@ -57,7 +57,7 @@ C_res_func_type* DLL_res_func;
 
 /* this is in compiled code */
 typedef void init_func_type (void (*)(int*, double*));
-C_deriv_func_type *deriv_func;
+/* C_deriv_func_type *deriv_func;*/ 
 
 double             *tt, *ytmp;
 int                isDll;

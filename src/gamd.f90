@@ -814,8 +814,8 @@ CONTAINS
     !!   EXECUTABLE STATEMENTS
     !!---------------------------------
     !!
+    FAC = 1.0d0
     SELECT CASE(ORD)
-
     CASE(1)
        FAC = -L31*H
     CASE(2)
@@ -4524,8 +4524,8 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
          &                  SFDOWN, SFUP, SFSAME, SF, UROUND
     INTEGER :: ORDMIN, ORDMAX, ITINT(4), ITMAX, IJOB, NMAX, LDJAC, LDLU, LDMAS
     INTEGER ::  NDEC, NFCN, NJAC, NSTEP(4), NNEWT(4), NERR(4)
-    INTEGER ::  IEFP, ISTORE,                                                   &
-         &   I,IEIPIV, IESC, NIND1, NIND2, NIND3
+    INTEGER ::   ISTORE,                                                   &
+         &   I,  NIND1, NIND2, NIND3
     LOGICAL ::  ARRET, JBAND, IMPLCT
 
     !!
@@ -4998,7 +4998,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     !! -------------------------------------------------------------------------
     CALL ETRO(R, FCN, T0, Y0, TEND, HMAX, H, RTOL, ATOL, ITOL,                       &
          &   JAC, IJAC, MLJAC, MUJAC, MAS, MLMAS, MUMAS, SOLOUT, IOUT, IDID, NMAX,   &
-         &   UROUND, THET, FACNEWT, FACNORD, TETAK0, CS, FACL, FACR, SFDOWN,         &
+         &   THET, FACNEWT, FACNORD, TETAK0, CS, FACL, FACR, SFDOWN,         &
          &   SFUP, SFSAME, SF, ORDMIN, ORDMAX, ITINT, ITMAX,                         &
          &   IMPLCT, JBAND, IJOB, LDJAC, LDLU, LDMAS, NIND1, NIND2, NIND3,           &
          &   NFCN, NJAC, NSTEP, NNEWT, NERR, NDEC, RPAR, IPAR)
@@ -5031,7 +5031,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     !! -------------------------------------------------------------------------
     SUBROUTINE  ETRO(R,FCN,T0,Y0,TEND,HMAX,H,RTOL,ATOL,ITOL,                  &
          &   JAC,IJAC,MLJAC,MUJAC,MAS,MLMAS,MUMAS,SOLOUT,IOUT,IDID,           &
-         &   NMAX,UROUND,THET,FACNEWT,FACNORD,TETAK0,CS,FACL,FACR,SFDOWN,     &
+         &   NMAX,THET,FACNEWT,FACNORD,TETAK0,CS,FACL,FACR,SFDOWN,     &
          &   SFUP,SFSAME,SF, ORDMIN,ORDMAX,ITINT,ITMAX,                       &
          &   IMPLCT,JBAND,IJOB,LDJAC,LDLU,LDMAS,NIND1,NIND2,NIND3,            &
          &   NFCN,NJAC,NSTEP,NNEWT,NERR,NDEC,RPAR,IPAR)
@@ -5057,7 +5057,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
 
       REAL(PREC), INTENT(IN)  :: TEND, ATOL(*), RTOL(*), RPAR(*), FACNORD(4),&
            &                  HMAX, THET, FACNEWT, TETAK0(4), CS(4), FACL, FACR,       &
-           &                  SFDOWN, SFUP, SFSAME, SF, UROUND
+           &                  SFDOWN, SFUP, SFSAME, SF
 
 
       LOGICAL, INTENT(IN) :: IMPLCT

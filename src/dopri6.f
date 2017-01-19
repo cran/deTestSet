@@ -410,7 +410,7 @@ C --- INITIAL PREPARATIONS
       CALL FCN(N,X,Y,K1,RPAR,IPAR)
       HMAX=ABS(HMAX)     
       IORD=5  
-      IF (H.EQ.0.D0) H=HINIT5(N,FCN,X,Y,XEND,POSNEG,K1,K2,K3,IORD,
+      IF (H.EQ.0.D0) H=HINIT5(N,FCN,X,Y,POSNEG,K1,K2,K3,IORD,
      &                       HMAX,ATOL,RTOL,ITOL,RPAR,IPAR)
       NFCN=NFCN+2
       REJECT=.FALSE.
@@ -615,7 +615,7 @@ C --- FAIL EXIT
       RETURN
       END
 C
-      FUNCTION HINIT5(N,FCN,X,Y,XEND,POSNEG,F0,F1,Y1,IORD,
+      FUNCTION HINIT5(N,FCN,X,Y,POSNEG,F0,F1,Y1,IORD,
      &                 HMAX,ATOL,RTOL,ITOL,RPAR,IPAR)
 C ----------------------------------------------------------
 C ----  COMPUTATION OF AN INITIAL STEP SIZE GUESS

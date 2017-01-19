@@ -1863,8 +1863,8 @@ C --- Three enhancement-type transistors in series
       if(phi-vbs.lt.0d0.or.phi.lt.0d0)then
          ierr=-1
         CALL Rprintd2('Error in  TWOBIT due to Phi, vbs ', phi, vbs)
-          call rexit('Run aborted')
-         return
+        call rexit('Run aborted')
+!         return
       end if
 
       VTE = VT0 + CGAMMA * ( DSQRT(PHI-VBS) - DSQRT(PHI) )
@@ -1924,7 +1924,7 @@ C --- Three enhancement-type transistors in series
          ierr=-1
          CALL Rprintd2('Error in TWOBIT due to Phi, vbd ', phi, vbd)
          call rexit('Run aborted')
-         return
+!         return
       end if
 
       VTE = VT0 + CGAMMA * ( DSQRT(PHI-VBD) - DSQRT(PHI) )

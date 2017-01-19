@@ -476,6 +476,9 @@ C --- INITIAL PREPARATIONS
       IASTI=0
       IASTIS=0
       NONSTI=0
+      ENORMVE = 0.0d0
+      errz = 0.0d0
+      enormz1 = 0.0d0
       
 cF we use the shampine algorithm to compute the contnuous
 cF extension
@@ -484,6 +487,7 @@ cF computation of eta vector in the direction of
 cF dominant eigenvalue of the Jacobian for stiffness detection
       IERR = 0
 cF used in the error check
+
 
       IF (NSTIFFCOND .GT. 0) THEN
 
@@ -613,8 +617,8 @@ C --- ERROR ESTIMATION
        HMAX=ABS(HMAX)
        IORD=5
 
-       IF (H.EQ.0.D0) H=HINITCKSTIFF(N,X,Y,XEND,POSNEG,K1,K2,Y1,IORD,
-     &                HMAX,HST,ERR,EXPO1,ATOL,RTOL,ITOL,RPAR,IPAR)
+       IF (H.EQ.0.D0) H=HINITCKSTIFF(N,Y,POSNEG,K1,K2,IORD,
+     &                HMAX,HST,ERR,EXPO1,ATOL,RTOL,ITOL)
 
 
       if (iprint .gt. 0 ) then
@@ -726,7 +730,7 @@ C removed ierr
        CALL FCN(N,X,Y,K1,RPAR,IPAR)
        HMAX=ABS(HMAX)
        IORD=5
-       IF (H.EQ.0.D0) H=HINITck(N,FCN,X,Y,XEND,POSNEG,K1,K2,K3,IORD,
+       IF (H.EQ.0.D0) H=HINITck(N,FCN,X,Y,POSNEG,K1,K2,K3,IORD,
      &                       HMAX,ATOL,RTOL,ITOL,RPAR,IPAR)
        NFCN=NFCN+2
       END IF
@@ -926,7 +930,7 @@ C KARLINE: always print ...
 C                  IF (IPRINT.GT.0 .OR. NSTIFF .EQ. 1) THEN
         CALL Rprintd1(
      &               'The problem seems to become stiff at x = ',X)
-        CALL Rprint('using the standard check of eignevalues')
+        CALL Rprint('using the standard check of eigenvalues')
                     IF (NSTIFF .EQ. 2) GOTO 76
 C                  END IF
                END IF
@@ -990,6 +994,8 @@ cf estimation of the error using ys
 
 C --- ERROR ESTIMATION
         ERRy=0.D0
+        ERRys=0.D0
+        erryys=0.0D+0
         errta=0.0D+0
         IF (ITOL.EQ.0) THEN
           DO 41 I=1,N
@@ -1415,7 +1421,7 @@ C --- FAIL EXIT
       RETURN
       END
 C
-      FUNCTION HINITck(N,FCN,X,Y,XEND,POSNEG,F0,F1,Y1,IORD,
+      FUNCTION HINITck(N,FCN,X,Y,POSNEG,F0,F1,Y1,IORD,
      &                 HMAX,ATOL,RTOL,ITOL,RPAR,IPAR)
 C ----------------------------------------------------------
 C ----  COMPUTATION OF AN INITIAL STEP SIZE GUESS
@@ -1451,7 +1457,7 @@ C ---- COMPARED TO THE SOLUTION
          H=SQRT(DNY/DNF)*0.01D0
       END IF
       H=MIN(H,HMAX)
-      IERR = 1.0d0
+      IERR = 1
       DO WHILE (IERR .NE.0)
         H=SIGN(H,POSNEG)
 C ---- PERFORM AN EXPLICIT EULER STEP
@@ -1491,15 +1497,15 @@ C ----  H**IORD * MAX ( NORM (F0), NORM (DER2)) = 0.01
       END
 
 
-      FUNCTION HINITCKSTIFF(N,X,Y,XEND,POSNEG,F0,F1,Y1,IORD,
-     &                 HMAX,HST,ERR,EXPO1,ATOL,RTOL,ITOL,RPAR,IPAR)
+      FUNCTION HINITCKSTIFF(N,Y,POSNEG,F0,F1,IORD,
+     &                 HMAX,HST,ERR,EXPO1,ATOL,RTOL,ITOL)
 C ----------------------------------------------------------
 C ----  COMPUTATION OF AN INITIAL STEP SIZE  USING THE
 C ----  INFORMATION OBTAINED AFTER THE COMPUTATION OF ETA
 C ----------------------------------------------------------
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-      DIMENSION Y(N),Y1(N),F0(N),F1(N),ATOL(*),RTOL(*)
-      DIMENSION RPAR(*),IPAR(*)
+      DIMENSION Y(N),F0(N),F1(N),ATOL(*),RTOL(*)
+
 
 C ---- COMPUTE A FIRST GUESS
 C ----   H = 0.01 * NORM (Y0) / NORM (F0)
@@ -1623,7 +1629,8 @@ c      db73 = 5.0d0/2.0d0
    5  CONTINUE
       IF (I.EQ.0) THEN
          CALL Rprinti1('No dense output available for comp. nr',II)
-         RETURN
+         CONTCK = 0.D0
+         GOTO 100
       END IF
 
       IF (hermite) THEN
@@ -1647,7 +1654,7 @@ c      db73 = 5.0d0/2.0d0
      &                     b6*CON(5*ND+I) + b7*CON(6*ND+I) )
 
       END IF
-      RETURN
+100   RETURN
       END
 
 C
