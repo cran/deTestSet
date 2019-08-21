@@ -66,8 +66,7 @@ plot(out, lwd = 2, which = 1:9)
 max(abs(out[nrow(out),-1] - reference("nand")))    
 }
 \references{
-\url{http://www.dm.uniba.it/~testset}
-
+\url{http://archimede.dm.uniba.it/~testset}
 
 }
 \note{

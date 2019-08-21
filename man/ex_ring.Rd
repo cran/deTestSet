@@ -77,7 +77,7 @@ mtext(side = 3, line = -1.5, "RING modulator",cex = 1.25, outer = TRUE)
 max(abs(out[nrow(out),-1]- reference("ring")))    
 }
 \references{
-\url{http://www.dm.uniba.it/~testset}
+\url{http://archimede.dm.uniba.it/~testset}
 
 [Hor76] E.H. Horneber. Analyse nichtlinearer RLCU-Netzwerke mit Hilfe der 
 gemischten Potentialfunktion

@@ -69,7 +69,7 @@ out1 <- hires(times = c(0, 321.8122))
 max(abs(out1[nrow(out1),-1] - reference("hires")))
 }
 \references{
-\url{http://www.dm.uniba.it/~testset}
+\url{http://archimede.dm.uniba.it/~testset}
 
 [Got77] B.A. Gottwald. MISS - ein einfaches Simulations-System fur biologische und chemische
 Prozesse. EDV in Medizin und Biologie, 3:85-90, 1977.

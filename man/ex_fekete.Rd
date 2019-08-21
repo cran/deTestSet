@@ -67,7 +67,7 @@ out1 <- fekete(times = c(0, 1000))
 max(abs(out1[nrow(out1),-1] - reference("fekete")))    
 }
 \references{
-\url{http://www.dm.uniba.it/~testset}
+\url{http://archimede.dm.uniba.it/~testset}
 }
 \details{
 

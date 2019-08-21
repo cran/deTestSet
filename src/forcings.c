@@ -163,13 +163,13 @@ static void C_event_func (int *n, double *t, double *y) {
   SEXP R_fcall, Time, ans;
   for (i = 0; i < *n; i++) REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                  incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_event_func,Time,Y));   incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));           incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                  
+  PROTECT(R_fcall = lang3(R_event_func,Time,Y));   
+  PROTECT(ans = eval(R_fcall, R_envir));           
 
   for (i = 0; i < *n; i++) y[i] = REAL(ans)[i];
 
-  my_unprotect(3);
+  UNPROTECT(3);
 }
 
     

@@ -4785,7 +4785,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
        END IF
     END DO
     IF (MINVAL(TETAK0).LE.0.0D0) THEN
-      CALL Rprintd4('Wrong input for work(5:8) ',WORK(5:8))
+      CALL Rprintd4('Wrong input for work(5:8) ',WORK(5),WORK(6),WORK(7),WORK(8))
        ARRET=.TRUE.
     END IF
 
@@ -5185,7 +5185,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
       NFCN = NFCN + 1
       IF (IERR.NE.0) THEN
          IDID=-5
-      CALL Rprint('GAM: ERROR: cannot handle IERR = -1 in (T0,Y0)')
+      CALL Rprint('GAM:ERROR: cannot handle IERR= -1 in (T0,Y0)')
           RETURN
       ENDIF
 

@@ -79,13 +79,13 @@ static void C_deriv_func_dop (int *neq, double *t, double *y,
 
   for (i = 0; i < *neq; i++)  REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                  incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));   incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));           incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                  
+  PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));   
+  PROTECT(ans = eval(R_fcall, R_envir));           
 
   for (i = 0; i < *neq; i++)   ydot[i] = REAL(ans)[i];
 
-  my_unprotect(3);
+  UNPROTECT(3);
 }
 
 /* deriv output function - for ordinary output variables */
@@ -99,13 +99,13 @@ static void C_deriv_out_dop (int *nOut, double *t, double *y,
   for (i = 0; i < n_eq; i++)  
       REAL(Y)[i] = y[i];
      
-  PROTECT(Time = ScalarReal(*t));                   incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));   incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));            incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                   
+  PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));   
+  PROTECT(ans = eval(R_fcall, R_envir));            
 
   for (i = 0; i < *nOut; i++) yout[i] = REAL(ans)[i + n_eq];
 
-  my_unprotect(3);                                  
+  UNPROTECT(3);                                  
 }      
 
 /* save output in R-variables */
@@ -161,19 +161,20 @@ SEXP call_dop(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /******                   DECLARATION SECTION                            ******/
 /******************************************************************************/
 
-  int  j, nt, latol, lrtol, lrw, liw;
+  int  j, k, nt, latol, lrtol, lrw, liw;
   int  isForcing;
   double *Atol, *Rtol, *ww;
   int itol, iout, idid, mflag;
 
   /* pointers to functions passed to FORTRAN */
   C_solout_type         *solout = NULL;
+  
 /******************************************************************************/
 /******                         STATEMENTS                               ******/
 /******************************************************************************/
 
 /*                      #### initialisation ####                              */    
-  init_N_Protect();
+  int nprot = 0;
 
   n_eq = LENGTH(y);             /* number of equations */ 
   nt   = LENGTH(times);         /* number of output times */
@@ -225,11 +226,21 @@ SEXP call_dop(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   for (j=0; j<length(rWork); j++) rwork[j] = REAL(rWork)[j];
   for (j=length(rWork); j<lrw; j++) rwork[j] = 0.;
 
-  /* initialise global R-variables...  */
-  initglobals (nt);
+  /* initialise global R-variables... initglobals (nt); */
   
-  /* Initialization of Parameters, Forcings (DLL) */
-  initParms (initfunc, parms);
+  PROTECT(Y = allocVector(REALSXP,(n_eq)));                nprot++;
+  PROTECT(YOUT = allocMatrix(REALSXP,ntot+1,nt));          nprot++;
+  
+  /* Initialization of Parameters, Forcings (DLL) initParms (initfunc, parms);*/
+  if (initfunc != NA_STRING) {
+    if (inherits(initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = parms);                          nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(initfunc);
+      initializer(Initdeparms);
+    }
+  }
+
   isForcing = initForcings(flist);
 
   if (nout > 0 ) {
@@ -297,19 +308,41 @@ SEXP call_dop(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
      warning("stopped based on conditioning estimation; kappa >   1e20");
 
 /*                   ####  an error occurred   ####                           */    
-  if (idid < 0 )
-    returnearly (1);
-
+  if (idid < 0 ){
+//    returnearly (1);
+    warning("Returning early. Results are accurate, as far as they go\n");
+    PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,it));              nprot++;
+    for (k = 0; k < it; k++)
+      for (j = 0; j < ntot+1; j++)
+        REAL(YOUT2)[k*(ntot+1) + j] = REAL(YOUT)[k*(ntot+1) + j];
+  }  
+  
   saveOut (tin, xytmp);              /* save final condition */
 
 /*                   ####   returning output   ####                           */    
   rwork[0] = rwork[6];
   rwork[1] = rwork[6];
   rwork[2] = tin ;
-  terminate(idid,5,16,5,0);       
+  // terminate(idid,5,16,5,0);   
+  
+  PROTECT(ISTATE = allocVector(INTSXP, 5));                nprot++;
+  for (k = 0; k < 4; k++) INTEGER(ISTATE)[k+1] = iwork[k +16];
+  INTEGER(ISTATE)[0] = idid;  
+    
+  PROTECT(RWORK = allocVector(REALSXP, 5));                nprot++;
+  for (k = 0; k < 5; k++) REAL(RWORK)[k] = rwork[k];
+  if (idid > 0) {
+      setAttrib(YOUT, install("istate"), ISTATE);
+      setAttrib(YOUT, install("rstate"), RWORK);
+  }
+  else  {
+      setAttrib(YOUT2, install("istate"), ISTATE);
+      setAttrib(YOUT2, install("rstate"), RWORK);
+  }
+
   
 /*                   ####     termination      ####                           */    
-  unprotect_all();
+  UNPROTECT(nprot);
   if (idid > 0)
     return(YOUT);
   else

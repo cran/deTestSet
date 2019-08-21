@@ -72,7 +72,7 @@ max(abs(out[nrow(out),inderr+1] - refsol[inderr])/refsol[inderr])
 
 }
 \references{
-\url{http://www.dm.uniba.it/~testset}
+\url{http://archimede.dm.uniba.it/~testset}
 
 [MM08] F. Mazzia and C. Magherini. Test Set for Initial Value Problem Solvers, 
 release 2.4. Department

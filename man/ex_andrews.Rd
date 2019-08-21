@@ -69,7 +69,7 @@ refsol <- reference("andrews")
 max(abs(out[nrow(out),-1] - refsol)/refsol)    
 }
 \references{
-\url{http://www.dm.uniba.it/~testset}
+\url{http://archimede.dm.uniba.it/~testset}
 }
 \details{
 

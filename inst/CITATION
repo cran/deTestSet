@@ -1,0 +1,19 @@
+citHeader("To cite package 'deTestSet' in publications use:")
+
+citEntry(entry="Article",
+  title = "A Test Set for Stiff Initial Value Problem Solvers in the open source software {R}: package de{T}est{S}et",
+  author = personList(as.person("Francesca Mazzia"),
+                      as.person("Jeff R. Cash"),
+                      as.person("Karline Soetaert")),
+  journal  =	"Journal of Computational and Applied Mathematics",
+  volume   =	"236",
+  pages    =	"4119--4131",
+  year     = "2012",
+  DOI      = "10.1016/j.cam.2012.03.014",
+  keywords =	"ordinary differential equations, initial value problems,
+    R, FORTRAN, C",
+  textVersion =  paste("Mazzia, F., Cash, J.R. and K. Soetaert, 2012. ",
+                       "A Test Set for Stiff Initial Value Problem Solvers in the open source software R: package deTestSet.",
+                       "Journal of Computational and Applied Mathematics 236: 4119-4131.",
+                       "DOI 10.1016/j.cam.2012.03.014")
+)

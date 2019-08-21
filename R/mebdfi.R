@@ -308,8 +308,8 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
        if (! is.matrix(tmp))
          stop("jacres must return a matrix\n")
        dd <- dim(tmp)
-       if ((imp ==23 && dd != c(bandup+banddown+1,n)) ||
-           (imp ==21 && dd != c(n,n)))
+       if ((imp ==23 && any(dd != c(bandup+banddown+1,n))) ||
+           (imp ==21 && any(dd != c(n,n))))
          stop("Jacobian dimension not ok")
 
        JacRes <- function(Rin,y,dy)  {

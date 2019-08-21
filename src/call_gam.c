@@ -84,13 +84,13 @@ static void C_deriv_func_gb (int *neq, double *t, double *y,
 
   for (i = 0; i < *neq; i++)  REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                  incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));   incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));           incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                  
+  PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));   
+  PROTECT(ans = eval(R_fcall, R_envir));           
 
   for (i = 0; i < *neq; i++)   ydot[i] = REAL(ans)[i];
 
-  my_unprotect(3);
+  UNPROTECT(3);
 }
 
 /* deriv output function - for ordinary output variables */
@@ -104,13 +104,13 @@ static void C_deriv_out_gb (int *nOut, double *t, double *y,
   for (i = 0; i < n_eq; i++)
       REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                   incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));   incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));            incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                   
+  PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));   
+  PROTECT(ans = eval(R_fcall, R_envir));            
 
   for (i = 0; i < *nOut; i++) yout[i] = REAL(ans)[i + n_eq];
 
-  my_unprotect(3);
+  UNPROTECT(3);
 }
 /* the mass matrix function */
 static void C_mas_func (int *neq, double *am, int *lmas,
@@ -119,17 +119,17 @@ static void C_mas_func (int *neq, double *am, int *lmas,
   int i;
   SEXP NEQ, LM, R_fcall, ans;
 
-  PROTECT(NEQ = NEW_INTEGER(1));                  incr_N_Protect();
-  PROTECT(LM = NEW_INTEGER(1));                   incr_N_Protect();
+  PROTECT(NEQ = NEW_INTEGER(1));                  
+  PROTECT(LM = NEW_INTEGER(1));                   
 
                               INTEGER(NEQ)[0] = *neq;
                               INTEGER(LM) [0] = *lmas;
-  PROTECT(R_fcall = lang3(R_mas_func,NEQ,LM));   incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));         incr_N_Protect();
+  PROTECT(R_fcall = lang3(R_mas_func,NEQ,LM));   
+  PROTECT(ans = eval(R_fcall, R_envir));         
 
   for (i = 0; i <*lmas * *neq; i++)   am[i] = REAL(ans)[i];
 
-  my_unprotect(4);
+  UNPROTECT(4);
 }
 
 /* save output in R-variables */
@@ -191,13 +191,13 @@ static void C_jac_func_gb (int *neq, double *t, double *y, int *ml,
 
   for (i = 0; i < *neq; i++) REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                 incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_jac_func,Time,Y));    incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));          incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                 
+  PROTECT(R_fcall = lang3(R_jac_func,Time,Y));    
+  PROTECT(ans = eval(R_fcall, R_envir));          
 
   for (i = 0; i < *neq * *nrowpd; i++)  pd[i] = REAL(ans)[i];
 
-  my_unprotect(3);
+  UNPROTECT(3);
 }
 
 /* give name to data types */
@@ -225,7 +225,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /******                   DECLARATION SECTION                            ******/
 /******************************************************************************/
 
-  int  j, nt, latol, lrtol, imas, mlmas, mumas, type;
+  int  j, k, nt, latol, lrtol, imas, mlmas, mumas, type;
   int  isForcing, runOK;
   double *Atol, *Rtol, hini;
   int itol, ijac, ml, mu, iout, idid, liw, lrw, sum;
@@ -241,7 +241,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /******************************************************************************/
 
 /*                      #### initialisation ####                              */
-  init_N_Protect();
+  int nprot = 0;
 
   type  = INTEGER(Type)[0];     /* jacobian type */
   ijac  = INTEGER(jT)[0];       /* jacobian type */
@@ -305,11 +305,23 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   mu = INTEGER(MU)[0];
   hini = REAL(Hini)[0];
 
-  /* initialise global R-variables...  */
-  initglobals (nt);
+  /* initialise global R-variables... initglobals (nt); */
+  
+  PROTECT(Y = allocVector(REALSXP,(n_eq)));        nprot++;
+  PROTECT(YOUT = allocMatrix(REALSXP,ntot+1,nt));  nprot++;
+  
+  
+  /* Initialization of Parameters, Forcings (DLL)   initParms(initfunc, parms);*/
 
-  /* Initialization of Parameters, Forcings (DLL) */
-  initParms(initfunc, parms);
+  if (initfunc != NA_STRING) {
+    if (inherits(initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = parms);                  nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(initfunc);
+      initializer(Initdeparms);
+    }
+  }
+  
   isForcing = initForcings(flist);
 
   if (nout > 0 ) {
@@ -386,20 +398,24 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   if(it <= nt-1) saveOut (tin, xytmp);              /* save final condition */
   if (idid < 0 ) {
     it = it-1;
-    returnearly (1);
-  }
+    warning("Returning early. Results are accurate, as far as they go\n");
+    PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,it));              nprot++;
+    for (k = 0; k < it; k++)
+      for (j = 0; j < ntot+1; j++)
+        REAL(YOUT2)[k*(ntot+1) + j] = REAL(YOUT)[k*(ntot+1) + j];
+  }  
 
 /*                   ####   returning output   ####                           */
 
 /* feval */
 
-  PROTECT(RWORK = allocVector(REALSXP, 3)); incr_N_Protect();
+  PROTECT(RWORK = allocVector(REALSXP, 3)); nprot++;
   REAL(RWORK)[0] = hini;
   REAL(RWORK)[1] = hini;
 
   REAL(RWORK)[2] = tin;
 
-  PROTECT(ISTATE = allocVector(INTSXP, 6)); incr_N_Protect();
+  PROTECT(ISTATE = allocVector(INTSXP, 6)); nprot++;
   INTEGER(ISTATE)[0] = idid;
 
 /* nsteps */
@@ -455,7 +471,7 @@ SEXP call_gambim(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   }
 
 /*                   ####     termination      ####                           */
-  unprotect_all();
+  UNPROTECT(nprot);
   if (runOK)
     return(YOUT);
   else

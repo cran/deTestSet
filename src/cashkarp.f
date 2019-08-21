@@ -1025,7 +1025,7 @@ C --- ERROR ESTIMATION
             END IF
           END IF
           IF (Nerrta .EQ. 15) THEN
-        CALL Rprinti1(
+        CALL Rprintd1(
      &               'The problem seems to become stiff at x = ',X)
         CALL Rprint('using stiffness detection based on error estimate')
 C            END IF
@@ -1245,7 +1245,7 @@ C     &          .AND. (NWARN1 .EQ. 0) ) THEN
                IF (NWARN1 .EQ. 0) THEN
         CALL Rprintd1(
      &               'The problem seems to become stiff at x = ',X)
-        CALL Rprinti1('Sigma = ', SIGMATOT)
+        CALL Rprintd1('Sigma = ', SIGMATOT)
                  nwarn1 = 1
               END IF
                IDID=-6

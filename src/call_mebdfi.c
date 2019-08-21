@@ -72,12 +72,12 @@ static void C_res_func (double *t, double *y, double *yprime, double *cj,
       REAL(Y)[i] = y[i];
       REAL (YPRIME)[i] = yprime[i];
     }
-  PROTECT(Time = ScalarReal(*t));                       incr_N_Protect();
-  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                       
+  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); 
+  PROTECT(ans = eval(R_fcall, R_envir));                
 
   for (i = 0; i < n_eq; i++)  	delta[i] = REAL(ans)[i];
-  my_unprotect(3);
+  UNPROTECT(3);
 }
 
 /* interface between fortran call to jacobian and R function */
@@ -96,11 +96,11 @@ static void C_jac_func (double *t, double *y, double *yprime,
       REAL(Y)[i] = y[i];
       REAL (YPRIME)[i] = yprime[i];      
     }
-  PROTECT(R_fcall = lang4(R_daejac_func, Rin, Y, YPRIME));  incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                 incr_N_Protect();
+  PROTECT(R_fcall = lang4(R_daejac_func, Rin, Y, YPRIME));  
+  PROTECT(ans = eval(R_fcall, R_envir));                 
   for (i = 0; i < n_eq * nrowpd; i++)  pd[i] = REAL(ans)[i];
 
-  my_unprotect(2);
+  UNPROTECT(2);
 }
 
 /* give name to data types */
@@ -137,8 +137,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 
 /*                      #### initialisation ####                              */    
 
-  init_N_Protect();
-
+  int nprot = 0;
 
   n_eq = LENGTH(y);
   nt = LENGTH(times);
@@ -229,20 +228,26 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 
   /* initialise global variables... */
 
-  PROTECT(Rin  = NEW_NUMERIC(2));                    incr_N_Protect();
-  PROTECT(Y = allocVector(REALSXP,n_eq));            incr_N_Protect();
-  PROTECT(YPRIME = allocVector(REALSXP,n_eq));       incr_N_Protect();
-  PROTECT(yout = allocMatrix(REALSXP,ntot+1,nt));    incr_N_Protect();
+  PROTECT(Rin  = NEW_NUMERIC(2));                    nprot++;
+  PROTECT(Y = allocVector(REALSXP,n_eq));            nprot++;
+  PROTECT(YPRIME = allocVector(REALSXP,n_eq));       nprot++;
+  PROTECT(yout = allocMatrix(REALSXP,ntot+1,nt));    nprot++;
   if (isOut == 1) {
-    PROTECT(dyout = allocMatrix(REALSXP,n_eq+1,nt));    incr_N_Protect();
+    PROTECT(dyout = allocMatrix(REALSXP,n_eq+1,nt)); nprot++;
   }
   
   /**************************************************************************/
   /****** Initialization of Parameters and Forcings (DLL functions)    ******/
   /**************************************************************************/
-  initParms(initfunc, parms);
-    //  error("till here");
-
+  //initParms(initfunc, parms);
+  if (initfunc != NA_STRING) {
+      if (inherits(initfunc, "NativeSymbol")) {
+        init_func_type *initializer;
+        PROTECT(de_gparms = parms);                  nprot++;
+        initializer = (init_func_type *) R_ExternalPtrAddrFn_(initfunc);
+        initializer(Initdeparms);
+      }
+    }
   isForcing = initForcings(flist);
 
 /* pointers to functions passed to the FORTRAN subroutine                    */
@@ -277,8 +282,8 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
       /* interface function between fortran and R passed to Fortran*/     
       res_func = (C_res_func_type *) C_res_func;
       /* needed to communicate with R */      
-      PROTECT(R_res_func = resfunc);               incr_N_Protect();
-      PROTECT(R_envir = rho);                  incr_N_Protect();
+      PROTECT(R_res_func = resfunc);              nprot++;
+      PROTECT(R_envir = rho);                     nprot++;
 
     }
   if (!isNull(jacfunc))
@@ -287,7 +292,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 	      jac_func = (C_jac_func_type *) R_ExternalPtrAddrFn_(jacfunc);
       else  {
 	      jac_func = (C_jac_func_type *) C_jac_func;
-	      PROTECT(R_daejac_func = jacfunc);         incr_N_Protect();
+	      PROTECT(R_daejac_func = jacfunc);         nprot++;
 	    }
     }
 /*                      #### initial time step ####                           */
@@ -315,19 +320,15 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 //
 	  tin = REAL(times)[i];
       tout = REAL(times)[i+1];
-//      Rprintf("idid %i tin %g tout %g xdytmp %g \n", idid, tin, tout, xdytmp[0]);
       F77_CALL(mebdfi)(&n_eq, &tin, &hini, xytmp, xdytmp, &tout, &tcrit,
         &mf, &idid, &lrw, rwork, &liw, iwork, mbnd, &maxord,
 	      &Itol, Rtol, Atol, out, ipar,  jac_func, res_func, &ierr);
-//	   Rprintf(" hini, xytmp %g %g %g %g %g %g\n", hini, xytmp[0], xytmp[1],xytmp[2] ,xytmp[3], xytmp[4] );
-//   error("here");
      if (idid == 1) {
         idid = 0;
         F77_CALL(mebdfi)(&n_eq, &tin, &hini, xytmp, xdytmp, &tout, &tcrit,
          &mf, &idid, &lrw, rwork, &liw, iwork, mbnd, &maxord,
 	       &Itol, Rtol, Atol, out, ipar,  jac_func, res_func, &ierr);
       }
-//     Rprintf("idid %i tin %g tout %g tin-tout %g \n", idid, tin, tout, tin-tout);
 
 	    if (idid == -1)   {
 	      warning("the integration failed to pass the error test, even after reducing h by factor 1e10");
@@ -349,7 +350,6 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
        warning("insufficient integer workspace for the integration");
 
       }
-  // Rprintf(" i, tin, tout, ntot %i, %g, %g, %i\n", i, tin, tout, ntot);
 
  	  REAL(yout)[(i+1)*(ntot+1)] = tin;
 	  for (j = 0; j < n_eq; j++)
@@ -371,24 +371,24 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 	   warning("Returning early from mebdfi  Results are accurate, as far as they go\n");
 
 	/* redimension yout */
-   	PROTECT(yout2 = allocMatrix(REALSXP,ntot+1,(i+2)));incr_N_Protect();
-  	for (k = 0; k < i+2; k++)
+   	PROTECT(yout2 = allocMatrix(REALSXP,ntot+1,(i+2)));nprot++;
+  	for (k = 0; k < i+2; k++){
 	   for (j = 0; j < ntot+1; j++)
 	    REAL(yout2)[k*(ntot+1) + j] = REAL(yout)[k*(ntot+1) + j];
-	   break;
+      }
+	  break;
     }
   }    /* end main time loop */
 
 
-/*     error("tillhere");
-                ####   returning output   ####                           */
+/*        ####   returning output   ####                           */
 
-  PROTECT(ISTATE = allocVector(INTSXP, 15));incr_N_Protect();
+  PROTECT(ISTATE = allocVector(INTSXP, 15));            nprot++;
   for (k = 0;k<14;k++) INTEGER(ISTATE)[k+1] = iwork[k];
   INTEGER(ISTATE)[0] = idid;
 
 
-  PROTECT(RWORK = allocVector(REALSXP, 1));incr_N_Protect();
+  PROTECT(RWORK = allocVector(REALSXP, 1));             nprot++;
   REAL(RWORK)[0] = rwork[1];
 
   if (idid >= 0)
@@ -406,7 +406,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 //
 
 /*                       ####   termination   ####                            */       
-  unprotect_all();
+  UNPROTECT(nprot);
   if (idid >= 0)
     return(yout);
   else

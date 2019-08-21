@@ -9,14 +9,14 @@
 }
 \description{
   R package deTestSet contains the R-version of the ODE and DAE initial value 
-  problems test set from the url: http://www.dm.uniba.it/\~testset.  
+  problems test set from the url: http://archimede.dm.uniba.it/~testset.  
 
   If the test model problem is small enough, then it is implemented in
   pure R. For larger models, the problem is specified in FORTRAN code.
 
   These implementations were compiled as DLLs, and included in the package.
   The code of these models can be found in the packages
-  \url{inst/doc/examples/dynload} subdirectory.
+  \code{inst/doc/examples/dynload} subdirectory.
   
   In addition to all solvers present in package \code{deSolve}, 
   \code{deTestSet} contains the initial value problem solvers 
@@ -29,7 +29,6 @@
   \tabular{ll}{
     Package: \tab deTestSet\cr
     Type:    \tab Package\cr
-    Version: \tab 1.1\cr
     License: \tab GNU Public License 2 or above\cr
   }
 
@@ -53,7 +52,12 @@
   \code{mebdfi}, \code{gamd}, and \code{daspk} and \code{radau} (deSolve)
 
 }
-
+\references{
+Mazzia, F., Cash, J.R. and K. Soetaert, 2012. 
+  A Test Set for Stiff Initial Value Problem Solvers in the open source software R: package deTestSet. 
+  Journal of Computational and Applied Mathematics 236: 4119-4131 
+  DOI information: 10.1016/j.cam.2012.03.014.
+}
 \examples{
 \dontrun{
 ## show examples (see respective help pages for details)
@@ -73,4 +77,3 @@ edit(vignette("deTestSet"))
 }
 }
 
-\keyword{ package }

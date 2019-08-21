@@ -13,7 +13,7 @@ SEXP Y, YPRIME , Rin;
 int    it, n_eq; 
 int    *iwork;   
 double *rwork;
- double *xytmp, *xdytmp, tin, tout;
+double *xytmp, *xdytmp, tin, tout;
 
 long int mu;
 long int ml;
@@ -79,16 +79,16 @@ SEXP getListElement(SEXP list, const char* str);
 
 /*============================================================================ 
   C- utilities, functions 
-============================================================================*/
+============================================================================
 void init_N_Protect(void);
 void incr_N_Protect(void);
 void unprotect_all(void);
 void my_unprotect(int);
 void returnearly (int);
 void terminate(int, int, int, int, int);
+void initParms(SEXP Initfunc, SEXP Parms);*/
 
 /* declarations for initialisations */
-void initParms(SEXP Initfunc, SEXP Parms);
 void Initdeparms(int*, double*);
 void Initdeforc(int*, double*);
 void initOutC(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar);

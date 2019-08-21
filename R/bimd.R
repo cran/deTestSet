@@ -160,8 +160,8 @@ bimd <- function(y, times, func, parms, nind = c(length(y),0,0),
       if (!is.matrix(tmp))
          stop("Jacobian function 'jacfunc' must return a matrix\n")
       dd <- dim(tmp)
-      if ((!full && dd != c(bandup+banddown+1,n)) ||
-          ( full && dd != c(n,n)))
+      if ((!full && any(dd != c(bandup+banddown+1,n))) ||
+          ( full && any(dd != c(n,n))))
          stop("Jacobian dimension not ok")
      } 
   }                                                                                

@@ -1,4 +1,5 @@
-useDynLib(deTestSet)
+useDynLib(deTestSet, .registration = TRUE)
+
 import(deSolve)
 importFrom("grDevices", "dev.interactive")
 importFrom("graphics", "par")
