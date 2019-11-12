@@ -1,4 +1,4 @@
-f1de49fca85ad50545550d2d740b22b4 *DESCRIPTION
+3229a2526717f6f3191caad3b34e0d0d *DESCRIPTION
 5f4c74e7b70e063baff9bfd144328c48 *NAMESPACE
 61a51a713dce716ac03d697f982dc5e2 *R/Utilities.R
 bded06932c748adffa6ec114dc77388c *R/bimd.R
@@ -37,7 +37,7 @@ deb6a4bab5a71852dc8b5c1b95aec396 *build/vignette.rds
 5ce2af703cfe715b8d2d696f176dc004 *inst/doc/carc.c
 d68ff2fc755596afa42f77b6bfb75b6b *inst/doc/deTestSet.R
 4f9cac76133f210331a8a47a7cff4249 *inst/doc/deTestSet.Rnw
-6ca399e2a8b09a32c68cf721fa784440 *inst/doc/deTestSet.pdf
+1b82d332552bc41ef8f6fa2034b8b64a *inst/doc/deTestSet.pdf
 46863084b396155719f354879076dbc3 *inst/doc/examples/Brusselator1D.R
 9398cace7cae4c0e044edc1b379f10f6 *inst/doc/examples/E5.R
 7399b4fd558efb4cae72d477db6d1b39 *inst/doc/examples/andrews.R
