@@ -199,11 +199,12 @@ C ---------------------------------------------------------------------------
       double precision VDS, VGS, VBS, VGD, VBD,nandGDSP, nandGDSM
       EXTERNAL nandGDSP, nandGDSM
 
+      nandIDS = 0.D0 !Karline: to initialise
       IF ( VDS .GT. 0.D0 ) THEN
        nandIDS = nandGDSP (NED,VDS, VGS, VBS,ierr)
       ELSE IF ( VDS .EQ. 0.D0) THEN
        nandIDS = 0.D0
-      ELSE IF ( VDS .LT. 0.D0) THE N
+      ELSE !   IF ( VDS .LT. 0.D0) THEN
        nandIDS = nandGDSM (NED,VDS, VGD, VBD,ierr)
       END IF
 
@@ -226,6 +227,7 @@ C ---------------------------------------------------------------------------
 
 C
 
+       nandGDSP = 0.D0  ! Karline added this to initialise
 
       IF(NED.EQ.1) THEN
 C --- Depletion-type
@@ -274,6 +276,8 @@ C --- Enhancement-type
       COMMON /nandcom/ RGS, RGD, RBS, RBD, CGS, CGD, CBD, CBS, C9,
      *               DELTA, CURIS, VTH, VDD, VBB
 
+
+       nandGDSM = 0.D0   ! KARLINE ADDED THIS TO INITIALISE...
 
       IF(NED.EQ.1) THEN
 C --- Depletion-type

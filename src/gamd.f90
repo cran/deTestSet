@@ -4700,6 +4700,11 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     END IF
     !!--------- FACNORD(1): STOPPING CRITERION FOR SPLITTING-NEWTON METHOD
     !!---------             ORDER 3
+    FACNORD(1) = 1D-3   ! karline: initialised those to avoid compiler warning
+    FACNORD(2) = 5D-2
+    FACNORD(3) = 1.0d-1
+    FACNORD(4) = 1.0d-1
+    
     IF (WORK(15).EQ.0.D0) THEN
        SELECT CASE (IMAS)
        CASE(0)    ! ODE CASE
@@ -4906,7 +4911,7 @@ SUBROUTINE   GAMD(R,FCN,T0,Y0,TEND,H,            &
     ELSE
        DO I=1,R
           IF (ATOL(I).LE.0.D0.OR.RTOL(I).LE. EPS) THEN
-      CALL Rprint('Tolerances(',I,') are too small')
+      CALL Rprinti1('Tolerances are too small', I)
              ARRET=.TRUE.
           END IF
        END DO

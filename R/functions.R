@@ -126,7 +126,7 @@ checkDLL <- function (func,jacfunc,dllname,
       stop("func, initfunc, or jacfunc cannot be the same")
     ModelInit <- NA
     if (! is.null(initfunc))  # to allow absence of initfunc
-      if (class (initfunc) == "CFunc")
+      if (inherits (initfunc, "CFunc"))
         ModelInit <- body(initfunc)[[2]]
       else if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
         is.loaded(initfunc, PACKAGE = dllname, type = "Fortran"))  {
@@ -143,7 +143,7 @@ checkDLL <- function (func,jacfunc,dllname,
     funcname <- func
     ## get the pointer and put it in func
 
-    if (class (func) == "CFunc")
+    if (inherits (func, "CFunc"))
         Func <- body(func)[[2]]
     else if(is.loaded(funcname, PACKAGE = dllname)) {
       Func <- getNativeSymbolInfo(funcname, PACKAGE = dllname)$address
@@ -157,7 +157,7 @@ checkDLL <- function (func,jacfunc,dllname,
           stop("If 'func' is dynloaded, so must 'jacvec' be")
         )
       jacfuncname <- jacfunc
-      if (class (jacfunc) == "CFunc")
+      if (inherits (jacfunc, "CFunc"))
         JacFunc <- body(jacfunc)[[2]]
 
       else if(is.loaded(jacfuncname, PACKAGE = dllname))  {

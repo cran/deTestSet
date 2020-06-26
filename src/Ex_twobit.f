@@ -1811,7 +1811,7 @@ C ---------------------------------------------------------------------------
          IDS = GDSP (NED,VDS, VGS, VBS,ierr)
       ELSE IF ( VDS .EQ. 0.d0) THEN
          IDS = 0.d0
-      ELSE IF ( VDS .LT. 0.d0) THEN
+      ELSE    ! IF ( VDS .LT. 0.d0) THEN
          IDS = GDSM (NED,VDS, VGD, VBD,ierr)
       END IF
 
@@ -1834,6 +1834,7 @@ C ---------------------------------------------------------------------------
      *               CURIS, VTH, VDD, VBB, CLOAD, COUT
 C
       ierr = 0
+      GDSP = 0.D0  ! Karline: initialised this
       IF(NED.EQ.0) THEN
 C --- Depletion-type
         VT0=-2.43d0
@@ -1894,6 +1895,7 @@ C --- Three enhancement-type transistors in series
      *               CURIS, VTH, VDD, VBB, CLOAD, COUT
 
       ierr = 0
+       GDSM = 0.d0        ! Karline - initialised this
       IF(NED.EQ.0) THEN
 C --- Depletion-type
         VT0=-2.43d0

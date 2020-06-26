@@ -1,5 +1,5 @@
 Package: deTestSet
-Version: 1.1.7
+Version: 1.1.7.2
 Title: Test Set for Differential Equations
 Authors@R: c(person("Karline","Soetaert", role = c("aut","cre"), 
                      email = "karline.soetaert@nioz.nl"),
@@ -21,14 +21,6 @@ Authors@R: c(person("Karline","Soetaert", role = c("aut","cre"),
                      comment = "file bimda.f")
 			)
 Maintainer: Karline Soetaert <karline.soetaert@nioz.nl>
-Depends: R (>= 2.01), deSolve
-Imports: graphics, grDevices, stats
-Description: Solvers and test set for stiff and non-stiff differential equations, and 
-  differential algebraic equations. 
-  'Mazzia, F., Cash, J.R. and K. Soetaert, 2012. DOI: 10.1016/j.cam.2012.03.014'.
-License: GPL
-Copyright: inst/COPYRIGHTS
-LazyData: yes
 Author: Karline Soetaert [aut, cre],
   Jeff Cash [aut],
   Francesca Mazzia [aut],
@@ -38,10 +30,15 @@ Author: Karline Soetaert [aut, cre],
   Cecilia Magherini [ctb] (files bimd.f, bimda.f),
   Luigi Brugnano [ctb] (files bimd.f, bimda.f),
   Cleve Moler [ctb] (file bimda.f)
-Repository: CRAN
-Repository/R-Forge/Project: bvpsolve
-Repository/R-Forge/Revision: 291
-Repository/R-Forge/DateTimeStamp: 2019-11-12 13:41:07
-Date/Publication: 2019-11-12 18:10:02 UTC
+Depends: R (>= 2.01), deSolve
+Imports: graphics, grDevices, stats
+Description: Solvers and test set for stiff and non-stiff differential equations, and 
+  differential algebraic equations. 
+  See Mazzia, F., Cash, J.R., and K. Soetaert (2012) <DOI:10.1016/j.cam.2012.03.014>.
+License: GPL
+Copyright: inst/COPYRIGHTS
+LazyData: yes
 NeedsCompilation: yes
-Packaged: 2019-11-12 13:50:56 UTC; rforge
+Packaged: 2020-06-25 17:06:16 UTC; karlines
+Repository: CRAN
+Date/Publication: 2020-06-26 22:50:07 UTC

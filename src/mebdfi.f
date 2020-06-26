@@ -357,7 +357,7 @@ c Francesca added I11
            IF (LWORK.LT.(I11+1)) THEN
                IDID = -11
       CALL Rprint('Real workspace is insufficient ')
-      CALL Rprint('Size of workspace must be at least ', I11 +1)
+      CALL Rprinti1('Size of workspace must be at least ',I11 +1)
                call rexit('stopped')
 
             ENDIF
@@ -365,7 +365,7 @@ c Francesca added I11
             IF (LIWORK.LT.N+14) THEN
                IDID = -12
       CALL Rprint('Integer workspace is insufficient ')
-      CALL Rprint('Size of workspace must be at least ', N +14)
+      CALL Rprinti1('Size of workspace must be at least ', N +14)
                call rexit('stopped')
             END IF
 
@@ -497,7 +497,7 @@ C           HAVE OVERSHOT TOUT
       CALL Rprintd1('IDID = -1 on input & (t-tout)*h .ge. 0. t= ', T)
       CALL Rprintd2('tout and h = ', TOUT, H)
       CALL Rprint(' interpolation was done as on normal return.')
-      CALL Rprintd1(' desired parameter changes were not made.')
+      CALL Rprint(' desired parameter changes were not made.')
             call rexit('stopped')
 
             CALL INTERP(N,JSTART,H,T,Y,TOUT,Y0)
@@ -629,7 +629,7 @@ C        ILLEGAL VALUE FOR MAXIMUM ORDER
          IF(NIND1.EQ.0)  NIND1=N
          IF(NIND1 + NIND2 + NIND3 .NE. N) THEN
 C    SUM OF VARIABLES OF DIFFERENT INDEX SHOULD BE N.
-      CALL Rprintd1('Bad input for number of variables of index 1,2,3')
+      CALL Rprint('Bad input for number of variables of index 1,2,3')
 
             IDID = -4
          ENDIF
@@ -2241,6 +2241,8 @@ C     ..
  6000 TOLD = T
       KFLAG = 0
       CFAIL = .TRUE.
+      DUP = ZERO    ! KARLINE ADDED THIS TO INITIALISE
+
       IF (JSTART.GT.0) GO TO 60
       IF (JSTART.NE.0) GO TO 30
 C     ------------------------------------------------------------------

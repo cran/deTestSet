@@ -24,17 +24,17 @@ void my_unprotect(int n) {
 
 
 /* Globals :*/
-SEXP R_deriv_func;
-SEXP R_jac_func;
-SEXP R_event_func;
+//SEXP R_deriv_func;
+//SEXP R_jac_func;
+//SEXP R_event_func;
 
-SEXP R_envir;
+//SEXP R_envir;
 
-SEXP R_res_func;
-SEXP R_mas_func;
-SEXP R_daejac_func;
+//SEXP R_res_func;
+//SEXP R_mas_func;
+//SEXP R_daejac_func;
 
-SEXP de_gparms;
+//SEXP de_gparms;
 
 /*======================================================
 SEXP initialisation functions - removed - done in solver functions

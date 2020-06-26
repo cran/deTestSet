@@ -1,4 +1,3 @@
-#include<R_ext/Rdynload.h>
 #ifndef R_R_H
 # include <R.h>
 #endif
@@ -7,7 +6,9 @@
 # include <R_ext/Rdynload.h>
 #endif
 
+#define EXTERN
 #include "de.h"
+#undef EXTERN
 
 #include <Rinternals.h>
 #include <stdlib.h> // for NULL

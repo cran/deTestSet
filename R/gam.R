@@ -95,7 +95,7 @@ gamd <- function(y, times, func, parms, nind = c(length(y),0,0),
   flist     <- list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   ModelInit <- NULL
 
-  if (is.character(func)  | class(func) == "CFunc") {   # function specified in a DLL
+  if (is.character(func)  | inherits(func, "CFunc")) {   # function specified in a DLL
     DLL <- checkDLL(func,jacfunc,dllname,
                     initfunc,verbose,nout, outnames)
 

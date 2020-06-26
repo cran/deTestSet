@@ -62,9 +62,9 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     stop("`times' must be NULL or numeric")
   if (!is.null(jacres) && !is.null(jacfunc))
     stop("either `jacfunc' OR 'jacres' must be specified, not both")
-  if (!is.null(func) && !is.function(func) && !is.character(func) && ! class(func) == "CFunc")
+  if (!is.null(func) && !is.function(func) && !is.character(func) && ! inherits(func, "CFunc"))
     stop("`func' must be a function, a character vector, of class 'CFunc' or NULL")
-  if (!is.null(res) && !is.function(res) && !is.character(res) && ! class(res) == "CFunc")
+  if (!is.null(res) && !is.function(res) && !is.character(res) && ! inherits(res, "CFunc"))
     stop("`res' must be NULL, a function, or character vector, or of class CFunc")
   if ((is.character(res) || is.character(func))&& (is.null(dllname) || !is.character(dllname)))
     stop("You need to specify the name of the dll or shared library where res or func can be found (without extension)")
@@ -148,9 +148,9 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     if (sum(duplicated (c(func, initfunc, jacfunc, res, jacres))) > 0)
       stop("func, initfunc, jacfunc, res, jacres cannot share the same name")
 
-  if (!is.null(dllname)| class(func) == "CFunc" | class(res) == "CFunc")  {
+  if (!is.null(dllname)| inherits(func, "CFunc") | inherits(res, "CFunc"))  {
 
-    if (class(initfunc) == "CFunc")
+    if (inherits(initfunc, "CFunc"))
       ModelInit <- body(initfunc)[[2]]
     else if (is.character(initfunc))  # KS: ADDED THAT to allow absence of initfunc
       if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
@@ -166,14 +166,14 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
 
   ## If res or func is a character vector,  make sure it describes
   ## a function in a loaded dll
-  if (is.character(res) || is.character(func) || class(res) == "CFunc" || class(func) == "CFunc") {
+  if (is.character(res) || is.character(func) || inherits(res, "CFunc") || inherits(func, "CFunc")) {
     if (is.character(res)){
       resname <- res
       if (is.loaded(resname, PACKAGE = dllname)) {
         Res <- getNativeSymbolInfo(resname, PACKAGE = dllname)$address
       } else stop(paste("cannot integrate: res function not loaded",resname))
 
-    }  else if (class(res) == "CFunc") {
+    }  else if (inherits(res, "CFunc")) {
       Res <- body(res)[[2]]
     } else if (is.character(func)) {
       funtype <- 2
@@ -182,15 +182,15 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
       if (is.loaded(resname, PACKAGE = dllname)) {
         Res <- getNativeSymbolInfo(resname, PACKAGE = dllname)$address
       } else stop(paste("cannot integrate: derivs function not loaded",resname))
-    } else if (class(func) == "CFunc") {
+    } else if (inherits(func, "CFunc")) {
       funtype <- 2
       Res <- body(func)[[2]]
     }
      if (!is.null(jacres))   {
-       if (!is.character(jacres) & class(jacres) != "CFunc" )
+       if (!is.character(jacres) & !inherits(jacres, "CFunc" ))
           stop("If 'res' is dynloaded, so must 'jacres' be")
        jacname <- jacres
-       if (class(jacres) == "CFunc")
+       if (inherits(jacres, "CFunc"))
           JacRes <- body(jacres)[[2]]
         
        else if (is.loaded(jacname, PACKAGE = dllname)) {

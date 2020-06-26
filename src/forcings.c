@@ -36,8 +36,6 @@ to the integration routines */
  
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-int    finit = 0;
-
 /*=========================================================================== 
          -----     Check for presence of forcing functions     -----       
    function "initForcings" checks if forcing functions are present and if so,

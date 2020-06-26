@@ -17,8 +17,6 @@
    karline soetaert
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-int maxt;
-  C_deriv_func_type     *deriv_func;  
 
 /* definition of the calls to the FORTRAN subroutines in file gamd.f**/
 

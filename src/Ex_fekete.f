@@ -45,7 +45,7 @@ C----------------------------------------------------------------------
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       
       integer i,j,k,nart,maxn,IPAR(*)
-      parameter(maxn=200)
+      parameter(maxn=50)  ! KARLINE: CHANGED TO 50 instead of 200
       double precision t,y(neqn),dy(neqn),RPAR(*)
       double precision p(maxn,3),q(maxn,3),lam(maxn),mu(maxn),
      +     pp(maxn,3),qp(maxn,3),phi(maxn),gpq(maxn),
