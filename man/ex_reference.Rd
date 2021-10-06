@@ -28,7 +28,7 @@ Francesca Mazzia
 reference("ring")
 }
 \references{
-\url{http://archimede.dm.uniba.it/~testset}
+\url{https://archimede.dm.uniba.it/~testset/}
 }
 \keyword{utilities}
 

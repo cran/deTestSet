@@ -1,5 +1,5 @@
 Package: deTestSet
-Version: 1.1.7.2
+Version: 1.1.7.3
 Title: Test Set for Differential Equations
 Authors@R: c(person("Karline","Soetaert", role = c("aut","cre"), 
                      email = "karline.soetaert@nioz.nl"),
@@ -37,8 +37,7 @@ Description: Solvers and test set for stiff and non-stiff differential equations
   See Mazzia, F., Cash, J.R., and K. Soetaert (2012) <DOI:10.1016/j.cam.2012.03.014>.
 License: GPL
 Copyright: inst/COPYRIGHTS
-LazyData: yes
 NeedsCompilation: yes
-Packaged: 2020-06-25 17:06:16 UTC; karlines
+Packaged: 2021-09-23 07:53:05 UTC; karlines
 Repository: CRAN
-Date/Publication: 2020-06-26 22:50:07 UTC
+Date/Publication: 2021-10-06 09:30:08 UTC

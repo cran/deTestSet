@@ -67,8 +67,7 @@ plot(out, lwd = 2)
 out[nrow(out),-1]-reference("transistor")
 }
 \references{
-\url{http://archimede.dm.uniba.it/~testset}
-
+\url{https://archimede.dm.uniba.it/~testset/}
 }
 \note{
 This model is implemented in FORTRAN
