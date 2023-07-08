@@ -61,7 +61,7 @@ out[nrow(out),-1] - reference("E5")
 
 }
 \references{
-\url{https://archimede.dm.uniba.it/~testset/}
+url : archimede.dm.uniba.it/~testset
 }
 \note{
 This model is implemented in R

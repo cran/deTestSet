@@ -74,7 +74,7 @@ refsol <- reference("crank")
 max(abs(out[nrow(out),2:8] - refsol[1:7])/refsol[1:7])     
 }
 \references{
-\url{https://archimede.dm.uniba.it/~testset/}
+url : archimede.dm.uniba.it/~testset
 
 Simeon, B.: Modelling a flexible slider crank
           mechanism by a mixed system of DAEs and PDEs,

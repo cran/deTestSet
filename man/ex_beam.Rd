@@ -65,7 +65,7 @@ max(abs(out[nrow(out),-1] - refsol)/refsol)
 
 }
 \references{
-\url{https://archimede.dm.uniba.it/~testset/}
+url : archimede.dm.uniba.it/~testset
 }
 \details{
 There are no parameters  

@@ -1145,8 +1145,8 @@ C
          D = D + (YPRIME(I)*(YMAX(I)))**2
  40   CONTINUE
       IF(ITOL.EQ.1) D=D*RTOL(1)**2
-      D = DSQRT(D)/DFLOAT(N)
-      R0 = DABS(H)*D*DFLOAT(N)*(1.0D+03)*UROUND
+      D = DSQRT(D)/DBLE(N)
+      R0 = DABS(H)*D*DBLE(N)*(1.0D+03)*UROUND
       IF(R0.EQ.0.0D+0) R0 = epsjac
       J1 = 0
 
@@ -2090,7 +2090,7 @@ C -------------------------------------------------------------------
          IF (D1.NE.ZERO) CRATE = DMAX1(0.9D+0*CRATE,D/D1)
       END IF
       TCRATE = TCRATE + CRATE
-      IF ((D*DMIN1(1.0D+0,2.0D+0*CRATE)).LT.ERRBND/DFLOAT(NQUSED))
+      IF ((D*DMIN1(1.0D+0,2.0D+0*CRATE)).LT.ERRBND/DBLE(NQUSED))
      +     RETURN
       IF (M.NE.0) THEN
          IF (D.GT.D1) THEN

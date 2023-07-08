@@ -66,7 +66,7 @@ plot(out, lwd = 2, mfrow = c(3, 4))
 out[nrow(out),2:11]-reference("caraxis")
 }
 \references{
-\url{https://archimede.dm.uniba.it/~testset/}
+url : archimede.dm.uniba.it/~testset
 }
 \details{
 

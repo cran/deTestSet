@@ -70,7 +70,7 @@ plot(out, which = "phi3.4", lwd = 2, xlim = c(10000, 60000),
 max(abs(out[nrow(out),-1]- reference("tube")))    
 }
 \references{
-\url{https://archimede.dm.uniba.it/~testset/}
+url : archimede.dm.uniba.it/~testset
 }
 \details{
 

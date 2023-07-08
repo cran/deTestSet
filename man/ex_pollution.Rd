@@ -68,7 +68,7 @@ out1 <- pollution(times = 0:60)
 max(abs(out1[nrow(out1),-1] -  reference("pollution")))    
 }
 \references{
-\url{https://archimede.dm.uniba.it/~testset/}
+url : archimede.dm.uniba.it/~testset
 
 [MM08] F. Mazzia and C. Magherini. Test Set for Initial Value Problem Solvers, 
 release 2.4. Department of Mathematics, University of Bari and INdAM, 

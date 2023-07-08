@@ -65,8 +65,7 @@ plot(out, which = 1:9, lwd = 2)
 max(abs(out[nrow(out), -1] - reference("wheelset")))
 }
 \references{
-\url{https://archimede.dm.uniba.it/~testset/}
-
+url : archimede.dm.uniba.it/~testset
 
 }
 \note{

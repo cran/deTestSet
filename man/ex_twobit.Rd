@@ -72,7 +72,7 @@ plot(out, lwd = 2, which = c("x49", "x130", "x148"), mfrow = c(3, 1))
 }
 }
 \references{
-\url{https://archimede.dm.uniba.it/~testset/}
+url : archimede.dm.uniba.it/~testset
 }
 \note{
 This model is implemented in FORTRAN
